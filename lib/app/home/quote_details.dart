@@ -60,7 +60,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                     ),
                   ],
                 ),
-                const Gap(50),
+                const Gap(20),
                 Stack(
                   children: [
                     SvgPicture.asset(
@@ -87,7 +87,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                             textAlign: TextAlign.center,
                             colors: AppColor().filledTextField,
                           ),
-                          const Gap(50),
+                          const Gap(30),
                           Divider(
                             thickness: 1,
                             indent: 20,
@@ -184,7 +184,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
             DraggableScrollableSheet(
               maxChildSize: 0.85,
               initialChildSize: 0.35,
-              minChildSize: 0.35,
+              minChildSize: 0.2,
               builder:
                   (BuildContext context, ScrollController scrollController) {
                 return Container(
