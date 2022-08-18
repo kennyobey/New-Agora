@@ -1,4 +1,4 @@
-import 'package:agora_care/app/authentication/%20verify_email_page.dart';
+import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class EmailPage extends StatefulWidget {
-  const EmailPage({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<EmailPage> createState() => _EmailPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _EmailPageState extends State<EmailPage> {
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,21 +40,15 @@ class _EmailPageState extends State<EmailPage> {
             ),
             const Gap(10),
             customTitleText(
-              'What’s your email address',
-              size: 20,
+              'Welcome! 👋',
+              size: 32,
               spacing: -0.1,
               fontWeight: FontWeight.w800,
               colors: AppColor().filledTextField,
             ),
             const Gap(10),
             customDescriptionText(
-              'We’ll send you a verification code so make',
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              colors: AppColor().lightTextColor,
-            ),
-            customDescriptionText(
-              'sure it’s a valid email',
+              'Login to your account to proceed',
               fontSize: 14,
               fontWeight: FontWeight.w400,
               colors: AppColor().lightTextColor,
@@ -77,11 +71,11 @@ class _EmailPageState extends State<EmailPage> {
             ),
             const Expanded(child: SizedBox()),
             CustomFillButton(
-              buttonText: 'Send code',
+              buttonText: 'Proceed',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
               onTap: () {
-                Get.to(() => const VerifyEmailPage());
+                Get.to(() => const UserNavScreen());
               },
             ),
             const Gap(50),

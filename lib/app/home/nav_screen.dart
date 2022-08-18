@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison
 
 import 'package:agora_care/app/cells/cell_screen.dart';
+import 'package:agora_care/app/profile/profile_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -28,8 +29,8 @@ class _UserNavScreenState extends State<UserNavScreen> {
       // Cells Screens
       const CellsScreen(),
 
-      // Whatever Screen
-      const HomeScreen(),
+      // Profile Screen
+      const ProfileScreen(),
     ];
     super.initState();
   }

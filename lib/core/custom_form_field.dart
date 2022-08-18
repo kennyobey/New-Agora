@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_unnecessary_containers, sized_box_for_whitespace, non_constant_identifier_names
+// ignore_for_file: avoid_unnecessary_containers, sized_box_for_whitespace, non_constant_identifier_names, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -249,7 +249,8 @@ class _CustomPassWordState extends State<CustomPassWord> {
                 Expanded(
                   child: customDescriptionText(
                     widget.label ?? '',
-                    fontSize: widget.labelSize ?? 10,
+                    fontSize: widget.labelSize ?? 14,
+                    fontWeight: FontWeight.w600,
                     colors: AppColor().textColor,
                   ),
                 ),
@@ -325,16 +326,16 @@ class _CustomPassWordState extends State<CustomPassWord> {
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                                 color: isHiddenPassword
-                                    ? AppColor()
-                                        .filledTextField
-                                        .withOpacity(0.5)
-                                    : AppColor().filledTextField,
+                                    ? AppColor().primaryColor.withOpacity(0.5)
+                                    : AppColor().primaryColor,
                               ),
                             ),
                         hintText: widget.hint ?? 'Enter your password',
                         hintStyle: GoogleFonts.openSans(
-                          color: Colors.black26,
-                          fontSize: 12,
+                          color: widget.hintColor ?? Colors.black54,
+                          fontSize: 14,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
                         ),
                       ),
                       onFieldSubmitted: widget.onSubmited,
@@ -716,6 +717,86 @@ class CustomTextFieldOnly extends StatelessWidget {
             ),
           ),
           onFieldSubmitted: onSubmited),
+    );
+  }
+}
+
+class CustomContainer extends StatelessWidget {
+  String? imgName;
+  String titleText;
+  VoidCallback? onTap;
+  Widget? trailing;
+  CustomContainer({
+    Key? key,
+    this.imgName,
+    required this.titleText,
+    this.onTap,
+    this.trailing,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 60,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: AppColor().whiteColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ListTile(
+          title: customTitleText(
+            titleText,
+            size: 14,
+            colors: AppColor().textColor,
+            fontWeight: FontWeight.w700,
+          ),
+          trailing: trailing,
+        ),
+      ),
+    );
+  }
+}
+
+class CustomContainer2 extends StatelessWidget {
+  String imgName;
+  String titleText;
+  VoidCallback? onTap;
+  Widget? trailing;
+  CustomContainer2({
+    Key? key,
+    required this.imgName,
+    required this.titleText,
+    this.onTap,
+    this.trailing,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 60,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: AppColor().whiteColor,
+          border: Border.all(width: 1, color: AppColor().blackColor),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ListTile(
+          leading: Image.asset(
+            imgName,
+            height: 26,
+          ),
+          title: customTitleText(
+            titleText,
+            size: 14,
+            colors: AppColor().textColor,
+          ),
+          trailing: trailing,
+        ),
+      ),
     );
   }
 }
