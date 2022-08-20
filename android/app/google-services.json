@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "773858271905",
+    "project_id": "agoracare-61b70",
+    "storage_bucket": "agoracare-61b70.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773858271905:android:849043bf14c0a77d5e06e0",
+        "android_client_info": {
+          "package_name": "com.example.agora_care"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773858271905-9t5mfqvc4uqd96neeh1ehb5390grd3cb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD40sAA7uxn0YA78GiuDzrCD6Wz7ORMpjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773858271905-9t5mfqvc4uqd96neeh1ehb5390grd3cb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

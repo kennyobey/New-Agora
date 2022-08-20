@@ -73,7 +73,7 @@ class _WelComePageState extends State<WelComePage> {
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
                   ),
-                  const Gap(20),
+                  const Gap(15),
                   CustomTextField(
                     label: 'What is your fullname?',
                     hint: 'Enter fullname',
@@ -81,7 +81,7 @@ class _WelComePageState extends State<WelComePage> {
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
                   ),
-                  const Gap(20),
+                  const Gap(15),
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: Column(
@@ -135,7 +135,7 @@ class _WelComePageState extends State<WelComePage> {
                       ],
                     ),
                   ),
-                  const Gap(20),
+                  const Gap(15),
                   CustomTextField(
                     label: 'What is your city and postcode?',
                     hint: 'Enter city and postcode',
@@ -143,7 +143,7 @@ class _WelComePageState extends State<WelComePage> {
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
                   ),
-                  const Gap(20),
+                  const Gap(15),
                   CustomTextField(
                     label: 'What is your address?',
                     hint: 'Enter address',
@@ -160,7 +160,6 @@ class _WelComePageState extends State<WelComePage> {
                       Get.to(() => const UserNavScreen());
                     },
                   ),
-                  const Gap(30),
                 ],
               ),
             ),
