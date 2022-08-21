@@ -7,6 +7,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
+import 'auth_controller.dart';
+import 'email_page.dart';
+
 class WelComePage extends StatefulWidget {
   const WelComePage({Key? key}) : super(key: key);
 
@@ -151,13 +154,24 @@ class _WelComePageState extends State<WelComePage> {
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
                   ),
-                  const Gap(50),
+                  const Gap(10),
                   CustomFillButton(
                     buttonText: 'Get me started',
                     textColor: AppColor().button1Color,
                     buttonColor: AppColor().primaryColor,
                     onTap: () {
                       Get.to(() => const UserNavScreen());
+                    },
+                  ),
+                  const Gap(5),
+                  CustomFillButton(
+                    buttonText: 'Log Out',
+                    textColor: AppColor().button1Color,
+                    buttonColor: AppColor().primaryColor,
+                    onTap: () {
+                      print("Sign out");
+                      AuthContoller.instance.logOut();
+                      Get.to(() => const EmailPage());
                     },
                   ),
                 ],

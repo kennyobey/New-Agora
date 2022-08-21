@@ -20,12 +20,12 @@ class EmailPage extends StatefulWidget {
 }
 
 class _EmailPageState extends State<EmailPage> {
-  late TextEditingController _emailController;
-  late TextEditingController _passworController;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passworController = TextEditingController();
   @override
   void iniState() {
-    _emailController = TextEditingController();
-    _passworController = TextEditingController();
+    //_emailController = TextEditingController();
+    // _passworController = TextEditingController();
     super.initState();
   }
 
@@ -110,10 +110,12 @@ class _EmailPageState extends State<EmailPage> {
                 //     email: email, password: password);
 
                 print("sign up");
-                AuthContoller.instance.register(
+
+                final userCredential = AuthContoller.instance.register(
                   _emailController.text.trim(),
                   _passworController.text.trim(),
                 );
+                print(userCredential);
                 Get.to(() => const VerifyEmailPage());
               },
             ),

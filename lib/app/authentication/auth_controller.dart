@@ -43,9 +43,26 @@ class AuthContoller extends GetxController {
   ) async {
     print("sign up");
     try {
-      await auth.createUserWithEmailAndPassword(
+      final userCredential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-    } catch (e) {
+      print(userCredential);
+    } on FirebaseAuthException catch (e) {
+      print(e.runtimeType);
+      print(e);
+      if (e.code == "weak-password") {
+        Get.snackbar("About", "weak password",
+            backgroundColor: Colors.redAccent,
+            snackPosition: SnackPosition.BOTTOM,
+            titleText: const Text(
+              "weak password",
+              style: TextStyle(color: Colors.white),
+            ),
+            messageText: Text(
+              e.toString(),
+              style: const TextStyle(color: Colors.white),
+            ));
+      }
+      ;
       Get.snackbar("About", "User Message",
           backgroundColor: Colors.redAccent,
           snackPosition: SnackPosition.BOTTOM,
