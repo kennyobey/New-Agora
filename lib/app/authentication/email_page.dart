@@ -1,11 +1,11 @@
-import 'dart:ffi';
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: override_on_non_overriding_member
+
 import 'package:agora_care/app/authentication/%20verify_email_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -90,18 +90,11 @@ class _EmailPageState extends State<EmailPage> {
               color: AppColor().lightTextColor,
             ),
             const Gap(20),
-<<<<<<< HEAD
-            CustomPassWord(
-              label: 'Password',
-              hint: 'Enter password',
-              keyType: TextInputType.text,
-=======
             CustomTextField(
               textEditingController: _passworController,
               label: 'Enter Password',
               hint: 'Enter password',
               keyType: TextInputType.emailAddress,
->>>>>>> Kenny_Branch
               validatorText: '** Field cannot be empty',
               color: AppColor().lightTextColor,
             ),
@@ -116,7 +109,9 @@ class _EmailPageState extends State<EmailPage> {
                 // await FirebaseAuth.instance.createUserWithEmailAndPassword(
                 //     email: email, password: password);
 
-                print("sign up");
+                if (kDebugMode) {
+                  print("sign up");
+                }
                 AuthContoller.instance.register(
                   _emailController.text.trim(),
                   _passworController.text.trim(),
