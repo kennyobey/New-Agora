@@ -115,7 +115,7 @@ class _EmailPageState extends State<EmailPage> {
                   _emailController.text.trim(),
                   _passworController.text.trim(),
                 );
-                print(userCredential);
+
                 Get.to(() => const VerifyEmailPage());
               },
             ),
