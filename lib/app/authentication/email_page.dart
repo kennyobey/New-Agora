@@ -1,11 +1,16 @@
+import 'dart:ffi';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:agora_care/app/authentication/%20verify_email_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+
+import 'auth_controller.dart';
 
 class EmailPage extends StatefulWidget {
   const EmailPage({Key? key}) : super(key: key);
@@ -15,6 +20,22 @@ class EmailPage extends StatefulWidget {
 }
 
 class _EmailPageState extends State<EmailPage> {
+  late TextEditingController _emailController;
+  late TextEditingController _passworController;
+  @override
+  void iniState() {
+    _emailController = TextEditingController();
+    _passworController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passworController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +82,7 @@ class _EmailPageState extends State<EmailPage> {
             ),
             const Gap(20),
             CustomTextField(
+              textEditingController: _emailController,
               label: 'Email Address',
               hint: 'Enter email address',
               keyType: TextInputType.emailAddress,
@@ -68,10 +90,18 @@ class _EmailPageState extends State<EmailPage> {
               color: AppColor().lightTextColor,
             ),
             const Gap(20),
+<<<<<<< HEAD
             CustomPassWord(
               label: 'Password',
               hint: 'Enter password',
               keyType: TextInputType.text,
+=======
+            CustomTextField(
+              textEditingController: _passworController,
+              label: 'Enter Password',
+              hint: 'Enter password',
+              keyType: TextInputType.emailAddress,
+>>>>>>> Kenny_Branch
               validatorText: '** Field cannot be empty',
               color: AppColor().lightTextColor,
             ),
@@ -80,7 +110,17 @@ class _EmailPageState extends State<EmailPage> {
               buttonText: 'Send code',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
-              onTap: () {
+              onTap: () async {
+                // final email = _emailController.text.trim();
+                // final password = _passworController.text.trim();
+                // await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                //     email: email, password: password);
+
+                print("sign up");
+                AuthContoller.instance.register(
+                  _emailController.text.trim(),
+                  _passworController.text.trim(),
+                );
                 Get.to(() => const VerifyEmailPage());
               },
             ),
