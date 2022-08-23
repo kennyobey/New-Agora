@@ -20,12 +20,12 @@ class EmailPage extends StatefulWidget {
 }
 
 class _EmailPageState extends State<EmailPage> {
-  late TextEditingController _emailController;
-  late TextEditingController _passworController;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passworController = TextEditingController();
   @override
   void iniState() {
-    _emailController = TextEditingController();
-    _passworController = TextEditingController();
+    //_emailController = TextEditingController();
+    // _passworController = TextEditingController();
     super.initState();
   }
 
@@ -109,13 +109,18 @@ class _EmailPageState extends State<EmailPage> {
                 // await FirebaseAuth.instance.createUserWithEmailAndPassword(
                 //     email: email, password: password);
 
+                print("sign up");
+
+                final userCredential = AuthContoller.instance.register(
+
                 if (kDebugMode) {
                   print("sign up");
                 }
-                AuthContoller.instance.register(
+                AuthContoller.instance.regist
                   _emailController.text.trim(),
                   _passworController.text.trim(),
                 );
+
                 Get.to(() => const VerifyEmailPage());
               },
             ),
