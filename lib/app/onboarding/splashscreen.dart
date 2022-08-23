@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:agora_care/app/authentication/email_page.dart';
+import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:flutter/material.dart';
@@ -100,6 +101,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 buttonColor: AppColor().button2Color,
                 borderRadius: BorderRadius.circular(50),
                 width: MediaQuery.of(context).size.width * 0.6,
+                onTap: () {
+                  Get.to(() => const LoginPage());
+                },
               ),
               const Gap(50),
               RichText(

@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,10 +26,12 @@ class AuthContoller extends GetxController {
 
   _initialScreen(User? user) {
     if (user == null) {
-      print('login page');
+      if (kDebugMode) {
+        print('login page');
+      }
       Get.offAll(() => const EmailPage());
     } else {
-      Get.offAll(() => WelComePage(
+      Get.offAll(() => const WelComePage(
           // email: user.email ?? "User email",
           // name: user.displayName ?? "User name",
           ));
@@ -41,7 +42,9 @@ class AuthContoller extends GetxController {
     String email,
     String password,
   ) async {
-    print("sign up");
+    if (kDebugMode) {
+      print("sign up");
+    }
     try {
       final userCredential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -78,7 +81,9 @@ class AuthContoller extends GetxController {
   }
 
   void login(String email, String password) async {
-    print("login");
+    if (kDebugMode) {
+      print("login");
+    }
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
     } catch (e) {
