@@ -18,6 +18,22 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passworController = TextEditingController();
+  @override
+  void iniState() {
+    //_emailController = TextEditingController();
+    // _passworController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passworController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +76,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const Gap(20),
               CustomTextField(
+                textEditingController: _emailController,
                 label: 'Email Address',
                 hint: 'Enter email address',
                 keyType: TextInputType.emailAddress,
@@ -73,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const Gap(20),
               CustomPassWord(
+                textEditingController: _passworController,
                 obscureText: true,
                 label: 'Password',
                 hint: 'Enter password',
@@ -91,7 +109,8 @@ class _LoginPageState extends State<LoginPage> {
                 textColor: AppColor().button1Color,
                 buttonColor: AppColor().primaryColor,
                 onTap: () {
-                  Get.to(() => const UserNavScreen());
+                  login();
+                  // Get.to(() => const UserNavScreen());
                 },
               ),
               const Gap(50),
@@ -100,5 +119,9 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  login() {
+    if (formKey.currentState!.validate()) {}
   }
 }

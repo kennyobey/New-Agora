@@ -121,13 +121,14 @@ class CustomTextField extends StatelessWidget {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return validatorText;
-                  } else {}
-
-                  return RegExp(
-                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                          .hasMatch(value)
-                      ? null
-                      : "Please enter a valid email";
+                  } else if (value != null) {
+                    return RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value)
+                        ? null
+                        : "Please enter a valid email";
+                  }
+                  return null;
                 },
                 initialValue: initialValue,
                 decoration: InputDecoration(

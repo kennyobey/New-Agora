@@ -1,3 +1,4 @@
+import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/onboarding/splashscreen.dart';
 import 'package:agora_care/core/constant/app_palette.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -6,12 +7,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'app/authentication/auth_controller.dart';
+import 'services/auth_controller.dart';
 import 'routes/app_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding();
-  await Firebase.initializeApp().then(((value) => Get.put(AuthContoller())));
+  await Firebase.initializeApp().then(((value) => Get.put(AuthController())));
   runApp(
     DevicePreview(
       enabled: true,

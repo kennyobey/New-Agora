@@ -37,6 +37,7 @@ dependencies:
   flutter_sequence_animation: ^4.0.0-nullsafety
   firebase_auth: ^3.3.20
   firebase_core: ^1.18.0
+  cloud_firestore: ^3.4.5
 
 dev_dependencies:
   flutter_test:

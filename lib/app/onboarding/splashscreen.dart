@@ -44,7 +44,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   getUserLogggedInStatus() async {
     await HelperFunction.getUserLogggedInStatus().then((value) {
-      if (value != null) {}
+      if (value != null) {
+        setState(() {
+          isSignedIn = value;
+        });
+      }
     });
   }
 
