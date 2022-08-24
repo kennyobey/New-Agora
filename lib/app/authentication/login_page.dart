@@ -145,6 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                       textColor: AppColor().button1Color,
                       buttonColor: AppColor().primaryColor,
                       onTap: () {
+                        print("The email is ${email}");
                         login();
                         // Get.to(() => const UserNavScreen());
                       },

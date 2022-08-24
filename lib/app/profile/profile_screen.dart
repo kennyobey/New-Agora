@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 
+import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
+import '../authentication/login_page.dart';
+import '../group_screen/group_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -84,6 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               email,
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
+                              colors: Colors.black,
                             ),
                           ],
                         ),
@@ -167,6 +171,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const Gap(20),
               CustomContainer(
+                onTap: () {
+                  nextScreen(context, const GroupScreen());
+                },
+                selectedColor: Theme.of(context).primaryColor,
+                selected: true,
+                trailing: const Icon(
+                  Icons.group,
+                  size: 30,
+                ),
+                titleText: 'Groups',
+                // onTap: () {
+                //   Get.to(() => const AccountStatement());
+                // },
+              ),
+              const Gap(15),
+              CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
                   height: 14,
@@ -176,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 //   Get.to(() => const AccountStatement());
                 // },
               ),
-              const Gap(20),
+              const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
@@ -187,7 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 //   Get.to(() => const AccountStatement());
                 // },
               ),
-              const Gap(20),
+              const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
@@ -198,7 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 //   Get.to(() => const AccountStatement());
                 // },
               ),
-              const Gap(20),
+              const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
@@ -209,7 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 //   Get.to(() => const AccountStatement());
                 // },
               ),
-              const Gap(20),
+              const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
@@ -217,13 +237,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Log out',
                 onTap: () {
-                  print(email);
-                  AuthController.instance.signOut();
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Logout"),
+                          content:
+                              const Text("Are you sure you want to logout?"),
+                          actions: [
+                            IconButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: const Icon(
+                                Icons.cancel,
+                                color: Colors.red,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                await AuthController.instance.signOut();
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const LoginPage()),
+                                    (route) => false);
+                              },
+                              icon: const Icon(
+                                Icons.done,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
+                        );
+                      });
+                  // print("The email is ${email}");
+                  // AuthController.instance.signOut();
 
                   // Get.to(() => const AccountStatement());
                 },
               ),
-              const Gap(20),
+              const Gap(15),
             ],
           ),
         ),

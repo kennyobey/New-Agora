@@ -734,12 +734,16 @@ class CustomContainer extends StatelessWidget {
   String titleText;
   VoidCallback? onTap;
   Widget? trailing;
+  bool? selected;
+  Color? selectedColor;
   CustomContainer({
     Key? key,
     this.imgName,
     required this.titleText,
     this.onTap,
     this.trailing,
+    this.selected,
+    this.selectedColor,
   }) : super(key: key);
 
   @override
@@ -754,6 +758,8 @@ class CustomContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: ListTile(
+          selectedColor: selectedColor,
+          selected: false,
           title: customTitleText(
             titleText,
             size: 14,
