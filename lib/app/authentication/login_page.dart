@@ -171,11 +171,13 @@ class _LoginPageState extends State<LoginPage> {
         if (value == true) {
           await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
               .gettingUserData(email);
+          print(email);
+
           // saving the values to our shared preferences
           await HelperFunction.saveUserLoggedInStatus(true);
           await HelperFunction.saveUserEmailSF(email);
           //await HelperFunction.saveUserNameSF(snapshot.docs[0]['fullName']);
-          nextScreenReplace(context, const HomeScreen());
+          nextScreenReplace(context, const UserNavScreen());
         } else {
           showSnackbar(context, Colors.red, value);
         }

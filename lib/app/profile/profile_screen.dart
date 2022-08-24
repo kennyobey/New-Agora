@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 
+import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -15,6 +16,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String email = "";
+
+  gettingUserData() async {
+    await HelperFunction.getUserEmailFromSF().then((value) {
+      setState(() {
+        email = value!;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const Gap(5),
                             customDescriptionText(
-                              'mrjoshuatobi@gmail.com',
+                              email,
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                             ),
@@ -206,7 +217,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Log out',
                 onTap: () {
+                  print(email);
                   AuthController.instance.signOut();
+
                   // Get.to(() => const AccountStatement());
                 },
               ),

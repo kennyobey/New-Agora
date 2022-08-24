@@ -1,10 +1,12 @@
-// ignore_for_file: override_on_non_overriding_member
+// ignore_for_file: override_on_non_overriding_member, use_build_context_synchronously
 
 import 'package:agora_care/app/authentication/%20verify_email_page.dart';
+import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/app/home/home_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -177,11 +179,12 @@ class _EmailPageState extends State<EmailPage> {
       )
           .then((value) async {
         if (value == true) {
+          print(UserCredential);
           // saving the shared preference
           await HelperFunction.saveUserLoggedInStatus(true);
           await HelperFunction.saveUserEmailSF(email);
           //await HelperFunction.saveUserNameSF(fullName);
-          nextScreenReplace(context, const HomeScreen());
+          nextScreenReplace(context, const WelComePage());
         } else {
           showSnackbar(context, Colors.red, value);
         }
