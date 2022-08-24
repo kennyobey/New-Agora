@@ -1,16 +1,21 @@
 // ignore_for_file: override_on_non_overriding_member
 
 import 'package:agora_care/app/authentication/%20verify_email_page.dart';
+import 'package:agora_care/app/home/home_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
+import '../../core/widget.dart';
+import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
+import 'login_page.dart';
 
 class EmailPage extends StatefulWidget {
   const EmailPage({Key? key}) : super(key: key);
@@ -44,6 +49,7 @@ class _EmailPageState extends State<EmailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
         elevation: 0,
@@ -122,6 +128,22 @@ class _EmailPageState extends State<EmailPage> {
                       },
                       obscureText: true,
                     ),
+                    const Gap(20),
+                    Text.rich(TextSpan(
+                      text: "Already have an account? ",
+                      style: const TextStyle(color: Colors.black, fontSize: 14),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: "Sign In",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                decoration: TextDecoration.underline),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                nextScreen(context, const LoginPage());
+                              }),
+                      ],
+                    )),
                     const Expanded(child: SizedBox()),
                     CustomFillButton(
                       buttonText: 'Send code',
@@ -153,9 +175,15 @@ class _EmailPageState extends State<EmailPage> {
         _emailController.text.trim(),
         _passworController.text.trim(),
       )
-          .then((value) {
+          .then((value) async {
         if (value == true) {
           // saving the shared preference
+          await HelperFunction.saveUserLoggedInStatus(true);
+          await HelperFunction.saveUserEmailSF(email);
+          //await HelperFunction.saveUserNameSF(fullName);
+          nextScreenReplace(context, const HomeScreen());
+        } else {
+          showSnackbar(context, Colors.red, value);
         }
       });
     }

@@ -171,7 +171,7 @@ class _WelComePageState extends State<WelComePage> {
                     buttonColor: AppColor().primaryColor,
                     onTap: () {
                       print("Sign out");
-                      // AuthController.instance.logOut();
+
                       Get.to(() => const LoginPage());
                     },
                   ),

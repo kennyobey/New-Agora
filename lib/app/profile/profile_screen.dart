@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 
+import '../../services/auth_controller.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -203,9 +205,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Log out',
-                // onTap: () {
-                //   Get.to(() => const AccountStatement());
-                // },
+                onTap: () {
+                  AuthController.instance.signOut();
+                  // Get.to(() => const AccountStatement());
+                },
               ),
               const Gap(20),
             ],
