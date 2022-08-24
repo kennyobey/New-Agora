@@ -121,8 +121,13 @@ class CustomTextField extends StatelessWidget {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return validatorText;
-                  }
-                  return null;
+                  } else {}
+
+                  return RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(value)
+                      ? null
+                      : "Please enter a valid email";
                 },
                 initialValue: initialValue,
                 decoration: InputDecoration(
@@ -199,6 +204,7 @@ class CustomPassWord extends StatefulWidget {
     this.colors,
     this.enableColor,
     this.labelSize,
+    required this.obscureText,
   });
 
   final VoidCallback? onClick;
@@ -225,6 +231,7 @@ class CustomPassWord extends StatefulWidget {
   final ValueChanged<String>? onSubmited;
   final ValueChanged<String>? onChanged;
   final String? validatorText;
+  final bool obscureText;
   final List<TextInputFormatter>? inputformater;
 
   @override
