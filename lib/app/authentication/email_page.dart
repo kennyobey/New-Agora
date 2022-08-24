@@ -112,14 +112,17 @@ class _EmailPageState extends State<EmailPage> {
                 print("sign up");
 
                 final userCredential = AuthContoller.instance.register(
-
-                if (kDebugMode) {
-                  print("sign up");
-                }
-                AuthContoller.instance.regist
                   _emailController.text.trim(),
                   _passworController.text.trim(),
                 );
+
+                // if (kDebugMode); {
+                //   print("sign up");
+                // };
+                // AuthContoller.instance.register
+                //   _emailController.text.trim(),
+                //   _passworController.text.trim(),
+                // );
 
                 Get.to(() => const VerifyEmailPage());
               },
