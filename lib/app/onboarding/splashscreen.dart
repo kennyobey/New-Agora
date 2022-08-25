@@ -2,13 +2,10 @@
 
 import 'dart:async';
 
-import 'package:agora_care/app/authentication/email_page.dart';
-import 'package:agora_care/app/authentication/login_page.dart';
+import 'package:agora_care/app/onboarding/onboarding.dart';
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/core/customWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../helper/helper_function.dart';
@@ -35,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
       //   Get.off(() => const UserNavScreen());
       // } else {
       //   _save('0');
-      // Get.off(() => const SignIn());
+      Get.off(() => Onboarding());
       //   }
     });
     getUserLogggedInStatus();
@@ -76,7 +73,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Expanded(child: SizedBox()),
                     Container(
                       decoration: BoxDecoration(
                           color: AppColor().primaryColor,
@@ -88,91 +84,6 @@ class _SplashScreenState extends State<SplashScreen> {
                           "assets/svgs/logo.svg",
                         ),
                       ),
-                    ),
-                    customDescriptionText(
-                      '“Emotions are a big part of',
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      colors: AppColor().whiteColor,
-                    ),
-                    customDescriptionText(
-                      'what makes us human.”',
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      colors: AppColor().whiteColor,
-                    ),
-                    const Expanded(child: SizedBox()),
-                    CustomFillButton(
-                      buttonText: 'Create an account',
-                      textColor: AppColor().primaryColor,
-                      buttonColor: AppColor().button1Color,
-                      borderRadius: BorderRadius.circular(50),
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      onTap: () {
-                        Get.to(() => const EmailPage());
-                      },
-                    ),
-                    const Gap(20),
-                    CustomFillButton(
-                      buttonText: 'Login',
-                      textColor: AppColor().whiteColor,
-                      buttonColor: AppColor().button2Color,
-                      borderRadius: BorderRadius.circular(50),
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      onTap: () {
-                        Get.to(() => const LoginPage());
-                      },
-                    ),
-                    const Gap(50),
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                          text:
-                              'By tapping Create an account and using Agora, ',
-                          style: TextStyle(
-                            fontFamily: 'HK GROTESK',
-                            color: AppColor().whiteColor,
-                            fontSize: 14,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: 'you agree to our ',
-                              style: TextStyle(
-                                fontFamily: 'HK GROTESK',
-                                color: AppColor().whiteColor,
-                                fontSize: 14,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'Terms ',
-                              style: TextStyle(
-                                fontFamily: 'HK GROTESK',
-                                color: AppColor().whiteColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'and ',
-                              style: TextStyle(
-                                fontFamily: 'HK GROTESK',
-                                color: AppColor().whiteColor,
-                                fontSize: 14,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'Privacy Policy.',
-                              style: TextStyle(
-                                fontFamily: 'HK GROTESK',
-                                color: AppColor().whiteColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ]),
-                    ),
-                    const SizedBox(
-                      height: 50,
                     ),
                   ],
                 ),
