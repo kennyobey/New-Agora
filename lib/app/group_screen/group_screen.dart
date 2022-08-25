@@ -67,7 +67,7 @@ class _GroupScreenState extends State<GroupScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                nextScreen(context, const SearchPage());
+                // nextScreen(context, const SearchPage());
               },
               icon: const Icon(
                 Icons.search,
@@ -161,7 +161,7 @@ class _GroupScreenState extends State<GroupScreen> {
                       });
                       DatabaseService(
                               uid: FirebaseAuth.instance.currentUser!.uid)
-                          .createGroup(userName,
+                          .createGroup(email,
                               FirebaseAuth.instance.currentUser!.uid, groupName)
                           .whenComplete(() {
                         _isLoading = false;
@@ -170,6 +170,7 @@ class _GroupScreenState extends State<GroupScreen> {
                       showSnackbar(
                           context, Colors.green, "Group created successfully.");
                     }
+                    print("");
                   },
                   style: ElevatedButton.styleFrom(
                       primary: Theme.of(context).primaryColor),
@@ -197,7 +198,7 @@ class _GroupScreenState extends State<GroupScreen> {
                   return GroupTile(
                       groupId: getId(snapshot.data['groups'][reverseIndex]),
                       groupName: getName(snapshot.data['groups'][reverseIndex]),
-                      userName: snapshot.data['fullName']);
+                      userName: snapshot.data['email']);
                 },
               );
             } else {
