@@ -121,6 +121,12 @@ class CustomTextField extends StatelessWidget {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return validatorText;
+                  } else if (value != null) {
+                    return RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value)
+                        ? null
+                        : "Please enter a valid email";
                   }
                   return null;
                 },
@@ -199,6 +205,7 @@ class CustomPassWord extends StatefulWidget {
     this.colors,
     this.enableColor,
     this.labelSize,
+    required this.obscureText,
   });
 
   final VoidCallback? onClick;
@@ -225,6 +232,7 @@ class CustomPassWord extends StatefulWidget {
   final ValueChanged<String>? onSubmited;
   final ValueChanged<String>? onChanged;
   final String? validatorText;
+  final bool obscureText;
   final List<TextInputFormatter>? inputformater;
 
   @override
@@ -726,12 +734,16 @@ class CustomContainer extends StatelessWidget {
   String titleText;
   VoidCallback? onTap;
   Widget? trailing;
+  bool? selected;
+  Color? selectedColor;
   CustomContainer({
     Key? key,
     this.imgName,
     required this.titleText,
     this.onTap,
     this.trailing,
+    this.selected,
+    this.selectedColor,
   }) : super(key: key);
 
   @override
@@ -746,6 +758,8 @@ class CustomContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: ListTile(
+          selectedColor: selectedColor,
+          selected: false,
           title: customTitleText(
             titleText,
             size: 14,

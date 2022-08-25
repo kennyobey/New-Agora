@@ -1,3 +1,4 @@
+import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -7,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-import 'auth_controller.dart';
+import '../../services/auth_controller.dart';
 import 'email_page.dart';
 
 class WelComePage extends StatefulWidget {
@@ -170,8 +171,8 @@ class _WelComePageState extends State<WelComePage> {
                     buttonColor: AppColor().primaryColor,
                     onTap: () {
                       print("Sign out");
-                      AuthContoller.instance.logOut();
-                      Get.to(() => const EmailPage());
+
+                      Get.to(() => const LoginPage());
                     },
                   ),
                 ],
