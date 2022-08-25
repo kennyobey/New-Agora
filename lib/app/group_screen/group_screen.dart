@@ -67,7 +67,7 @@ class _GroupScreenState extends State<GroupScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                // nextScreen(context, const SearchPage());
+                nextScreen(context, const SearchPage());
               },
               icon: const Icon(
                 Icons.search,
