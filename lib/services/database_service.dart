@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class DatabaseService {
   final String? uid;
@@ -51,7 +52,9 @@ class DatabaseService {
       "members": FieldValue.arrayUnion(["${uid}_$email"]),
       "groupId": groupDocumentReference.id,
     });
-    print(" The group name$groupName");
+    if (kDebugMode) {
+      print(" The group name$groupName");
+    }
     DocumentReference userDocumentReference = userCollection.doc(uid);
     return await userDocumentReference.update({
       "groups":

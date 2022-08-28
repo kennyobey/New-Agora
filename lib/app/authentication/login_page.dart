@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, unused_local_variable, override_on_non_overriding_member, unused_field
+
 import 'package:agora_care/app/authentication/email_page.dart';
 import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -5,6 +7,7 @@ import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -14,7 +17,6 @@ import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
 import '../../services/database_service.dart';
-import '../home/home_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -32,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   String password = "";
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passworController = TextEditingController();
+
   @override
   void iniState() {
     //_emailController = TextEditingController();
@@ -145,7 +148,9 @@ class _LoginPageState extends State<LoginPage> {
                       textColor: AppColor().button1Color,
                       buttonColor: AppColor().primaryColor,
                       onTap: () {
-                        print("The email is ${email}");
+                        if (kDebugMode) {
+                          print("The email is $email");
+                        }
                         login();
                         // Get.to(() => const UserNavScreen());
                       },
@@ -172,7 +177,9 @@ class _LoginPageState extends State<LoginPage> {
         if (value == true) {
           await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
               .gettingUserData(email);
-          print(email);
+          if (kDebugMode) {
+            print('User Email: $email');
+          }
 
           // saving the values to our shared preferences
           await HelperFunction.saveUserLoggedInStatus(true);

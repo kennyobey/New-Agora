@@ -1,13 +1,10 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:agora_care/app/authentication/login_page.dart';
-import 'package:agora_care/app/home/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../app/authentication/email_page.dart';
-import '../app/authentication/welcome_page.dart';
-import '../app/authentication/welcome_page.dart';
 import '../app/home/nav_screen.dart';
 import '../helper/helper_function.dart';
 import 'database_service.dart';
