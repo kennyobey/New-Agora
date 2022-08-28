@@ -29,6 +29,11 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
+	<!-- <key>NSAppTransportSecurity</key>
+	<dict>
+    <key>NSAllowsLocalNetworking</key>
+    <true/>
+	</dict> -->
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
@@ -44,9 +49,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<key>NSAppTransportSecurity</key>
-<dict>
-	<key>NSAllowsLocalNetworking</key>
+	<true/>
 </dict>
-    <true/>
 </plist>
