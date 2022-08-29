@@ -20,6 +20,7 @@ class UserModel {
     this.profilePic,
     this.streak = 0,
     this.weeks = 0,
+    this.role,
     this.admin,
     this.lastLoginTime,
     this.weeklyLoginTime,
@@ -37,6 +38,7 @@ class UserModel {
   final int? streak;
   final int? weeks;
   final bool? admin;
+  final String? role;
   DateTime? lastLoginTime;
   DateTime? weeklyLoginTime;
   DateTime? updatedAt;
@@ -53,6 +55,7 @@ class UserModel {
         streak: json["streak"],
         weeks: json["weeks"],
         admin: json["admin"],
+        role: json["role"],
         lastLoginTime: json["lastLoginTime"] == null
             ? null
             : DateTime.parse(json["lastLoginTime"]),
@@ -76,6 +79,7 @@ class UserModel {
         "streak": streak,
         "weeks": weeks,
         "admin": admin,
+        "role": role,
         "lastLoginTime":
             lastLoginTime == null ? null : lastLoginTime!.toIso8601String(),
         "weeklyLoginTime":
