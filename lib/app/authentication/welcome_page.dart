@@ -3,13 +3,11 @@ import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-
-import '../../services/auth_controller.dart';
-import 'email_page.dart';
 
 class WelComePage extends StatefulWidget {
   const WelComePage({Key? key}) : super(key: key);
@@ -165,6 +163,20 @@ class _WelComePageState extends State<WelComePage> {
                     },
                   ),
                   const Gap(5),
+
+                  CustomFillButton(
+                    buttonText: 'Log Out',
+                    textColor: AppColor().button1Color,
+                    buttonColor: AppColor().primaryColor,
+                    onTap: () {
+                      if (kDebugMode) {
+                        print("Sign out");
+                      }
+
+                      Get.to(() => const LoginPage());
+                    },
+                  ),
+
                 ],
               ),
             ),

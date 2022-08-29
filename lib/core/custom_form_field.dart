@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_unnecessary_containers, sized_box_for_whitespace, non_constant_identifier_names, must_be_immutable
+// ignore_for_file: avoid_unnecessary_containers, sized_box_for_whitespace, non_constant_identifier_names, must_be_immutable, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

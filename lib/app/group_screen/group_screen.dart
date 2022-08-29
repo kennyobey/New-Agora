@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/constant/group_tile.dart';
@@ -6,7 +7,6 @@ import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
 import '../../services/database_service.dart';
-import '../authentication/login_page.dart';
 import 'searchpage.dart';
 
 class GroupScreen extends StatefulWidget {
@@ -170,7 +170,9 @@ class _GroupScreenState extends State<GroupScreen> {
                       showSnackbar(
                           context, Colors.green, "Group created successfully.");
                     }
-                    print("");
+                    if (kDebugMode) {
+                      print("Group created successfully.");
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                       primary: Theme.of(context).primaryColor),

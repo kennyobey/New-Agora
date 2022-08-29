@@ -1,8 +1,6 @@
-// ignore_for_file: override_on_non_overriding_member, use_build_context_synchronously
+// ignore_for_file: override_on_non_overriding_member, use_build_context_synchronously, unused_local_variable, unused_field
 
-import 'package:agora_care/app/authentication/%20verify_email_page.dart';
 import 'package:agora_care/app/authentication/welcome_page.dart';
-import 'package:agora_care/app/home/home_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -154,7 +152,15 @@ class _EmailPageState extends State<EmailPage> {
                       onTap: () async {
                         register();
 
+
                         print("sign up");
+
+                        if (kDebugMode) {
+                          print("sign up");
+                        }
+
+                        //Get.to(() => const VerifyEmailPage());
+
                       },
                     ),
                     const Gap(50),
@@ -177,6 +183,7 @@ class _EmailPageState extends State<EmailPage> {
       )
           .then((value) async {
         if (value == true) {
+
           print(UserCredential);
           print("The email is ${email}");
           final user = FirebaseAuth.instance.currentUser;
@@ -184,6 +191,10 @@ class _EmailPageState extends State<EmailPage> {
             await user.sendEmailVerification();
             print(user);
             Get.to(() => const VerifyEmailPage());
+
+          if (kDebugMode) {
+            print(UserCredential);
+
           }
           // saving the shared preference
           await HelperFunction.saveUserLoggedInStatus(true);

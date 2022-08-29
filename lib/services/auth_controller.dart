@@ -1,14 +1,16 @@
+
 import 'package:agora_care/app/authentication/%20verify_email_page.dart';
+
+// ignore_for_file: unnecessary_null_comparison
+
+
 import 'package:agora_care/app/authentication/login_page.dart';
-import 'package:agora_care/app/home/home_screen.dart';
+import 'package:agora_care/app/model/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../app/authentication/email_page.dart';
-import '../app/authentication/welcome_page.dart';
-import '../app/authentication/welcome_page.dart';
 import '../app/home/nav_screen.dart';
 import '../helper/helper_function.dart';
 import 'database_service.dart';
@@ -16,11 +18,16 @@ import 'database_service.dart';
 class AuthController extends GetxController {
   // Authconroller.instance
   static AuthController instance = Get.find();
+  DateTime? lastUpdated;
 
   //email password name....
   late Rx<User?> _user;
 
+  Rx<UserModel> liveUser = UserModel().obs;
+  UserModel get users => liveUser.value;
+
   FirebaseAuth auth = FirebaseAuth.instance;
+  final _userDoc = FirebaseFirestore.instance.collection("users");
 
   @override
   void onReady() {
@@ -110,8 +117,20 @@ class AuthController extends GetxController {
       User user = (await auth.signInWithEmailAndPassword(
               email: email, password: password))
           .user!;
-
+      DateTime now = DateTime.now();
       if (user != null) {
+        final userModel = await getUserByModel(user.uid);
+        if (userModel.lastLoginTime == null) {
+          userModel.lastLoginTime = now;
+          userModel.updatedAt = now;
+          _userDoc.doc(user.uid).update(userModel.toJson());
+        } else {
+          if (userModel.lastLoginTime!.difference(now).inDays >= 1) {
+            userModel.lastLoginTime = now;
+            userModel.updatedAt = now;
+            _userDoc.doc(user.uid).update(userModel.toJson());
+          }
+        }
         return true;
       }
     } on FirebaseAuthException catch (e) {
@@ -154,4 +173,10 @@ class AuthController extends GetxController {
   // void logOut() async {
   //   await auth.signOut();
   // }
+  Future<UserModel> getUserByModel(String id) async {
+    final result = await _userDoc.doc(id).get();
+    final user = UserModel.fromJson(result.data()!);
+
+    return user;
+  }
 }
