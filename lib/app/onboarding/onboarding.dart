@@ -1,7 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'dart:async';
-
 import 'package:agora_care/app/authentication/email_page.dart';
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -21,23 +19,11 @@ class Onboarding extends StatefulWidget {
 }
 
 class _OnboardingState extends State<Onboarding> {
-  // ignore: unused_field
-  Timer? _timer;
   // final controller = Get.find<AuthServices>();
   bool isSignedIn = false;
 
   @override
   void initState() {
-    _timer = Timer(const Duration(milliseconds: 3000), () {
-      // if (controller.status == Status.IsFirstTime) {
-      //   Get.off(() => OnboardAuth(locations, context));
-      // } else if (controller.status == Status.Authenticated) {
-      //   Get.off(() => const UserNavScreen());
-      // } else {
-      //   _save('0');
-      // Get.off(() => const SignIn());
-      //   }
-    });
     getUserLogggedInStatus();
     super.initState();
   }

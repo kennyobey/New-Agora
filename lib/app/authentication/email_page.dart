@@ -1,6 +1,6 @@
 // ignore_for_file: override_on_non_overriding_member, use_build_context_synchronously, unused_local_variable, unused_field
 
-import 'package:agora_care/app/authentication/welcome_page.dart';
+import 'package:agora_care/app/authentication/%20verify_email_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -17,6 +17,7 @@ import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
 import 'login_page.dart';
+import 'welcome_page.dart';
 
 class EmailPage extends StatefulWidget {
   const EmailPage({Key? key}) : super(key: key);
@@ -89,7 +90,7 @@ class _EmailPageState extends State<EmailPage> {
                     ),
                     const Gap(10),
                     customDescriptionText(
-                      'We’ll send you a verification link so make',
+                      'We’ll send you a verification code so make',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       colors: AppColor().lightTextColor,
@@ -147,13 +148,15 @@ class _EmailPageState extends State<EmailPage> {
                     )),
                     const Expanded(child: SizedBox()),
                     CustomFillButton(
-                      buttonText: 'Sign Up',
+                      buttonText: 'Send code',
                       textColor: AppColor().button1Color,
                       buttonColor: AppColor().primaryColor,
                       onTap: () async {
                         register();
 
+
                         print("sign up");
+
 
                         if (kDebugMode) {
                           print("sign up");
@@ -180,6 +183,7 @@ class _EmailPageState extends State<EmailPage> {
         _emailController.text.trim(),
         _passworController.text.trim(),
       )
+
           .then((value) async {
         if (value == true) {
           print(UserCredential);
@@ -203,6 +207,39 @@ class _EmailPageState extends State<EmailPage> {
           }
         }
       });
+
+          .then(
+        (value) async {
+          if (value == true) {
+            if (kDebugMode) {
+              print(UserCredential);
+            }
+            if (kDebugMode) {
+              print("The email is $email");
+            }
+            final user = FirebaseAuth.instance.currentUser;
+            if (user!.emailVerified == false) {
+              await user.sendEmailVerification();
+              if (kDebugMode) {
+                print(user);
+              }
+              Get.to(() => const VerifyEmailPage());
+              if (kDebugMode) {
+                print(UserCredential);
+              }
+
+              // saving the shared preference
+              await HelperFunction.saveUserLoggedInStatus(true);
+              await HelperFunction.saveUserEmailSF(email);
+            } else if (user.emailVerified == true) {
+              nextScreenReplace(context, const WelComePage());
+            } else {
+              showSnackbar(context, Colors.red, value);
+            }
+          }
+        },
+      );
+
     }
   }
 }

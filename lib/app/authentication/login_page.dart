@@ -143,9 +143,13 @@ class _LoginPageState extends State<LoginPage> {
                 textColor: AppColor().button1Color,
                 buttonColor: AppColor().primaryColor,
                 onTap: () async {
-                  print("The email is ${email}");
+                  if (kDebugMode) {
+                    print("The email is $email");
+                  }
                   final user = FirebaseAuth.instance.currentUser;
-                  print("The Use details are$user");
+                  if (kDebugMode) {
+                    print("The Use details are$user");
+                  }
                   if (user?.emailVerified ?? false) {
                     return Get.to(() => const WelComePage());
                   } else {
@@ -158,6 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                   // Get.to(() => const UserNavScreen());
                 },
               ),
+
               Form(
                 key: formKey,
                 child: Container(
@@ -257,6 +262,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               )
+
             ],
           ),
         ),

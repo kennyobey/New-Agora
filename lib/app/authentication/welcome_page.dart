@@ -1,13 +1,12 @@
-import 'package:agora_care/app/authentication/login_page.dart';
-import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
+import 'package:agora_care/services/auth_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
 
 class WelComePage extends StatefulWidget {
   const WelComePage({Key? key}) : super(key: key);
@@ -18,12 +17,40 @@ class WelComePage extends StatefulWidget {
 
 class _WelComePageState extends State<WelComePage> {
   String? selectedGender;
+  final AuthController _authContoller = AuthController();
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _fullnameController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
 
   final gender = [
     'Male',
     'Female',
     'Rather Not Say',
   ];
+
+  User? user;
+
+  var nickName = 'Tom';
+  var profilePicUrl =
+      'https://pixel.nymag.com/imgs/daily/vulture/2017/06/14/14-tom-cruise.w700.h700.jpg';
+
+  // @override
+  // void initState() {
+  //   user = FirebaseAuth.instance.currentUser!().then((user) {
+  //     setState(() {
+  //       profilePicUrl = user.photoUrl;
+  //       nickName = user.displayName;
+  //     });
+  //   }).catchError((e) {
+  //     if (kDebugMode) {
+  //       print(e);
+  //     }
+  //   });
+  //   super.initState();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +101,7 @@ class _WelComePageState extends State<WelComePage> {
                     keyType: TextInputType.name,
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
+                    textEditingController: _usernameController,
                   ),
                   const Gap(15),
                   CustomTextField(
@@ -82,6 +110,7 @@ class _WelComePageState extends State<WelComePage> {
                     keyType: TextInputType.name,
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
+                    textEditingController: _fullnameController,
                   ),
                   const Gap(15),
                   SizedBox(
@@ -144,6 +173,7 @@ class _WelComePageState extends State<WelComePage> {
                     keyType: TextInputType.text,
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
+                    textEditingController: _cityController,
                   ),
                   const Gap(15),
                   CustomTextField(
@@ -152,31 +182,37 @@ class _WelComePageState extends State<WelComePage> {
                     keyType: TextInputType.streetAddress,
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
+                    textEditingController: _addressController,
                   ),
-                  const Gap(30),
+                  const Gap(10),
                   CustomFillButton(
                     buttonText: 'Get me started',
                     textColor: AppColor().button1Color,
                     buttonColor: AppColor().primaryColor,
-                    onTap: () {
-                      Get.to(() => const UserNavScreen());
+                    onTap: () async {
+                      // Get.to(() => const UserNavScreen());
+                      _authContoller.userChanges(
+                        _usernameController.text,
+                        _fullnameController.text,
+                        selectedGender.toString(),
+                        _addressController.text,
+                        _cityController.text,
+                        '',
+                      );
                     },
                   ),
                   const Gap(5),
-
-                  CustomFillButton(
-                    buttonText: 'Log Out',
-                    textColor: AppColor().button1Color,
-                    buttonColor: AppColor().primaryColor,
-                    onTap: () {
-                      if (kDebugMode) {
-                        print("Sign out");
-                      }
-
-                      Get.to(() => const LoginPage());
-                    },
-                  ),
-
+                  // CustomFillButton(
+                  //   buttonText: 'Log Out',
+                  //   textColor: AppColor().button1Color,
+                  //   buttonColor: AppColor().primaryColor,
+                  //   onTap: () {
+                  //     if (kDebugMode) {
+                  //       print("Sign out");
+                  //     }
+                  //     Get.to(() => const LoginPage());
+                  //   },
+                  // ),
                 ],
               ),
             ),
