@@ -17,7 +17,6 @@ import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
 import 'login_page.dart';
-import 'welcome_page.dart';
 
 class EmailPage extends StatefulWidget {
   const EmailPage({Key? key}) : super(key: key);
@@ -154,8 +153,6 @@ class _EmailPageState extends State<EmailPage> {
                       onTap: () async {
                         register();
 
-                        print("sign up");
-
                         if (kDebugMode) {
                           print("sign up");
                         }
@@ -183,12 +180,18 @@ class _EmailPageState extends State<EmailPage> {
       )
           .then((value) async {
         if (value == true) {
-          print(UserCredential);
-          print("The email is ${email}");
+          if (kDebugMode) {
+            print(UserCredential);
+          }
+          if (kDebugMode) {
+            print("The email is $email");
+          }
           final user = FirebaseAuth.instance.currentUser;
           if (user != null) {
             await user.sendEmailVerification();
-            print(user);
+            if (kDebugMode) {
+              print(user);
+            }
             Get.to(() => const VerifyEmailPage());
 
             if (kDebugMode) {
