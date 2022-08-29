@@ -163,10 +163,6 @@ class _WelComePageState extends State<WelComePage> {
                     },
                   ),
                   const Gap(5),
-<<<<<<< HEAD
-=======
-
->>>>>>> f40e1bccc0f4198ef440885b68c9ede3c506e02c
                   CustomFillButton(
                     buttonText: 'Log Out',
                     textColor: AppColor().button1Color,
@@ -179,10 +175,6 @@ class _WelComePageState extends State<WelComePage> {
                       Get.to(() => const LoginPage());
                     },
                   ),
-<<<<<<< HEAD
-=======
-
->>>>>>> f40e1bccc0f4198ef440885b68c9ede3c506e02c
                 ],
               ),
             ),

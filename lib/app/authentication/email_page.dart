@@ -1,5 +1,6 @@
 // ignore_for_file: override_on_non_overriding_member, use_build_context_synchronously, unused_local_variable, unused_field
 
+import 'package:agora_care/app/authentication/%20verify_email_page.dart';
 import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -151,16 +152,11 @@ class _EmailPageState extends State<EmailPage> {
                       buttonColor: AppColor().primaryColor,
                       onTap: () async {
                         register();
-
-<<<<<<<<< Temporary merge branch 1
-                        print("sign up");
-=========
                         if (kDebugMode) {
                           print("sign up");
                         }
 
                         //Get.to(() => const VerifyEmailPage());
->>>>>>>>> Temporary merge branch 2
                       },
                     ),
                     const Gap(50),
@@ -181,30 +177,36 @@ class _EmailPageState extends State<EmailPage> {
         _emailController.text.trim(),
         _passworController.text.trim(),
       )
-          .then((value) async {
-        if (value == true) {
-<<<<<<<<< Temporary merge branch 1
-          print(UserCredential);
-          print("The email is ${email}");
-          final user = FirebaseAuth.instance.currentUser;
-          if (user != null) {
-            await user.sendEmailVerification();
-            print(user);
-            Get.to(() => const VerifyEmailPage());
-=========
-          if (kDebugMode) {
-            print(UserCredential);
->>>>>>>>> Temporary merge branch 2
+          .then(
+        (value) async {
+          if (value == true) {
+            if (kDebugMode) {
+              print(UserCredential);
+            }
+            if (kDebugMode) {
+              print("The email is $email");
+            }
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null) {
+              await user.sendEmailVerification();
+              if (kDebugMode) {
+                print(user);
+              }
+              Get.to(() => const VerifyEmailPage());
+              if (kDebugMode) {
+                print(UserCredential);
+              }
+              // saving the shared preference
+              await HelperFunction.saveUserLoggedInStatus(true);
+              await HelperFunction.saveUserEmailSF(email);
+              //await HelperFunction.saveUserNameSF(fullName);
+              nextScreenReplace(context, const WelComePage());
+            } else {
+              showSnackbar(context, Colors.red, value);
+            }
           }
-          // saving the shared preference
-          await HelperFunction.saveUserLoggedInStatus(true);
-          await HelperFunction.saveUserEmailSF(email);
-          //await HelperFunction.saveUserNameSF(fullName);
-          nextScreenReplace(context, const WelComePage());
-        } else {
-          showSnackbar(context, Colors.red, value);
-        }
-      });
+        },
+      );
     }
   }
 }
