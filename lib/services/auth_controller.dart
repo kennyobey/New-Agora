@@ -1,17 +1,14 @@
-
 import 'package:agora_care/app/authentication/%20verify_email_page.dart';
+import 'package:agora_care/app/authentication/email_page.dart';
 
 // ignore_for_file: unnecessary_null_comparison
 
-
-import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
-import '../app/home/nav_screen.dart';
 import '../helper/helper_function.dart';
 import 'database_service.dart';
 
