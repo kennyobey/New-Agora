@@ -1,6 +1,5 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,8 +19,6 @@ class AuthControllers extends GetxController {
 
   Rx<String> streak = Rx("");
   String get getStreak => streak.value;
-  //email password name....
-  late Rx<User?> _user;
 
   Rx<UserModel> liveUser = UserModel().obs;
   UserModel get users => liveUser.value;
@@ -32,7 +29,6 @@ class AuthControllers extends GetxController {
 
   @override
   void onInit() async {
-    // TODO: implement onInit
     super.onInit();
     final now = DateTime.now();
     if (FirebaseAuth.instance.currentUser != null) {
@@ -48,27 +44,30 @@ class AuthControllers extends GetxController {
         final newUser =
             await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
         liveUser(newUser);
-        print("user value gotten user ${liveUser.value.toJson()}");
+        if (kDebugMode) {
+          print("user value gotten user ${liveUser.value.toJson()}");
+        }
       }
     }
   }
 
-  _initialScreen(User? user) async {
-    if (user == null) {
-      if (kDebugMode) {
-        print('login page');
-      }
-      Get.offAll(() => const LoginPage());
-    } else {
-      final userModel = await getUserByModel(user.uid);
-      sharePref?.getUser(userModel.uid!);
-      Get.offAll(() => const UserNavScreen(
-          // email: user.email ?? "User email",
-          // name: user.displayName ?? "User name",
-          ));
-    }
-  }
+  // _initialScreen(User? user) async {
+  //   if (user == null) {
+  //     if (kDebugMode) {
+  //       print('login page');
+  //     }
+  //     Get.offAll(() => const LoginPage());
+  //   } else {
+  //     final userModel = await getUserByModel(user.uid);
+  //     sharePref?.getUser(userModel.uid!);
+  //     Get.offAll(() => const UserNavScreen(
+  //         // email: user.email ?? "User email",
+  //         // name: user.displayName ?? "User name",
+  //         ));
+  //   }
+  // }
 
+  //register
   Future registerUserWithEmailandPassword(String email, String password) async {
     try {
       User user = (await auth.createUserWithEmailAndPassword(
@@ -85,47 +84,6 @@ class AuthControllers extends GetxController {
     }
   }
 
-  // void register(
-  //   String email,
-  //   String password,
-  // ) async {
-  //   if (kDebugMode) {
-  //     print("sign up");
-  //   }
-  //   try {
-  //     final userCredential = await auth.createUserWithEmailAndPassword(
-  //         email: email, password: password);
-  //     print(userCredential);
-  //   } on FirebaseAuthException catch (e) {
-  //     print(e.runtimeType);
-  //     print(e);
-  //     if (e.code == "weak-password") {
-  //       Get.snackbar("About", "weak password",
-  //           backgroundColor: Colors.redAccent,
-  //           snackPosition: SnackPosition.BOTTOM,
-  //           titleText: const Text(
-  //             "weak password",
-  //             style: TextStyle(color: Colors.white),
-  //           ),
-  //           messageText: Text(
-  //             e.toString(),
-  //             style: const TextStyle(color: Colors.white),
-  //           ));
-  //     }
-  //     ;
-  //     Get.snackbar("About", "User Message",
-  //         backgroundColor: Colors.redAccent,
-  //         snackPosition: SnackPosition.BOTTOM,
-  //         titleText: const Text(
-  //           "Account creation failed",
-  //           style: TextStyle(color: Colors.white),
-  //         ),
-  //         messageText: Text(
-  //           e.toString(),
-  //           style: const TextStyle(color: Colors.white),
-  //         ));
-  //   }
-  // }
   // login
   Future loginWithUserNameandPassword(String email, String password) async {
     try {
@@ -135,13 +93,10 @@ class AuthControllers extends GetxController {
       ))
           .user!;
       DateTime now = DateTime.now();
-
       if (user == null) {
         return;
       }
-
       final userModel = await getUserByModel(user.uid);
-      // print("user value gotten user ${userModel.toJson()}");
       if (userModel.lastLoginTime == null) {
         userModel.lastLoginTime = now;
         userModel.updatedAt = now;
@@ -152,7 +107,6 @@ class AuthControllers extends GetxController {
         });
         final newUser = await getUserByModel(user.uid);
         liveUser(newUser);
-        // print("user value gotten user ${newUser.toJson()}");
       } else {
         if (userModel.lastLoginTime!.difference(now).inDays >= 1) {
           _userDoc.doc(user.uid).update({
@@ -161,7 +115,9 @@ class AuthControllers extends GetxController {
           });
           final newUser = await getUserByModel(user.uid);
           liveUser(newUser);
-          print("user value gotten user ${liveUser.value.toJson()}");
+          if (kDebugMode) {
+            print("user value gotten user ${liveUser.value.toJson()}");
+          }
         }
       }
       Get.to(const UserNavScreen());
@@ -170,10 +126,13 @@ class AuthControllers extends GetxController {
     }
   }
 
+  //Update Profile
   Future userChanges(String username, String fullName, String gender,
       String address, String postalCode, String profilePics) async {
     try {
-      print("user detail update profile ${liveUser.value.toJson()}");
+      if (kDebugMode) {
+        print("user detail update profile ${liveUser.value.toJson()}");
+      }
       if (liveUser.value.uid != null) {
         if (kDebugMode) {
           print('I reach here');
@@ -198,6 +157,7 @@ class AuthControllers extends GetxController {
     }
   }
 
+  // Sign Out
   Future signOut() async {
     try {
       await HelperFunction.saveUserLoggedInStatus(false);
@@ -209,6 +169,7 @@ class AuthControllers extends GetxController {
     }
   }
 
+  // Get Users Data by Id
   Future<UserModel> getUserByModel(String id) async {
     final result = await _userDoc.doc(id).get();
     final user = UserModel.fromJson(result.data()!);
