@@ -17,8 +17,9 @@ class UserModel {
     this.gender,
     this.postalCode,
     this.address,
-    this.profilePics,
+    this.profilePic,
     this.reference,
+    this.streak = 0,
     this.admin,
     this.lastLoginTime,
     this.createdAt,
@@ -32,8 +33,9 @@ class UserModel {
   final String? gender;
   final int? postalCode;
   final String? address;
-  final String? profilePics;
+  final String? profilePic;
   final String? reference;
+  final int? streak;
   final bool? admin;
   DateTime? lastLoginTime;
   final DateTime? createdAt;
@@ -47,8 +49,9 @@ class UserModel {
         gender: json["gender"],
         postalCode: json["postalCode"],
         address: json["address"],
-        profilePics: json["profilePics"],
+        profilePic: json["profilePic"],
         reference: json["reference"],
+        streak: json["streak"],
         admin: json["admin"],
         lastLoginTime: json["lastLoginTime"] == null
             ? null
@@ -69,8 +72,9 @@ class UserModel {
         "gender": gender,
         "postalCode": postalCode,
         "address": address,
-        "profilePics": profilePics,
+        "profilePic": profilePic,
         "reference": reference,
+        "streak": streak,
         "admin": admin,
         "lastLoginTime":
             lastLoginTime == null ? null : lastLoginTime!.toIso8601String(),
