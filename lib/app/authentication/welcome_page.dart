@@ -163,20 +163,6 @@ class _WelComePageState extends State<WelComePage> {
                     },
                   ),
                   const Gap(5),
-
-                  CustomFillButton(
-                    buttonText: 'Log Out',
-                    textColor: AppColor().button1Color,
-                    buttonColor: AppColor().primaryColor,
-                    onTap: () {
-                      if (kDebugMode) {
-                        print("Sign out");
-                      }
-
-                      Get.to(() => const LoginPage());
-                    },
-                  ),
-
                 ],
               ),
             ),
