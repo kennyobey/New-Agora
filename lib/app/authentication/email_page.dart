@@ -154,9 +154,7 @@ class _EmailPageState extends State<EmailPage> {
                       onTap: () async {
                         register();
 
-
                         print("sign up");
-
 
                         if (kDebugMode) {
                           print("sign up");
@@ -183,7 +181,6 @@ class _EmailPageState extends State<EmailPage> {
         _emailController.text.trim(),
         _passworController.text.trim(),
       )
-
           .then((value) async {
         if (value == true) {
           print(UserCredential);
@@ -207,39 +204,6 @@ class _EmailPageState extends State<EmailPage> {
           }
         }
       });
-
-          .then(
-        (value) async {
-          if (value == true) {
-            if (kDebugMode) {
-              print(UserCredential);
-            }
-            if (kDebugMode) {
-              print("The email is $email");
-            }
-            final user = FirebaseAuth.instance.currentUser;
-            if (user!.emailVerified == false) {
-              await user.sendEmailVerification();
-              if (kDebugMode) {
-                print(user);
-              }
-              Get.to(() => const VerifyEmailPage());
-              if (kDebugMode) {
-                print(UserCredential);
-              }
-
-              // saving the shared preference
-              await HelperFunction.saveUserLoggedInStatus(true);
-              await HelperFunction.saveUserEmailSF(email);
-            } else if (user.emailVerified == true) {
-              nextScreenReplace(context, const WelComePage());
-            } else {
-              showSnackbar(context, Colors.red, value);
-            }
-          }
-        },
-      );
-
     }
   }
 }
