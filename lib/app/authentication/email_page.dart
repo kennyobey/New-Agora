@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
+import ' verify_email_page.dart';
 import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
@@ -152,6 +153,11 @@ class _EmailPageState extends State<EmailPage> {
                       buttonColor: AppColor().primaryColor,
                       onTap: () async {
                         register();
+
+
+                        print("sign up");
+
+
                         if (kDebugMode) {
                           print("sign up");
                         }
@@ -177,6 +183,31 @@ class _EmailPageState extends State<EmailPage> {
         _emailController.text.trim(),
         _passworController.text.trim(),
       )
+
+          .then((value) async {
+        if (value == true) {
+          print(UserCredential);
+          print("The email is ${email}");
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            await user.sendEmailVerification();
+            print(user);
+            Get.to(() => const VerifyEmailPage());
+
+            if (kDebugMode) {
+              print(UserCredential);
+            }
+            // saving the shared preference
+            await HelperFunction.saveUserLoggedInStatus(true);
+            await HelperFunction.saveUserEmailSF(email);
+            //await HelperFunction.saveUserNameSF(fullName);
+            // nextScreenReplace(context, const VerifyEmailPage());
+          } else {
+            showSnackbar(context, Colors.red, value);
+          }
+        }
+      });
+
           .then(
         (value) async {
           if (value == true) {
@@ -208,6 +239,7 @@ class _EmailPageState extends State<EmailPage> {
           }
         },
       );
+
     }
   }
 }
