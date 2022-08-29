@@ -1,11 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:agora_care/app/onboarding/quote.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
@@ -173,9 +175,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const Gap(20),
               CustomContainer(
-                onTap: () {
-                  nextScreen(context, const GroupScreen());
-                },
                 selectedColor: Theme.of(context).primaryColor,
                 selected: true,
                 trailing: const Icon(
@@ -183,9 +182,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   size: 30,
                 ),
                 titleText: 'Groups',
-                // onTap: () {
-                //   Get.to(() => const AccountStatement());
-                // },
+                onTap: () {
+                  nextScreen(context, const GroupScreen());
+                },
+              ),
+              const Gap(15),
+              CustomContainer(
+                trailing: SvgPicture.asset(
+                  'assets/svgs/keyboard_arrow_right.svg',
+                  height: 14,
+                ),
+                titleText: 'Quote Page',
+                onTap: () {
+                  Get.to(() => const QuotePage());
+                },
               ),
               const Gap(15),
               CustomContainer(

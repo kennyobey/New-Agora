@@ -126,12 +126,13 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     const Gap(20),
-                    Text.rich(TextSpan(
-                      text: "Don't have an account? ",
-                      style: TextStyle(
-                          color: AppColor().lightTextColor, fontSize: 14),
-                      children: <TextSpan>[
-                        TextSpan(
+                    Text.rich(
+                      TextSpan(
+                        text: "Don't have an account? ",
+                        style: TextStyle(
+                            color: AppColor().lightTextColor, fontSize: 14),
+                        children: <TextSpan>[
+                          TextSpan(
                             text: "Sign Up",
                             style: TextStyle(
                                 color: AppColor().lightTextColor,
@@ -139,19 +140,21 @@ class _LoginPageState extends State<LoginPage> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 nextScreen(context, const EmailPage());
-                              }),
-                      ],
-                    )),
+                              },
+                          ),
+                        ],
+                      ),
+                    ),
                     const Expanded(child: SizedBox()),
                     CustomFillButton(
                       buttonText: 'Proceed',
                       textColor: AppColor().button1Color,
                       buttonColor: AppColor().primaryColor,
-                      onTap: () {
+                      onTap: () async {
+                        await login();
                         if (kDebugMode) {
                           print("The email is $email");
                         }
-                        login();
                         // Get.to(() => const UserNavScreen());
                       },
                     ),
