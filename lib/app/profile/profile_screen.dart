@@ -24,6 +24,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String email = "";
+  static AuthController instance = Get.find();
 
   gettingUserData() async {
     await HelperFunction.getUserEmailFromSF().then((value) {
@@ -81,7 +82,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             customDescriptionText(
-                              'Joshua Tobi',
+                              instance.liveUser.value.fullName == null
+                                  ? 'Your Name'
+                                  : instance.liveUser.value.fullName!,
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               colors: AppColor().filledTextField,
