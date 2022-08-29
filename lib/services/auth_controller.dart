@@ -4,6 +4,7 @@ import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +16,10 @@ class AuthController extends GetxController {
   // Authconroller.instance
   static AuthController instance = Get.find();
   DateTime? lastUpdated;
+  HelperFunction? sharePref;
 
+  Rx<String> streak = Rx("");
+  String get getStreak => streak.value;
   //email password name....
   late Rx<User?> _user;
 
@@ -23,6 +27,7 @@ class AuthController extends GetxController {
   UserModel get users => liveUser.value;
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseDatabase refDatabase = FirebaseDatabase.instance;
   final _userDoc = FirebaseFirestore.instance.collection("users");
 
   @override
@@ -34,13 +39,15 @@ class AuthController extends GetxController {
     ever(_user, _initialScreen);
   }
 
-  _initialScreen(User? user) {
+  _initialScreen(User? user) async {
     if (user == null) {
       if (kDebugMode) {
         print('login page');
       }
       Get.offAll(() => const LoginPage());
     } else {
+      final userModel = await getUserByModel(user.uid);
+      sharePref?.getUser(userModel.uid!);
       Get.offAll(() => const UserNavScreen(
           // email: user.email ?? "User email",
           // name: user.displayName ?? "User name",
@@ -109,7 +116,9 @@ class AuthController extends GetxController {
   Future loginWithUserNameandPassword(String email, String password) async {
     try {
       User user = (await auth.signInWithEmailAndPassword(
-              email: email, password: password))
+        email: email,
+        password: password,
+      ))
           .user!;
       DateTime now = DateTime.now();
       if (user != null) {
@@ -132,26 +141,36 @@ class AuthController extends GetxController {
     }
   }
 
-  // void login(String email, String password) async {
-  //   if (kDebugMode) {
-  //     print("login");
-  //   }
-  //   try {
-  //     await auth.signInWithEmailAndPassword(email: email, password: password);
-  //   } catch (e) {
-  //     Get.snackbar("About Login", "Login Message",
-  //         backgroundColor: Colors.redAccent,
-  //         snackPosition: SnackPosition.BOTTOM,
-  //         titleText: const Text(
-  //           "Login failed",
-  //           style: TextStyle(color: Colors.white),
-  //         ),
-  //         messageText: Text(
-  //           e.toString(),
-  //           style: const TextStyle(color: Colors.white),
-  //         ));
-  //   }
-  // }
+  Future userChanges(
+    String username,
+    String fullName,
+    String gender,
+    String address,
+    String postalCode,
+    String profilePics,
+  ) async {
+    try {
+      // User? user = (await auth.userChanges());
+      //   username: email,
+      //   password: password,
+      // ))
+      //     .user!;
+      // DateTime now = DateTime.now();
+      User? users;
+      if (users != null) {
+        FirebaseDatabase.instance.ref().child('user').child(users.uid).update({
+          'username': username,
+          'fullName': fullName,
+          'gender': gender,
+          'address': address,
+          'postalCode': postalCode,
+          'profilePics': profilePics,
+        });
+      }
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    }
+  }
 
   Future signOut() async {
     try {
@@ -164,9 +183,6 @@ class AuthController extends GetxController {
     }
   }
 
-  // void logOut() async {
-  //   await auth.signOut();
-  // }
   Future<UserModel> getUserByModel(String id) async {
     final result = await _userDoc.doc(id).get();
     final user = UserModel.fromJson(result.data()!);

@@ -1,6 +1,9 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:agora_care/app/home/quote_details.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -14,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final AuthController _authContoller = AuthController();
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
     AppColor().blueColor,
@@ -48,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const Gap(20),
               Center(
                 child: customTitleText(
-                  'Good afternoon, Josh',
+                  'Good afternoon, ${_authContoller.liveUser.value.fullName}',
                   size: 20,
                   spacing: -0.1,
                   fontWeight: FontWeight.w700,
@@ -64,7 +68,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    '5',
+                    // '5',
+                    _authContoller.liveUser.value.streak == null
+                        ? '0'
+                        : _authContoller.liveUser.value.streak.toString(),
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     colors: AppColor().textColor,

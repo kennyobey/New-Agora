@@ -35,7 +35,6 @@ class _SplashScreenState extends State<SplashScreen> {
       Get.off(() => Onboarding());
       //   }
     });
-    getUserLogggedInStatus();
     super.initState();
   }
 

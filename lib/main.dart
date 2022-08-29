@@ -54,6 +54,7 @@ class AgoraCare extends StatelessWidget {
         initialBinding: AppBinding(),
         title: 'Agora Care Mobile App',
         darkTheme: Get.isDarkMode ? ThemeData.dark() : ThemeData.light(),
+
         theme: ThemeData(
           fontFamily: 'HK GROTESK',
           primarySwatch: Palette.primaryColor,
