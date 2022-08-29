@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
+import ' verify_email_page.dart';
 import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
@@ -152,7 +153,6 @@ class _EmailPageState extends State<EmailPage> {
                       onTap: () async {
                         register();
 
-
                         print("sign up");
 
                         if (kDebugMode) {
@@ -160,7 +160,6 @@ class _EmailPageState extends State<EmailPage> {
                         }
 
                         //Get.to(() => const VerifyEmailPage());
-
                       },
                     ),
                     const Gap(50),
@@ -183,7 +182,6 @@ class _EmailPageState extends State<EmailPage> {
       )
           .then((value) async {
         if (value == true) {
-
           print(UserCredential);
           print("The email is ${email}");
           final user = FirebaseAuth.instance.currentUser;
@@ -192,17 +190,17 @@ class _EmailPageState extends State<EmailPage> {
             print(user);
             Get.to(() => const VerifyEmailPage());
 
-          if (kDebugMode) {
-            print(UserCredential);
-
+            if (kDebugMode) {
+              print(UserCredential);
+            }
+            // saving the shared preference
+            await HelperFunction.saveUserLoggedInStatus(true);
+            await HelperFunction.saveUserEmailSF(email);
+            //await HelperFunction.saveUserNameSF(fullName);
+            // nextScreenReplace(context, const VerifyEmailPage());
+          } else {
+            showSnackbar(context, Colors.red, value);
           }
-          // saving the shared preference
-          await HelperFunction.saveUserLoggedInStatus(true);
-          await HelperFunction.saveUserEmailSF(email);
-          //await HelperFunction.saveUserNameSF(fullName);
-          // nextScreenReplace(context, const VerifyEmailPage());
-        } else {
-          showSnackbar(context, Colors.red, value);
         }
       });
     }
