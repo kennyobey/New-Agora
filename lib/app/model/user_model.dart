@@ -17,7 +17,7 @@ class UserModel {
     this.gender,
     this.postalCode,
     this.address,
-    this.profilePics,
+    this.profilePic,
     this.reference,
     this.admin,
     this.lastLoginTime,
@@ -32,7 +32,7 @@ class UserModel {
   final String? gender;
   final int? postalCode;
   final String? address;
-  final String? profilePics;
+  final String? profilePic;
   final String? reference;
   final bool? admin;
   DateTime? lastLoginTime;
@@ -47,7 +47,7 @@ class UserModel {
         gender: json["gender"],
         postalCode: json["postalCode"],
         address: json["address"],
-        profilePics: json["profilePics"],
+        profilePic: json["profilePic"],
         reference: json["reference"],
         admin: json["admin"],
         lastLoginTime: json["lastLoginTime"] == null
@@ -69,7 +69,7 @@ class UserModel {
         "gender": gender,
         "postalCode": postalCode,
         "address": address,
-        "profilePics": profilePics,
+        "profilePic": profilePic,
         "reference": reference,
         "admin": admin,
         "lastLoginTime":
