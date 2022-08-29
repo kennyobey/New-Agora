@@ -3,8 +3,10 @@
 import 'package:agora_care/app/cells/cell_screen.dart';
 import 'package:agora_care/app/profile/profile_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 import 'home_screen.dart';
 
@@ -18,13 +20,16 @@ class UserNavScreen extends StatefulWidget {
 }
 
 class _UserNavScreenState extends State<UserNavScreen> {
+  final _authController = Get.find<AuthControllers>();
   late List<Widget> _screens;
 
   @override
   void initState() {
     _screens = [
       //Home Screen
-      const HomeScreen(),
+      _authController.liveUser.value.role != 'admin'
+          ? const HomeScreen()
+          : const HomeScreen(),
 
       // Cells Screens
       const CellsScreen(),
