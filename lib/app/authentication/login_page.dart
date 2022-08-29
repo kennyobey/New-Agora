@@ -27,7 +27,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
-  final AuthController _authContoller = AuthController();
+  final _authContoller = Get.find<AuthControllers>();
   bool _isLoading = false;
 
   String email = "";
@@ -170,28 +170,10 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoading = true;
       });
-      final userCredential = AuthController.instance
-          .loginWithUserNameandPassword(
+      _authContoller.loginWithUserNameandPassword(
         _emailController.text.trim(),
         _passworController.text.trim(),
-      )
-          .then((value) async {
-        if (value == true) {
-          await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-              .gettingUserData(email);
-          if (kDebugMode) {
-            print('User Email: $email');
-          }
-
-          // saving the values to our shared preferences
-          await HelperFunction.saveUserLoggedInStatus(true);
-          await HelperFunction.saveUserEmailSF(email);
-          //await HelperFunction.saveUserNameSF(snapshot.docs[0]['fullName']);
-          nextScreenReplace(context, const UserNavScreen());
-        } else {
-          showSnackbar(context, Colors.red, value);
-        }
-      });
+      );
     }
   }
 }

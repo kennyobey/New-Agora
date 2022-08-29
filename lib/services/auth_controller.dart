@@ -12,9 +12,9 @@ import '../app/home/nav_screen.dart';
 import '../helper/helper_function.dart';
 import 'database_service.dart';
 
-class AuthController extends GetxController {
+class AuthControllers extends GetxController {
   // Authconroller.instance
-  static AuthController instance = Get.find();
+
   DateTime? lastUpdated;
   HelperFunction? sharePref;
 
@@ -31,12 +31,26 @@ class AuthController extends GetxController {
   final _userDoc = FirebaseFirestore.instance.collection("users");
 
   @override
-  void onReady() {
-    super.onReady();
-    _user = Rx<User?>(auth.currentUser);
-    // our user would be notified
-    _user.bindStream(auth.userChanges());
-    ever(_user, _initialScreen);
+  void onInit() async {
+    // TODO: implement onInit
+    super.onInit();
+    final now = DateTime.now();
+    if (FirebaseAuth.instance.currentUser != null) {
+      final newUser =
+          await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
+      liveUser(newUser);
+
+      if (newUser.lastLoginTime!.difference(now).inDays >= 1) {
+        _userDoc.doc(FirebaseAuth.instance.currentUser!.uid).update({
+          "streak": FieldValue.increment(1),
+          "lastLoginTime": DateTime.now().toIso8601String()
+        });
+        final newUser =
+            await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
+        liveUser(newUser);
+        print("user value gotten user ${liveUser.value.toJson()}");
+      }
+    }
   }
 
   _initialScreen(User? user) async {
@@ -121,21 +135,36 @@ class AuthController extends GetxController {
       ))
           .user!;
       DateTime now = DateTime.now();
-      if (user != null) {
-        final userModel = await getUserByModel(user.uid);
-        if (userModel.lastLoginTime == null) {
-          userModel.lastLoginTime = now;
-          userModel.updatedAt = now;
-          _userDoc.doc(user.uid).update(userModel.toJson());
-        } else {
-          if (userModel.lastLoginTime!.difference(now).inDays >= 1) {
-            userModel.lastLoginTime = now;
-            userModel.updatedAt = now;
-            _userDoc.doc(user.uid).update(userModel.toJson());
-          }
-        }
-        return true;
+
+      if (user == null) {
+        return;
       }
+
+      final userModel = await getUserByModel(user.uid);
+      // print("user value gotten user ${userModel.toJson()}");
+      if (userModel.lastLoginTime == null) {
+        userModel.lastLoginTime = now;
+        userModel.updatedAt = now;
+
+        _userDoc.doc(user.uid).update({
+          "streak": FieldValue.increment(1),
+          "lastLoginTime": DateTime.now().toIso8601String()
+        });
+        final newUser = await getUserByModel(user.uid);
+        liveUser(newUser);
+        // print("user value gotten user ${newUser.toJson()}");
+      } else {
+        if (userModel.lastLoginTime!.difference(now).inDays >= 1) {
+          _userDoc.doc(user.uid).update({
+            "streak": FieldValue.increment(1),
+            "lastLoginTime": DateTime.now().toIso8601String()
+          });
+          final newUser = await getUserByModel(user.uid);
+          liveUser(newUser);
+          print("user value gotten user ${liveUser.value.toJson()}");
+        }
+      }
+      Get.to(const UserNavScreen());
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
@@ -144,21 +173,16 @@ class AuthController extends GetxController {
   Future userChanges(String username, String fullName, String gender,
       String address, String postalCode, String profilePics) async {
     try {
-      User users = (await auth.signInWithEmailAndPassword(
-        email: username,
-        password: fullName,
-      ))
-          .user!;
-      // User? users;
-      if (users != null) {
+      print("user detail update profile ${liveUser.value.toJson()}");
+      if (liveUser.value.uid != null) {
         if (kDebugMode) {
           print('I reach here');
         }
-        final userModel = await getUserByModel(users.uid);
+
         if (kDebugMode) {
           print('USER ID is: ${users.uid}');
         }
-        FirebaseDatabase.instance.ref().child('users').child(users.uid).update({
+        _userDoc.doc(users.uid).update({
           'username': username,
           'fullName': fullName,
           'gender': gender,
@@ -166,7 +190,8 @@ class AuthController extends GetxController {
           'postalCode': postalCode,
           'profilePics': profilePics,
         });
-        _userDoc.doc(users.uid).update(userModel.toJson());
+        final newUser = await getUserByModel(users.uid!);
+        liveUser(newUser);
       }
     } on FirebaseAuthException catch (e) {
       return e.message;

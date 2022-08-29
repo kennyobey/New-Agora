@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class WelComePage extends StatefulWidget {
   const WelComePage({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class WelComePage extends StatefulWidget {
 
 class _WelComePageState extends State<WelComePage> {
   String? selectedGender;
-  final AuthController _authContoller = AuthController();
+  final _authContoller = Get.find<AuthControllers>();
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _fullnameController = TextEditingController();

@@ -2,8 +2,10 @@
 
 import 'dart:async';
 
+import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/app/onboarding/onboarding.dart';
 import 'package:agora_care/core/constant/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -32,7 +34,12 @@ class _SplashScreenState extends State<SplashScreen> {
       //   Get.off(() => const UserNavScreen());
       // } else {
       //   _save('0');
-      Get.off(() => Onboarding());
+      if (FirebaseAuth.instance.currentUser != null) {
+        Get.off(const UserNavScreen());
+      } else {
+        Get.off(() => Onboarding());
+      }
+
       //   }
     });
     super.initState();

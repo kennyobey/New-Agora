@@ -31,7 +31,7 @@ class UserModel {
   final String? fullName;
   final String? username;
   final String? gender;
-  final int? postalCode;
+  final String? postalCode;
   final String? address;
   final String? profilePic;
   final String? reference;

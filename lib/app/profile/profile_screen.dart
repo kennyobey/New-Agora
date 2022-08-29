@@ -25,7 +25,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String email = "";
-  static AuthController instance = Get.find();
+  final _authContoller = Get.find<AuthControllers>();
 
   gettingUserData() async {
     await HelperFunction.getUserEmailFromSF().then((value) {
@@ -83,9 +83,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             customDescriptionText(
-                              instance.liveUser.value.fullName == null
+                              _authContoller.liveUser.value.fullName == null
                                   ? 'Your Name'
-                                  : instance.liveUser.value.fullName!,
+                                  : _authContoller.liveUser.value.fullName!,
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               colors: AppColor().filledTextField,
@@ -273,7 +273,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             IconButton(
                               onPressed: () async {
-                                await AuthController.instance.signOut();
+                                _authContoller.signOut();
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
                                         builder: (context) =>

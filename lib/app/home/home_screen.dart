@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final AuthController _authContoller = AuthController();
+  final _authContoller = Get.find<AuthControllers>();
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
     AppColor().blueColor,
@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("testing user is ${_authContoller.liveUser.value.toJson()}");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
@@ -51,13 +52,15 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               const Gap(20),
               Center(
-                child: customTitleText(
-                  'Good afternoon, ${_authContoller.liveUser.value.fullName}',
-                  size: 20,
-                  spacing: -0.1,
-                  fontWeight: FontWeight.w700,
-                  colors: AppColor().filledTextField,
-                ),
+                child: Obx(() {
+                  return customTitleText(
+                    'Good afternoon, ${_authContoller.liveUser.value.fullName}',
+                    size: 20,
+                    spacing: -0.1,
+                    fontWeight: FontWeight.w700,
+                    colors: AppColor().filledTextField,
+                  );
+                }),
               ),
               const Gap(10),
               Row(
@@ -67,15 +70,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     'assets/svgs/streak.svg',
                   ),
                   const Gap(5),
-                  customDescriptionText(
-                    // '5',
-                    _authContoller.liveUser.value.streak == null
-                        ? '0'
-                        : _authContoller.liveUser.value.streak.toString(),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().textColor,
-                  ),
+                  Obx(() {
+                    return customDescriptionText(
+                      // '5',
+                      _authContoller.liveUser.value.streak == null
+                          ? '0'
+                          : _authContoller.liveUser.value.streak.toString(),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      colors: AppColor().textColor,
+                    );
+                  }),
                   const Gap(5),
                   customDescriptionText(
                     'Streak',
