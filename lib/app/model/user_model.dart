@@ -18,7 +18,7 @@ class UserModel {
     this.postalCode,
     this.address,
     this.profilePic,
-    this.reference,
+    this.role,
     this.streak = 0,
     this.admin,
     this.lastLoginTime,
@@ -34,7 +34,7 @@ class UserModel {
   final String? postalCode;
   final String? address;
   final String? profilePic;
-  final String? reference;
+  final String? role;
   final int? streak;
   final bool? admin;
   DateTime? lastLoginTime;
@@ -50,7 +50,7 @@ class UserModel {
         postalCode: json["postalCode"],
         address: json["address"],
         profilePic: json["profilePic"],
-        reference: json["reference"],
+        role: json["role"],
         streak: json["streak"],
         admin: json["admin"],
         lastLoginTime: json["lastLoginTime"] == null
@@ -73,7 +73,7 @@ class UserModel {
         "postalCode": postalCode,
         "address": address,
         "profilePic": profilePic,
-        "reference": reference,
+        "role": role,
         "streak": streak,
         "admin": admin,
         "lastLoginTime":
