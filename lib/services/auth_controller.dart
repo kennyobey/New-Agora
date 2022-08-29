@@ -1,5 +1,14 @@
+<<<<<<< HEAD
 // ignore_for_file: unnecessary_null_comparison
 
+=======
+
+import 'package:agora_care/app/authentication/%20verify_email_page.dart';
+
+// ignore_for_file: unnecessary_null_comparison
+
+
+>>>>>>> f40e1bccc0f4198ef440885b68c9ede3c506e02c
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

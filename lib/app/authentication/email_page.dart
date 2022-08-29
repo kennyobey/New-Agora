@@ -152,11 +152,15 @@ class _EmailPageState extends State<EmailPage> {
                       onTap: () async {
                         register();
 
+<<<<<<<<< Temporary merge branch 1
+                        print("sign up");
+=========
                         if (kDebugMode) {
                           print("sign up");
                         }
 
                         //Get.to(() => const VerifyEmailPage());
+>>>>>>>>> Temporary merge branch 2
                       },
                     ),
                     const Gap(50),
@@ -179,8 +183,18 @@ class _EmailPageState extends State<EmailPage> {
       )
           .then((value) async {
         if (value == true) {
+<<<<<<<<< Temporary merge branch 1
+          print(UserCredential);
+          print("The email is ${email}");
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            await user.sendEmailVerification();
+            print(user);
+            Get.to(() => const VerifyEmailPage());
+=========
           if (kDebugMode) {
             print(UserCredential);
+>>>>>>>>> Temporary merge branch 2
           }
           // saving the shared preference
           await HelperFunction.saveUserLoggedInStatus(true);

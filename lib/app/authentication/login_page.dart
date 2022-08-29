@@ -63,6 +63,77 @@ class _LoginPageState extends State<LoginPage> {
               child: CircularProgressIndicator(
                 color: Theme.of(context).primaryColor,
               ),
+<<<<<<< HEAD
+=======
+              const Gap(20),
+              CustomTextField(
+                textEditingController: _emailController,
+                label: 'Email Address',
+                hint: 'Enter email address',
+                keyType: TextInputType.emailAddress,
+                validatorText: '** Field cannot be empty',
+                color: AppColor().lightTextColor,
+                onChanged: (val) {
+                  setState(() {
+                    email = val;
+                  });
+                },
+              ),
+
+              const Gap(20),
+              CustomPassWord(
+                textEditingController: _passworController,
+                obscureText: true,
+                label: 'Password',
+                hint: 'Enter password',
+                keyType: TextInputType.text,
+                validatorText: '** Field cannot be empty',
+                color: AppColor().lightTextColor,
+                onChanged: (val) {
+                  setState(() {
+                    password = val;
+                  });
+                },
+              ),
+              const Gap(20),
+              Text.rich(TextSpan(
+                text: "Don't have an account? ",
+                style:
+                    TextStyle(color: AppColor().lightTextColor, fontSize: 14),
+                children: <TextSpan>[
+                  TextSpan(
+                      text: "Sign Up",
+                      style: TextStyle(
+                          color: AppColor().lightTextColor,
+                          decoration: TextDecoration.underline),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          nextScreen(context, const EmailPage());
+                        }),
+                ],
+              )),
+              const Expanded(child: SizedBox()),
+              CustomFillButton(
+                buttonText: 'Proceed',
+                textColor: AppColor().button1Color,
+                buttonColor: AppColor().primaryColor,
+                onTap: () async {
+                  print("The email is ${email}");
+                  final user = FirebaseAuth.instance.currentUser;
+                  print("The Use details are$user");
+                  if (user?.emailVerified ?? false) {
+                    return Get.to(() => const WelComePage());
+                  } else {
+                    Get.snackbar(
+                        "Email Verification", "Go and verify your mail",
+                        duration: const Duration(seconds: 5));
+                  }
+                  //await user!.sendEmailVerification();
+                  login();
+                  // Get.to(() => const UserNavScreen());
+                },
+
+>>>>>>> f40e1bccc0f4198ef440885b68c9ede3c506e02c
             )
           : Form(
               key: formKey,
@@ -161,6 +232,10 @@ class _LoginPageState extends State<LoginPage> {
                     const Gap(50),
                   ],
                 ),
+<<<<<<< HEAD
+=======
+
+>>>>>>> f40e1bccc0f4198ef440885b68c9ede3c506e02c
               ),
             ),
     );
