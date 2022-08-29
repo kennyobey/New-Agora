@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:agora_care/app/authentication/edit_profile.dart';
 import 'package:agora_care/app/onboarding/quote.dart';
+import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -82,14 +82,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            customDescriptionText(
-                              _authContoller.liveUser.value.fullName == null
-                                  ? 'Your Name'
-                                  : _authContoller.liveUser.value.fullName!,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              colors: AppColor().filledTextField,
-                            ),
+                            Obx(() {
+                              return customDescriptionText(
+                                _authContoller.liveUser.value.fullName == null
+                                    ? 'Your Name'
+                                    : _authContoller.liveUser.value.fullName!,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                colors: AppColor().filledTextField,
+                              );
+                            }),
                             const Gap(5),
                             customDescriptionText(
                               email,
@@ -120,12 +122,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'assets/svgs/streak.svg',
                         ),
                         const Gap(5),
-                        customDescriptionText(
-                          '5',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          colors: AppColor().textColor,
-                        ),
+                        Obx(() {
+                          return customDescriptionText(
+                            // '5',
+                            _authContoller.liveUser.value.streak == null
+                                ? '0'
+                                : _authContoller.liveUser.value.streak
+                                    .toString(),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            colors: AppColor().textColor,
+                          );
+                        }),
                         const Gap(5),
                         customDescriptionText(
                           'Streak',
