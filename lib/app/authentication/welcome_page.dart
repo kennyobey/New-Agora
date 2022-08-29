@@ -153,7 +153,7 @@ class _WelComePageState extends State<WelComePage> {
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
                   ),
-                  const Gap(10),
+                  const Gap(30),
                   CustomFillButton(
                     buttonText: 'Get me started',
                     textColor: AppColor().button1Color,
@@ -163,6 +163,7 @@ class _WelComePageState extends State<WelComePage> {
                     },
                   ),
                   const Gap(5),
+
                   CustomFillButton(
                     buttonText: 'Log Out',
                     textColor: AppColor().button1Color,
@@ -175,6 +176,7 @@ class _WelComePageState extends State<WelComePage> {
                       Get.to(() => const LoginPage());
                     },
                   ),
+
                 ],
               ),
             ),

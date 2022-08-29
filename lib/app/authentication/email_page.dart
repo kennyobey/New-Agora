@@ -88,7 +88,7 @@ class _EmailPageState extends State<EmailPage> {
                     ),
                     const Gap(10),
                     customDescriptionText(
-                      'We’ll send you a verification code so make',
+                      'We’ll send you a verification link so make',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       colors: AppColor().lightTextColor,
@@ -146,17 +146,21 @@ class _EmailPageState extends State<EmailPage> {
                     )),
                     const Expanded(child: SizedBox()),
                     CustomFillButton(
-                      buttonText: 'Send code',
+                      buttonText: 'Sign Up',
                       textColor: AppColor().button1Color,
                       buttonColor: AppColor().primaryColor,
                       onTap: () async {
                         register();
+
+
+                        print("sign up");
 
                         if (kDebugMode) {
                           print("sign up");
                         }
 
                         //Get.to(() => const VerifyEmailPage());
+
                       },
                     ),
                     const Gap(50),
@@ -179,14 +183,24 @@ class _EmailPageState extends State<EmailPage> {
       )
           .then((value) async {
         if (value == true) {
+
+          print(UserCredential);
+          print("The email is ${email}");
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            await user.sendEmailVerification();
+            print(user);
+            Get.to(() => const VerifyEmailPage());
+
           if (kDebugMode) {
             print(UserCredential);
+
           }
           // saving the shared preference
           await HelperFunction.saveUserLoggedInStatus(true);
           await HelperFunction.saveUserEmailSF(email);
           //await HelperFunction.saveUserNameSF(fullName);
-          nextScreenReplace(context, const WelComePage());
+          // nextScreenReplace(context, const VerifyEmailPage());
         } else {
           showSnackbar(context, Colors.red, value);
         }
