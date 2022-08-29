@@ -1,3 +1,4 @@
+import 'package:agora_care/app/authentication/%20verify_email_page.dart';
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/home/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,9 +36,9 @@ class AuthController extends GetxController {
       if (kDebugMode) {
         print('login page');
       }
-      Get.offAll(() => const LoginPage());
+      Get.offAll(() => const EmailPage());
     } else {
-      Get.offAll(() => const UserNavScreen(
+      Get.offAll(() => const VerifyEmailPage(
           // email: user.email ?? "User email",
           // name: user.displayName ?? "User name",
           ));
@@ -49,7 +50,9 @@ class AuthController extends GetxController {
       User user = (await auth.createUserWithEmailAndPassword(
               email: email, password: password))
           .user!;
-
+      if (user != null) {
+        user.sendEmailVerification();
+      }
       if (user != null) {
         // call our database service to update the user data.
         await DatabaseService(uid: user.uid).savingUserData(email);
