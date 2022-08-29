@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable, override_on_non_overriding_member, unused_field
 
 import 'package:agora_care/app/authentication/email_page.dart';
-import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -150,16 +149,13 @@ class _LoginPageState extends State<LoginPage> {
                   if (kDebugMode) {
                     print("The Use details are$user");
                   }
-                  if (user?.emailVerified ?? false) {
-                    return Get.to(() => const WelComePage());
+                  if (user!.emailVerified == true) {
+                    return login();
                   } else {
                     Get.snackbar(
                         "Email Verification", "Go and verify your mail",
                         duration: const Duration(seconds: 5));
                   }
-                  //await user!.sendEmailVerification();
-                  login();
-                  // Get.to(() => const UserNavScreen());
                 },
               ),
             ],

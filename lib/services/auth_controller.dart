@@ -141,24 +141,24 @@ class AuthController extends GetxController {
     }
   }
 
-  Future userChanges(
-    String username,
-    String fullName,
-    String gender,
-    String address,
-    String postalCode,
-    String profilePics,
-  ) async {
+  Future userChanges(String username, String fullName, String gender,
+      String address, String postalCode, String profilePics) async {
     try {
-      // User? user = (await auth.userChanges());
-      //   username: email,
-      //   password: password,
-      // ))
-      //     .user!;
-      // DateTime now = DateTime.now();
-      User? users;
+      User users = (await auth.signInWithEmailAndPassword(
+        email: username,
+        password: fullName,
+      ))
+          .user!;
+      // User? users;
       if (users != null) {
-        FirebaseDatabase.instance.ref().child('user').child(users.uid).update({
+        if (kDebugMode) {
+          print('I reach here');
+        }
+        final userModel = await getUserByModel(users.uid);
+        if (kDebugMode) {
+          print('USER ID is: ${users.uid}');
+        }
+        FirebaseDatabase.instance.ref().child('users').child(users.uid).update({
           'username': username,
           'fullName': fullName,
           'gender': gender,
@@ -166,6 +166,7 @@ class AuthController extends GetxController {
           'postalCode': postalCode,
           'profilePics': profilePics,
         });
+        _userDoc.doc(users.uid).update(userModel.toJson());
       }
     } on FirebaseAuthException catch (e) {
       return e.message;

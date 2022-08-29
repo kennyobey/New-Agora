@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:agora_care/app/authentication/welcome_page.dart';
+import 'package:agora_care/app/authentication/edit_profile.dart';
 import 'package:agora_care/app/onboarding/quote.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -209,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Edit profile',
                 onTap: () {
-                  Get.to(() => const WelComePage());
+                  Get.to(() => const EditProfile());
                 },
               ),
               const Gap(15),

@@ -3,6 +3,7 @@ import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -190,7 +191,10 @@ class _WelComePageState extends State<WelComePage> {
                     buttonColor: AppColor().primaryColor,
                     onTap: () async {
                       // Get.to(() => const UserNavScreen());
-                      _authContoller.userChanges(
+                      if (kDebugMode) {
+                        print('update profile');
+                      }
+                      await _authContoller.userChanges(
                         _usernameController.text,
                         _fullnameController.text,
                         selectedGender.toString(),
