@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, unused_field
 
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +12,7 @@ import '../helper/helper_function.dart';
 import 'database_service.dart';
 
 class AuthControllers extends GetxController {
-  // Authconroller.instance
+  final bool isLoading = false;
 
   DateTime? lastUpdated;
   HelperFunction? sharePref;

@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable, override_on_non_overriding_member, unused_field
 
 import 'package:agora_care/app/authentication/email_page.dart';
-import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -14,9 +13,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../core/widget.dart';
-import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
-import '../../services/database_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
