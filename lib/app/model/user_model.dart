@@ -18,11 +18,13 @@ class UserModel {
     this.postalCode,
     this.address,
     this.profilePic,
-    this.reference,
+    this.role,
+    this.isEmailVerified,
     this.streak = 0,
+    this.weeks = 0,
     this.admin,
     this.lastLoginTime,
-    this.createdAt,
+    this.weeklyLoginTime,
     this.updatedAt,
   });
 
@@ -34,11 +36,13 @@ class UserModel {
   final String? postalCode;
   final String? address;
   final String? profilePic;
-  final String? reference;
+  final String? role;
+  final bool? isEmailVerified;
   final int? streak;
+  final int? weeks;
   final bool? admin;
   DateTime? lastLoginTime;
-  final DateTime? createdAt;
+  DateTime? weeklyLoginTime;
   DateTime? updatedAt;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -50,15 +54,17 @@ class UserModel {
         postalCode: json["postalCode"],
         address: json["address"],
         profilePic: json["profilePic"],
-        reference: json["reference"],
+        role: json["role"],
+        isEmailVerified: json["isEmailVerified"],
         streak: json["streak"],
+        weeks: json["weeks"],
         admin: json["admin"],
         lastLoginTime: json["lastLoginTime"] == null
             ? null
             : DateTime.parse(json["lastLoginTime"]),
-        createdAt: json["createdAt"] == null
+        weeklyLoginTime: json["weeklyLoginTime"] == null
             ? null
-            : DateTime.parse(json["createdAt"]),
+            : DateTime.parse(json["weeklyLoginTime"]),
         updatedAt: json["updatedAt"] == null
             ? null
             : DateTime.parse(json["updatedAt"]),
@@ -73,12 +79,15 @@ class UserModel {
         "postalCode": postalCode,
         "address": address,
         "profilePic": profilePic,
-        "reference": reference,
+        "role": role,
+        "isEmailVerified": isEmailVerified,
         "streak": streak,
+        "weeks": weeks,
         "admin": admin,
         "lastLoginTime":
             lastLoginTime == null ? null : lastLoginTime!.toIso8601String(),
-        "createdAt": createdAt == null ? null : createdAt!.toIso8601String(),
+        "weeklyLoginTime":
+            weeklyLoginTime == null ? null : weeklyLoginTime!.toIso8601String(),
         "updatedAt": updatedAt == null ? null : updatedAt!.toIso8601String(),
       };
 }

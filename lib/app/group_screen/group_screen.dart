@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../core/constant/group_tile.dart';
 import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
-import '../../services/auth_controller.dart';
 import '../../services/database_service.dart';
 import 'searchpage.dart';
 
@@ -20,7 +18,7 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   String userName = "";
   String email = "";
-  final _authContoller = Get.find<AuthControllers>();
+  // final _authContoller = Get.find<AuthControllers>();
   Stream? groups;
   bool _isLoading = false;
   String groupName = "";
