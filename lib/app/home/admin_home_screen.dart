@@ -50,11 +50,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
     print("testing user is ${_authContoller.liveUser.value.toJson()}");
     return Scaffold(
       floatingActionButton: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(
             Radius.circular(30),
           ),
-          color: Colors.amber,
+          color: AppColor().addCellColor,
         ),
         width: 150,
         height: 60,
