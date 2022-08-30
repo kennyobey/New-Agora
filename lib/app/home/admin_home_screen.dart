@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'package:agora_care/app/cells/create_cell.dart';
 import 'package:agora_care/app/home/quote_details.dart';
 import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -10,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+
+import 'post_qoute.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({Key? key}) : super(key: key);
@@ -63,7 +66,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Get.to(
+                  () => const CreateCell(),
+                  transition: Transition.downToUp,
+                );
+              },
               icon: const Icon(Icons.add),
               color: Colors.white,
               iconSize: 30,
@@ -164,8 +172,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     width: MediaQuery.of(context).size.width,
                     child: GestureDetector(
                       onTap: () {
+                        print("object");
                         Get.to(
-                          () => const QuoteDetails(),
+                          () => const PostQoute(),
                           transition: Transition.downToUp,
                         );
                       },
@@ -180,14 +189,23 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     top: 60,
                     left: 70,
                     right: 70,
-                    child: Column(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/svgs/fluent_tap-single-48-filled.svg',
-                          // height: MediaQuery.of(context).size.height * 0.2,
-                          // width: MediaQuery.of(context).size.width,
-                        ),
-                      ],
+                    child: InkWell(
+                      onTap: (() {
+                        print("object");
+                        Get.to(
+                          () => const PostQoute(),
+                          transition: Transition.downToUp,
+                        );
+                      }),
+                      child: Column(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/svgs/fluent_tap-single-48-filled.svg',
+                            // height: MediaQuery.of(context).size.height * 0.2,
+                            // width: MediaQuery.of(context).size.width,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

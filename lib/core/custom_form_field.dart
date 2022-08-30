@@ -15,6 +15,8 @@ class CustomTextField extends StatelessWidget {
     this.pretext,
     this.sufText,
     this.maxLength,
+    this.maxLines,
+    this.minLines,
     this.initialValue,
     this.hintColor,
     this.icon,
@@ -54,6 +56,8 @@ class CustomTextField extends StatelessWidget {
   final String? sufText;
   final String? initialValue;
   final int? maxLength;
+  final int? maxLines;
+  final int? minLines;
   final double? labelSize;
   final bool? enabled;
   final Widget? icon, prefixIcon, suffixIcon;
@@ -114,6 +118,8 @@ class CustomTextField extends StatelessWidget {
                 autofocus: false,
                 onChanged: onChanged,
                 maxLength: maxLength,
+                maxLines: maxLines,
+                minLines: minLines,
                 controller: textEditingController,
                 enabled: enabled,
                 keyboardType: keyType,
