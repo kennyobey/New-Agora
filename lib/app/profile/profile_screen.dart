@@ -15,6 +15,7 @@ import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
 import '../authentication/login_page.dart';
 import '../group_screen/group_screen.dart';
+import '../home/admin_home_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -47,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Container(
           color: AppColor().boxColor,
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          //height: MediaQuery.of(context).size.height,
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,9 +228,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Settings',
-                // onTap: () {
-                //   Get.to(() => const AccountStatement());
-                // },
+                onTap: () {
+                  Get.to(() => const AdminHomeScreen());
+                },
               ),
               const Gap(15),
               CustomContainer(
