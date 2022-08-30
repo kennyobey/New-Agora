@@ -3,6 +3,7 @@
 import 'package:agora_care/app/home/quote_details.dart';
 import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/core/constant/members.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +46,37 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
     print("testing user is ${_authContoller.liveUser.value.toJson()}");
     return Scaffold(
+      floatingActionButton: Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(30),
+          ),
+          color: Colors.amber,
+        ),
+        width: 150,
+        height: 60,
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              color: Colors.white,
+              iconSize: 30,
+            ),
+            customDescriptionText(
+              "Add Cell",
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              colors: AppColor().whiteColor,
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
         elevation: 0,
@@ -284,29 +314,63 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                     Cells(
                                         title: "Cephas",
                                         members: "3000 members",
-                                        time: "Last activity: 7th May 2022")
+                                        time: "Last activity: 7th May 2022"),
                                   ],
                                 )
                               ])),
                         ),
                       );
                     }),
-                    const Material(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.grey,
+                    ListView.builder(
+                        // itemCount: books == null ? 0 : books!.length,
+                        itemBuilder: (_, i) {
+                      return Container(
+                        margin: const EdgeInsets.only(
+                            left: 0, right: 0, top: 10, bottom: 10),
+                        child: Container(
+                          child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Row(children: [
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: const [
+                                    Members(
+                                        title: "Kehinde",
+                                        active: "Active 19hrs ago",
+                                        streak: "16 streak",
+                                        weeks: "4 weeks")
+                                  ],
+                                )
+                              ])),
                         ),
-                        title: Text("content"),
-                      ),
-                    ),
-                    const Material(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.grey,
-                        ),
-                        title: Text("content"),
-                      ),
-                    ),
+                      );
+                    }),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.20,
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                      (orientation == Orientation.landscape)
+                                          ? 2
+                                          : 2),
+                          padding: EdgeInsets.zero,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: imageName.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return recentQuotes(
+                              assetName: imageName[index],
+                              views: '14,000',
+                              messages: '400',
+                              shares: '40',
+                            );
+                          },
+                        )),
                   ],
                 ),
               ))

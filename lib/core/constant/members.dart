@@ -7,16 +7,18 @@ import '../customWidgets.dart';
 import 'colors.dart';
 
 class Members extends StatelessWidget {
-  const Members(
-      {Key? key,
-      required this.title,
-      required this.members,
-      required this.time})
-      : super(key: key);
+  const Members({
+    Key? key,
+    required this.title,
+    required this.active,
+    required this.streak,
+    required this.weeks,
+  }) : super(key: key);
 
   final String title;
-  final String members;
-  final String time;
+  final String active;
+  final String streak;
+  final String weeks;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,7 @@ class Members extends StatelessWidget {
               customDescriptionText(
                 title,
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 colors: AppColor().lightTextColor,
               ),
               const SizedBox(
@@ -50,14 +52,29 @@ class Members extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   customDescriptionText(
-                    members,
+                    active,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    colors: AppColor().lightTextColor,
+                  ),
+                  const Gap(30),
+                  SvgPicture.asset(
+                    'assets/svgs/streak.svg',
+                  ),
+                  const Gap(5),
+                  customDescriptionText(
+                    streak,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().lightTextColor,
                   ),
-                  const Gap(30),
+                  const Gap(10),
+                  SvgPicture.asset(
+                    'assets/svgs/calender.svg',
+                  ),
+                  const Gap(5),
                   customDescriptionText(
-                    time,
+                    weeks,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().lightTextColor,
