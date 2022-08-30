@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/app/home/quote_details.dart';
+import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
@@ -56,7 +57,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
           color: AppColor().whiteColor,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -212,7 +213,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 headerSliverBuilder: (BuildContext context, bool isScroll) {
                   return [
                     SliverAppBar(
+                      stretch: true,
                       pinned: true,
+                      automaticallyImplyLeading: false,
                       backgroundColor: Colors.white,
                       bottom: PreferredSize(
                         preferredSize: const Size.fromHeight(10),
@@ -232,15 +235,25 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                               //           blurRadius: 7,
                               //           offset: const Offset(0, 0))
                               //     ]),
-                              tabs: const [
-                                Text(
+                              tabs: [
+                                customDescriptionText(
                                   "Cells",
-                                  style: TextStyle(color: Colors.black),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  colors: AppColor().lightTextColor,
                                 ),
-                                Text("Members",
-                                    style: TextStyle(color: Colors.black)),
-                                Text("Qoutes",
-                                    style: TextStyle(color: Colors.black)),
+                                customDescriptionText(
+                                  "Members",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  colors: AppColor().lightTextColor,
+                                ),
+                                customDescriptionText(
+                                  "Qoutes",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  colors: AppColor().lightTextColor,
+                                ),
                               ],
                             )),
                       ),
@@ -255,17 +268,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                         itemBuilder: (_, i) {
                       return Container(
                         margin: const EdgeInsets.only(
-                            left: 20, right: 20, top: 10, bottom: 10),
+                            left: 0, right: 0, top: 10, bottom: 10),
                         child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 2,
-                                    offset: const Offset(0, 0),
-                                    color: Colors.grey.withOpacity(0.2))
-                              ]),
                           child: Container(
                               padding: const EdgeInsets.all(8),
                               child: Row(children: [
@@ -276,54 +280,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Row(
-                                      children: const [
-                                        // const Icon(
-                                        //   Icons.star,
-                                        //   size: 24,
-                                        //   color: AppColors.starColor,
-                                        // ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          'rating',
-                                          style: TextStyle(color: Colors.black),
-                                        )
-                                      ],
-                                    ),
-                                    const Text(
-                                      'title',
-                                      style: TextStyle(
-                                        fontFamily: "Avenir",
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const Text(
-                                      'text',
-                                      style: TextStyle(
-                                          fontFamily: "Avenir",
-                                          fontSize: 14,
-                                          color: Colors.black),
-                                    ),
-                                    Container(
-                                      height: 20,
-                                      width: 50,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          color: Colors.black),
-                                      alignment: Alignment.center,
-                                      child: const Text(
-                                        "love",
-                                        style: TextStyle(
-                                            fontFamily: "Avenir",
-                                            fontSize: 12,
-                                            color: Colors.white),
-                                      ),
-                                    )
+                                  children: const [
+                                    Cells(
+                                        title: "Cephas",
+                                        members: "3000 members",
+                                        time: "Last activity: 7th May 2022")
                                   ],
                                 )
                               ])),
