@@ -1,7 +1,9 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/app/home/quote_details.dart';
+import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/core/constant/members.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:flutter/foundation.dart';
@@ -17,7 +19,10 @@ class AdminHomeScreen extends StatefulWidget {
   State<AdminHomeScreen> createState() => _AdminHomeScreenState();
 }
 
-class _AdminHomeScreenState extends State<AdminHomeScreen> {
+class _AdminHomeScreenState extends State<AdminHomeScreen>
+    with TickerProviderStateMixin {
+  ScrollController? _scrollController;
+  TabController? _tabController;
   final _authContoller = Get.find<AuthControllers>();
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
@@ -34,11 +39,48 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _scrollController = ScrollController();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
+
     if (kDebugMode) {
       print("testing user is ${_authContoller.liveUser.value.toJson()}");
     }
     return Scaffold(
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(30),
+          ),
+          color: AppColor().addCellColor,
+        ),
+        width: 150,
+        height: 60,
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              color: Colors.white,
+              iconSize: 30,
+            ),
+            customDescriptionText(
+              "Add Cell",
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              colors: AppColor().whiteColor,
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
         elevation: 0,
@@ -49,7 +91,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           color: AppColor().whiteColor,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -144,12 +186,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     right: 70,
                     child: Column(
                       children: [
-                        customDescriptionText(
-                          '“Be yourself everyone else is already taken.”',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          textAlign: TextAlign.center,
-                          colors: AppColor().whiteColor,
+                        SvgPicture.asset(
+                          'assets/svgs/fluent_tap-single-48-filled.svg',
+                          // height: MediaQuery.of(context).size.height * 0.2,
+                          // width: MediaQuery.of(context).size.width,
                         ),
                       ],
                     ),
@@ -200,68 +240,201 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 endIndent: 50,
                 color: AppColor().lightTextColor.withOpacity(0.3),
               ),
-              const Gap(20),
-              Row(
-                children: [
-                  customDescriptionText(
-                    'Popular cells'.toUpperCase(),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().filledTextField,
-                  ),
-                  const Gap(5),
-                  SvgPicture.asset(
-                    'assets/svgs/arrow_right.svg',
-                  ),
-                ],
-              ),
-              const Gap(20),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: colorList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return recommendedCells(
-                      colors: colorList[index],
-                      title: 'Cephas',
-                      assetName: 'assets/svgs/bank.svg',
-                    );
-                  },
+
+              Expanded(
+                  child: NestedScrollView(
+                controller: _scrollController,
+                headerSliverBuilder: (BuildContext context, bool isScroll) {
+                  return [
+                    SliverAppBar(
+                      stretch: true,
+                      pinned: true,
+                      automaticallyImplyLeading: false,
+                      backgroundColor: Colors.white,
+                      bottom: PreferredSize(
+                        preferredSize: const Size.fromHeight(10),
+                        child: Container(
+                            margin: const EdgeInsets.only(bottom: 0, left: 0),
+                            child: TabBar(
+                              indicatorPadding: const EdgeInsets.all(0),
+                              indicatorSize: TabBarIndicatorSize.label,
+                              labelPadding: const EdgeInsets.only(right: 20),
+                              controller: _tabController,
+                              isScrollable: true,
+                              // indicator: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(10),
+                              //     boxShadow: [
+                              //       BoxShadow(
+                              //           color: Colors.grey.withOpacity(0.2),
+                              //           blurRadius: 7,
+                              //           offset: const Offset(0, 0))
+                              //     ]),
+                              tabs: [
+                                customDescriptionText(
+                                  "Cells",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  colors: AppColor().lightTextColor,
+                                ),
+                                customDescriptionText(
+                                  "Members",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  colors: AppColor().lightTextColor,
+                                ),
+                                customDescriptionText(
+                                  "Qoutes",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  colors: AppColor().lightTextColor,
+                                ),
+                              ],
+                            )),
+                      ),
+                    )
+                  ];
+                },
+                body: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    ListView.builder(
+                        // itemCount: books == null ? 0 : books!.length,
+                        itemBuilder: (_, i) {
+                      return Container(
+                        margin: const EdgeInsets.only(
+                            left: 0, right: 0, top: 10, bottom: 10),
+                        child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: const [
+                                  Cells(
+                                      title: "Cephas",
+                                      members: "3000 members",
+                                      time: "Last activity: 7th May 2022"),
+                                ],
+                              )
+                            ])),
+                      );
+                    }),
+                    ListView.builder(
+                        // itemCount: books == null ? 0 : books!.length,
+                        itemBuilder: (_, i) {
+                      return Container(
+                        margin: const EdgeInsets.only(
+                            left: 0, right: 0, top: 10, bottom: 10),
+                        child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: const [
+                                  Members(
+                                      title: "Kehinde",
+                                      active: "Active 19hrs ago",
+                                      streak: "16 streak",
+                                      weeks: "4 weeks")
+                                ],
+                              )
+                            ])),
+                      );
+                    }),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.20,
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                      (orientation == Orientation.landscape)
+                                          ? 2
+                                          : 2),
+                          padding: EdgeInsets.zero,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: imageName.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return recentQuotes(
+                              assetName: imageName[index],
+                              views: '14,000',
+                              messages: '400',
+                              shares: '40',
+                            );
+                          },
+                        )),
+                  ],
                 ),
-              ),
-              const Gap(30),
-              Row(
-                children: [
-                  customDescriptionText(
-                    'Recent quotes'.toUpperCase(),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().filledTextField,
-                  ),
-                  const Gap(5),
-                  SvgPicture.asset(
-                    'assets/svgs/arrow_right.svg',
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.25,
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: imageName.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return recentQuotes(
-                      assetName: imageName[index],
-                      views: '14,000',
-                      messages: '400',
-                      shares: '40',
-                    );
-                  },
-                ),
-              ),
+              ))
+              // Row(
+              //   children: [
+              //     customDescriptionText(
+              //       'Popular cells'.toUpperCase(),
+              //       fontSize: 12,
+              //       fontWeight: FontWeight.w700,
+              //       colors: AppColor().filledTextField,
+              //     ),
+              //     const Gap(5),
+              //     SvgPicture.asset(
+              //       'assets/svgs/arrow_right.svg',
+              //     ),
+              //   ],
+              // ),
+              // const Gap(20),
+              // SizedBox(
+              //   height: MediaQuery.of(context).size.height * 0.1,
+              //   child: ListView.builder(
+              //     padding: EdgeInsets.zero,
+              //     scrollDirection: Axis.horizontal,
+              //     itemCount: colorList.length,
+              //     itemBuilder: (BuildContext context, int index) {
+              //       return recommendedCells(
+              //         colors: colorList[index],
+              //         title: 'Cephas',
+              //         assetName: 'assets/svgs/bank.svg',
+              //       );
+              //     },
+              //   ),
+              // ),
+              // const Gap(30),
+              // Row(
+              //   children: [
+              //     customDescriptionText(
+              //       'Recent quotes'.toUpperCase(),
+              //       fontSize: 12,
+              //       fontWeight: FontWeight.w700,
+              //       colors: AppColor().filledTextField,
+              //     ),
+              //     const Gap(5),
+              //     SvgPicture.asset(
+              //       'assets/svgs/arrow_right.svg',
+              //     ),
+              //   ],
+              // ),
+              // SizedBox(
+              //   height: MediaQuery.of(context).size.height * 0.25,
+              //   child: ListView.builder(
+              //     padding: EdgeInsets.zero,
+              //     scrollDirection: Axis.horizontal,
+              //     itemCount: imageName.length,
+              //     itemBuilder: (BuildContext context, int index) {
+              //       return recentQuotes(
+              //         assetName: imageName[index],
+              //         views: '14,000',
+              //         messages: '400',
+              //         shares: '40',
+              //       );
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),

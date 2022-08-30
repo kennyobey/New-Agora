@@ -22,6 +22,7 @@ class AppColor {
   Color successColor = const Color(0xff1EBD71);
   Color errorColor = const Color(0xffEA1601);
   Color notification = const Color(0xFFF2B12E);
+  Color addCellColor = const Color(0xFFD27A00);
 
   Color flareColor = const Color(0xffBA3089);
   Color navSelectedColor = const Color(0xffFFE3F5);
