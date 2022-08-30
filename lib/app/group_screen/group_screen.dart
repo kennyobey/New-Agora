@@ -1,6 +1,10 @@
+import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/core/customWidgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../core/constant/group_tile.dart';
 import '../../core/widget.dart';
@@ -65,20 +69,29 @@ class _GroupScreenState extends State<GroupScreen> {
       appBar: AppBar(
         actions: [
           IconButton(
-              onPressed: () {
-                nextScreen(context, const SearchPage());
-              },
-              icon: const Icon(
-                Icons.search,
-              ))
+            onPressed: () => Get.to(() => const SearchPage()),
+            icon: Icon(
+              CupertinoIcons.search,
+              color: AppColor().primaryColor,
+            ),
+          )
         ],
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: AppColor().primaryColor,
+          ),
+          onPressed: () => Get.back(),
+        ),
+        automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text(
-          "Groups",
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 27),
+        backgroundColor: AppColor().whiteColor,
+        title: customTitleText(
+          "Cells",
+          size: 27,
+          fontWeight: FontWeight.bold,
+          colors: AppColor().primaryColor,
         ),
       ),
       body: groupList(),

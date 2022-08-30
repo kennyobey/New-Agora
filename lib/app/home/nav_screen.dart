@@ -1,9 +1,10 @@
-// ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison
+// ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable
 
 import 'package:agora_care/app/cells/cell_screen.dart';
 import 'package:agora_care/app/profile/profile_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/widget/global_bottom_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -11,9 +12,8 @@ import 'package:get/get.dart';
 import 'home_screen.dart';
 
 class UserNavScreen extends StatefulWidget {
-  const UserNavScreen({
-    Key? key,
-  }) : super(key: key);
+  int? tabIndex;
+  UserNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
 
   @override
   _UserNavScreenState createState() => _UserNavScreenState();
@@ -22,6 +22,8 @@ class UserNavScreen extends StatefulWidget {
 class _UserNavScreenState extends State<UserNavScreen> {
   final _authController = Get.find<AuthControllers>();
   late List<Widget> _screens;
+
+  final _scaffoldState = GlobalKey();
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _UserNavScreenState extends State<UserNavScreen> {
 
       // Cells Screens
       const CellsScreen(),
+      // showGlobalBottomSheet(context),
 
       // Profile Screen
       const ProfileScreen(),
@@ -41,11 +44,12 @@ class _UserNavScreenState extends State<UserNavScreen> {
   }
 
   int _selectedIndex = 0;
-  void _selectPage(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  int? newIndex;
+  // void _selectPage(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +57,34 @@ class _UserNavScreenState extends State<UserNavScreen> {
       resizeToAvoidBottomInset: false,
       body: IndexedStack(
         index: _selectedIndex,
+        // index: widget.tabIndex,
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-        onTap: _selectPage,
+        onTap: (newIndex) async => {
+          if (newIndex == 1)
+            {
+              await showGlobalBottomSheet(context),
+              setState(() {
+                //
+              })
+            }
+          else
+            {
+              setState(() {
+                setState(() {
+                  widget.tabIndex = newIndex;
+                  _selectedIndex = widget.tabIndex!;
+                  // _selectPage;
+                });
+              })
+            }
+        },
         backgroundColor: AppColor().whiteColor,
         currentIndex: _selectedIndex,
         elevation: 20,
+        key: _scaffoldState,
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
@@ -108,167 +132,27 @@ class _UserNavScreenState extends State<UserNavScreen> {
       ),
     );
   }
+
+  showGlobalBottomSheet(context) async {
+    return await showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: AppColor().whiteColor,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      context: context,
+      builder: (context) => GlobalBottomDialogue(
+        back: () {
+          print('back pressed');
+          Get.close(1);
+        },
+        next: () async {
+          // await Get.to(() => UserNavScreen(tabIndex: 1));
+          await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => UserNavScreen(tabIndex: 2)));
+          print('next pressed');
+        },
+      ),
+    );
+  }
 }
-
-
-// import 'package:flutter/material.dart';
-// import 'package:foodie/repository/order_respository.dart';
-// import 'package:foodie/user_screen/screen/profile/my_wallet.dart';
-// import 'package:get/get.dart';
-
-// import '../../authentication_screen/screens/new_auth.dart';
-// import '../../logic/const.dart';
-// import '../../repository/auth.dart';
-// import 'home_screen.dart';
-// import 'my_order.dart';
-// import 'profile/nav_profile.dart';
-// import 'searchB_screen.dart';
-
-// class UserNavScreen extends StatefulWidget {
-//   static const routeName = "/nav_screen";
-
-//   @override
-//   _UserNavScreenState createState() => _UserNavScreenState();
-// }
-
-// class _UserNavScreenState extends State<UserNavScreen> {
-//   final orderController = Get.find<OrderRespository>();
-//   late List<Widget> _screens;
-//   final controller = Get.find<AuthServices>();
-
-//   @override
-//   void initState() {
-//     if (controller.status == Status.Authenticated || controller.user != null
-//         ? controller.user!.isVerified!
-//         : false) {
-//       _screens = [
-//         //Home Screen
-//         HomeScreen(),
-
-//         // Search
-//         SearchScreen(),
-
-//         // Orders
-//         MyOrder(),
-
-//         // Profile
-//         NavProfile(),
-//       ];
-//     } else {
-//       _screens = [
-//         //Home Screen
-//         HomeScreen(),
-
-//         // Search
-//         NewAuth(),
-
-//         // Orders
-//         NewAuth(),
-
-//         //alternative profile screen for non registered users
-//         NewAuth(),
-//         // NonRegUserScreen(signUp),
-//       ];
-//     }
-
-//     super.initState();
-//   }
-
-//   int _selectedIndex = 0;
-
-//   void _selectPage(int index) {
-//     if (index == 1) controller.isprofpage = false;
-//     setState(() {
-//       print(index);
-//       _selectedIndex = index;
-//     });
-//   }
-
-//   void signUp() {
-//     setState(() {
-//       print('here!!!!');
-//       _screens = [
-//         //Home Screen
-//         HomeScreen(),
-
-//         // Search
-//         NewAuth(),
-
-//         // Orders
-//         NewAuth(),
-//         // NonRegUserSignup(),
-
-//         //alternative profile screen for non registered users
-//         NewAuth(),
-//       ];
-//     });
-//   }
-
-//   void checkSignIn() {
-//     setState(() {
-//       if (controller.user != null ? controller.user!.isVerified! : false)
-//         _screens = [
-//           //Home Screen
-//           HomeScreen(),
-
-//           // Search
-//           MyWallet(),
-
-//           // Orders
-//           MyOrder(),
-
-//           // Profile
-//           NavProfile(),
-//         ];
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     if (controller.thankYouRoute >= 0) {
-//       _selectPage(controller.thankYouRoute);
-//       controller.updateThankyouRoute(-1);
-//     }
-//     checkSignIn();
-//     return Scaffold(
-//       resizeToAvoidBottomInset: false,
-//       body: _screens[_selectedIndex],
-//       bottomNavigationBar: Container(
-//         decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.only(
-//                 topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-//         child: BottomNavigationBar(
-//           onTap: _selectPage,
-//           backgroundColor: Colors.transparent,
-//           unselectedItemColor: Colors.grey,
-//           selectedItemColor: UIData.kbrightColor,
-//           currentIndex: _selectedIndex,
-//           // type: BottomNavigationBarType.fixed,
-//           items: [
-//             BottomNavigationBarItem(
-//               backgroundColor: Theme.of(context).bottomAppBarColor,
-//               icon: Icon(Icons.home_outlined),
-//               label: 'Home',
-//             ),
-//             BottomNavigationBarItem(
-//               backgroundColor: Theme.of(context).bottomAppBarColor,
-//               icon: Icon(Icons.account_balance_wallet_outlined),
-//               label: 'Wallet',
-//             ),
-//             BottomNavigationBarItem(
-//               backgroundColor: Theme.of(context).bottomAppBarColor,
-//               icon: Icon(Icons.receipt),
-//               label: 'Orders',
-//             ),
-//             BottomNavigationBarItem(
-//               backgroundColor: Theme.of(context).bottomAppBarColor,
-//               icon: Icon(Icons.person_outlined),
-//               label: 'Profile',
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

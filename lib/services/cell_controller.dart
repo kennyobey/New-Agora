@@ -1,7 +1,9 @@
 // ignore_for_file: unnecessary_null_comparison, unused_field
 
 import 'package:agora_care/app/authentication/login_page.dart';
+import 'package:agora_care/app/model/cells_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -9,9 +11,9 @@ import 'package:get/get.dart';
 
 import '../app/home/nav_screen.dart';
 import '../helper/helper_function.dart';
-import 'database_service.dart';
 
-class AuthControllers extends GetxController {
+class CellControllers extends GetxController {
+  final _authController = Get.find<AuthControllers>();
   final bool isLoading = false;
 
   // DateTime? lastUpdated;
@@ -54,38 +56,12 @@ class AuthControllers extends GetxController {
     }
   }
 
-  // _initialScreen(User? user) async {
-  //   if (user == null) {
-  //     if (kDebugMode) {
-  //       print('login page');
-  //     }
-  //     Get.offAll(() => const LoginPage());
-  //   } else {
-  //     final userModel = await getUserByModel(user.uid);
-  //     sharePref?.getUser(userModel.uid!);
-  //     Get.offAll(() => const UserNavScreen(
-  //         // email: user.email ?? "User email",
-  //         // name: user.displayName ?? "User name",
-  //         ));
-  //   }
-  // }
-
-  //register
-  Future registerUserWithEmailandPassword(String email, String password) async {
-    try {
-      User user = (await auth.createUserWithEmailAndPassword(
-              email: email, password: password))
-          .user!;
-
-      if (user != null) {
-        // call our database service to update the user data.
-        await DatabaseService(uid: user.uid).savingUserData(email);
-        return true;
-      }
-    } on FirebaseAuthException catch (e) {
-      return e.message;
-    }
-  }
+  //all cells
+  Stream<List<CellModel>> getCells() => FirebaseFirestore.instance
+      .collection('groups')
+      .snapshots()
+      .map((snapshot) =>
+          snapshot.docs.map((doc) => CellModel.fromJson(doc.data())).toList());
 
   // login
   Future loginWithUserNameandPassword(String email, String password) async {

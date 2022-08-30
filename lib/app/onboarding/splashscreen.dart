@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // } else {
       //   _save('0');
       if (FirebaseAuth.instance.currentUser != null) {
-        Get.off(const UserNavScreen());
+        Get.off(() => UserNavScreen());
       } else {
         Get.off(() => Onboarding());
       }

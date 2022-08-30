@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../app/group_screen/chat_page.dart';
@@ -23,6 +24,9 @@ class _GroupTileState extends State<GroupTile> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        if (kDebugMode) {
+          print('Joining Group');
+        }
         nextScreen(
             context,
             ChatPage(

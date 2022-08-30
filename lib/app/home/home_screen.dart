@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'package:agora_care/app/cells/cell_screen.dart';
 import 'package:agora_care/app/home/quote_details.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -206,19 +207,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: AppColor().lightTextColor.withOpacity(0.3),
               ),
               const Gap(20),
-              Row(
-                children: [
-                  customDescriptionText(
-                    'Popular cells'.toUpperCase(),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().filledTextField,
-                  ),
-                  const Gap(5),
-                  SvgPicture.asset(
-                    'assets/svgs/arrow_right.svg',
-                  ),
-                ],
+              GestureDetector(
+                onTap: () => Get.to(() => const CellsScreen()),
+                child: Row(
+                  children: [
+                    customDescriptionText(
+                      'Popular cells'.toUpperCase(),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      colors: AppColor().filledTextField,
+                    ),
+                    const Gap(5),
+                    SvgPicture.asset(
+                      'assets/svgs/arrow_right.svg',
+                    ),
+                  ],
+                ),
               ),
               const Gap(20),
               SizedBox(

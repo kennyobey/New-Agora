@@ -2,6 +2,7 @@
 
 import 'package:agora_care/app/onboarding/quote.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
+import 'package:agora_care/app/profile/support.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -10,10 +11,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
-import '../authentication/login_page.dart';
 import '../group_screen/group_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -52,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Gap(20),
+              const Gap(15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -66,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SvgPicture.asset('assets/svgs/bell.svg'),
                 ],
               ),
-              const Gap(20),
+              const Gap(15),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -94,7 +93,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }),
                             const Gap(5),
                             customDescriptionText(
-                              email,
+                              _authContoller.liveUser.value.email == null
+                                  ? 'example@mail.com'
+                                  : _authContoller.liveUser.value.email!,
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                               colors: Colors.black,
@@ -109,12 +110,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
-                    const Gap(20),
+                    const Gap(15),
                     const Divider(
                       height: 1,
                       thickness: 1,
                     ),
-                    const Gap(20),
+                    const Gap(15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -191,7 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 fontWeight: FontWeight.w700,
                 colors: AppColor().filledTextField,
               ),
-              const Gap(20),
+              const Gap(15),
               CustomContainer(
                 selectedColor: Theme.of(context).primaryColor,
                 selected: true,
@@ -201,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Groups',
                 onTap: () {
-                  nextScreen(context, const GroupScreen());
+                  Get.to(() => const GroupScreen());
                 },
               ),
               const Gap(15),
@@ -234,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Settings',
                 // onTap: () {
-                //   Get.to(() => const AccountStatement());
+                //   Get.to(() => const Settings());
                 // },
               ),
               const Gap(15),
@@ -245,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Consult a psychologist',
                 // onTap: () {
-                //   Get.to(() => const AccountStatement());
+                //   Get.to(() => const Psychologist());
                 // },
               ),
               const Gap(15),
@@ -255,9 +256,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Support',
-                // onTap: () {
-                //   Get.to(() => const AccountStatement());
-                // },
+                onTap: () {
+                  Get.to(() => const SupportPage());
+                },
               ),
               const Gap(15),
               CustomContainer(
@@ -287,12 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             IconButton(
                               onPressed: () async {
-                                _authContoller.signOut();
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LoginPage()),
-                                    (route) => false);
+                                await _authContoller.signOut();
                               },
                               icon: const Icon(
                                 Icons.done,

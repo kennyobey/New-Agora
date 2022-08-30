@@ -1,8 +1,15 @@
+import 'package:agora_care/app/model/cells_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/helper/helper_function.dart';
+import 'package:agora_care/services/cell_controller.dart';
+import 'package:agora_care/services/database_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class CellsScreen extends StatefulWidget {
   const CellsScreen({Key? key}) : super(key: key);
@@ -12,6 +19,14 @@ class CellsScreen extends StatefulWidget {
 }
 
 class _CellsScreenState extends State<CellsScreen> {
+  final _cellContoller = Get.find<CellControllers>();
+  String userName = "";
+  String email = "";
+  // final _authContoller = Get.find<AuthControllers>();
+  Stream? groups;
+  final bool _isLoading = false;
+  String groupName = "";
+
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
     AppColor().blueColor,
@@ -33,6 +48,43 @@ class _CellsScreenState extends State<CellsScreen> {
     'assets/images/image1.png',
     'assets/images/image2.png',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    gettingUserData();
+  }
+
+  // string manipulation
+  String getId(String res) {
+    return res.substring(0, res.indexOf("_"));
+  }
+
+  String getName(String res) {
+    return res.substring(res.indexOf("_") + 1);
+  }
+
+  gettingUserData() async {
+    await HelperFunction.getUserEmailFromSF().then((value) {
+      setState(() {
+        email = value!;
+      });
+    });
+    // getting the list of snapshots in our stream
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+        .getUserGroups()
+        .then((snapshot) {
+      setState(() {
+        groups = snapshot;
+      });
+    });
+  }
+
+  Stream<List<CellModel>> getCells() => FirebaseFirestore.instance
+      .collection('groups')
+      .snapshots()
+      .map((snapshot) =>
+          snapshot.docs.map((doc) => CellModel.fromJson(doc.data())).toList());
 
   @override
   Widget build(BuildContext context) {
@@ -76,18 +128,51 @@ class _CellsScreenState extends State<CellsScreen> {
             const Gap(20),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.1,
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
-                scrollDirection: Axis.horizontal,
-                itemCount: colorList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return recommendedCells(
-                    colors: colorList[index],
-                    title: 'Cephas',
-                    assetName: 'assets/svgs/bank.svg',
-                  );
-                },
-              ),
+              child: StreamBuilder<List<CellModel>>(
+                  // stream: _cellContoller.getCells().asStream(),
+                  stream: getCells(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      print('SnapShot data${snapshot.data}');
+                      final cells = snapshot.data!;
+                      if (snapshot.data != null) {
+                        if (snapshot.data!.isNotEmpty) {
+                          return ListView.builder(
+                            padding: EdgeInsets.zero,
+                            scrollDirection: Axis.horizontal,
+                            // itemCount: colorList.length,
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              int reverseIndex =
+                                  snapshot.data!.length - index - 1;
+
+                              return recommendedCells(
+                                groupId: getId(
+                                    snapshot.data![reverseIndex].toString()),
+                                // groupId: cells.map((e) => null),
+                                colors: colorList[index],
+                                title: getName(
+                                    snapshot.data![reverseIndex].toString()),
+                                assetName: 'assets/svgs/bank.svg',
+                                // cellModel: cells[index],
+                              );
+                            },
+                          );
+                        } else {
+                          return customDescriptionText(
+                              'No Available Group to join');
+                        }
+                      } else {
+                        return customDescriptionText(
+                            'No Available Group to join');
+                      }
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor),
+                      );
+                    }
+                  }),
             ),
             const Gap(30),
             Row(
@@ -106,21 +191,49 @@ class _CellsScreenState extends State<CellsScreen> {
             ),
             const Gap(10),
             Expanded(
-              child: GridView.builder(
-                padding: EdgeInsets.zero,
-                scrollDirection: Axis.vertical,
-                itemCount: colorList.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: 5 / 3, crossAxisCount: 2),
-                itemBuilder: (BuildContext context, int index) {
-                  return otherCells(
-                    colors: colorList[index],
-                    title: 'Cephas',
-                    assetName: 'assets/svgs/bank.svg',
-                    assetName2: 'assets/svgs/people.svg',
-                  );
-                },
-              ),
+              child: StreamBuilder(
+                  stream: groups,
+                  builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data['groups'] != null) {
+                        if (snapshot.data['groups'].length != 0) {
+                          return GridView.builder(
+                            padding: EdgeInsets.zero,
+                            scrollDirection: Axis.vertical,
+                            itemCount: snapshot.data['groups'].length,
+                            // itemCount: colorList.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: 5 / 3, crossAxisCount: 2),
+                            itemBuilder: (BuildContext context, int index) {
+                              int reverseIndex =
+                                  snapshot.data['groups'].length - index - 1;
+                              return otherCells(
+                                colors: colorList[index],
+                                groupId: getId(
+                                    snapshot.data['groups'][reverseIndex]),
+                                title: getName(
+                                    snapshot.data['groups'][reverseIndex]),
+                                assetName: 'assets/svgs/bank.svg',
+                                assetName2: 'assets/svgs/people.svg',
+                              );
+                            },
+                          );
+                        } else {
+                          return customDescriptionText(
+                              'No Available Group to join');
+                        }
+                      } else {
+                        return customDescriptionText(
+                            'No Available Group to join');
+                      }
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor),
+                      );
+                    }
+                  }),
             ),
           ],
         ),
@@ -130,8 +243,10 @@ class _CellsScreenState extends State<CellsScreen> {
 
   GestureDetector recommendedCells({
     Color? colors,
+    String? groupId,
     String? title,
     String? assetName,
+    // CellModel? cellModel,
   }) {
     return GestureDetector(
       onTap: () {},
@@ -170,6 +285,7 @@ class _CellsScreenState extends State<CellsScreen> {
 
   GestureDetector otherCells({
     Color? colors,
+    String? groupId,
     String? title,
     String? assetName,
     String? assetName2,

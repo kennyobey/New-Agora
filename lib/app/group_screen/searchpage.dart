@@ -1,8 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/core/customWidgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
@@ -52,18 +56,27 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: AppColor().primaryColor,
+          ),
+          onPressed: () => Get.back(),
+        ),
+        automaticallyImplyLeading: false,
         elevation: 0,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text(
+        backgroundColor: AppColor().whiteColor,
+        title: customTitleText(
           "Search",
-          style: TextStyle(
-              fontSize: 27, fontWeight: FontWeight.bold, color: Colors.white),
+          size: 27,
+          fontWeight: FontWeight.bold,
+          colors: AppColor().primaryColor,
         ),
       ),
       body: Column(
         children: [
           Container(
-            color: Theme.of(context).primaryColor,
+            color: AppColor().primaryColor2,
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: Row(
               children: [
@@ -80,6 +93,9 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    if (kDebugMode) {
+                      print('Searching now');
+                    }
                     initiateSearchMethod();
                   },
                   child: Container(

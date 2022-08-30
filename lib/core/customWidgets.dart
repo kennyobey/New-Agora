@@ -17,6 +17,7 @@ Widget customTitleText(
   double? spacing,
   double? size,
   TextStyle? style,
+  TextOverflow? textOverflow,
   final String? validatorText,
   FontWeight? fontWeight,
   DecorationImage? image,
@@ -26,7 +27,7 @@ Widget customTitleText(
     width: width,
     child: Text(
       title,
-      overflow: TextOverflow.ellipsis,
+      overflow: textOverflow ?? TextOverflow.ellipsis,
       textAlign: textAlign ?? TextAlign.start,
       style: style ??
           TextStyle(
@@ -51,6 +52,7 @@ Widget customDescriptionText(
   FontStyle? fontStyle,
   double? spacing,
   double? fontSize,
+  TextOverflow? textOverflow,
   TextStyle? style,
   Null Function()? onTap,
   TextDecoration? decoration,
@@ -61,7 +63,7 @@ Widget customDescriptionText(
       width: width,
       child: Text(
         title,
-        overflow: TextOverflow.clip,
+        overflow: textOverflow ?? TextOverflow.clip,
         textAlign: textAlign,
         style: style ??
             TextStyle(
