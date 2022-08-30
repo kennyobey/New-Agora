@@ -18,11 +18,12 @@ class UserModel {
     this.postalCode,
     this.address,
     this.profilePic,
-    this.role,
     this.streak = 0,
+    this.weeks = 0,
+    this.role,
     this.admin,
     this.lastLoginTime,
-    this.createdAt,
+    this.weeklyLoginTime,
     this.updatedAt,
   });
 
@@ -34,11 +35,12 @@ class UserModel {
   final String? postalCode;
   final String? address;
   final String? profilePic;
-  final String? role;
   final int? streak;
+  final int? weeks;
   final bool? admin;
+  final String? role;
   DateTime? lastLoginTime;
-  final DateTime? createdAt;
+  DateTime? weeklyLoginTime;
   DateTime? updatedAt;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -50,15 +52,16 @@ class UserModel {
         postalCode: json["postalCode"],
         address: json["address"],
         profilePic: json["profilePic"],
-        role: json["role"],
         streak: json["streak"],
+        weeks: json["weeks"],
         admin: json["admin"],
+        role: json["role"],
         lastLoginTime: json["lastLoginTime"] == null
             ? null
             : DateTime.parse(json["lastLoginTime"]),
-        createdAt: json["createdAt"] == null
+        weeklyLoginTime: json["weeklyLoginTime"] == null
             ? null
-            : DateTime.parse(json["createdAt"]),
+            : DateTime.parse(json["weeklyLoginTime"]),
         updatedAt: json["updatedAt"] == null
             ? null
             : DateTime.parse(json["updatedAt"]),
@@ -73,12 +76,14 @@ class UserModel {
         "postalCode": postalCode,
         "address": address,
         "profilePic": profilePic,
-        "role": role,
         "streak": streak,
+        "weeks": weeks,
         "admin": admin,
+        "role": role,
         "lastLoginTime":
             lastLoginTime == null ? null : lastLoginTime!.toIso8601String(),
-        "createdAt": createdAt == null ? null : createdAt!.toIso8601String(),
+        "weeklyLoginTime":
+            weeklyLoginTime == null ? null : weeklyLoginTime!.toIso8601String(),
         "updatedAt": updatedAt == null ? null : updatedAt!.toIso8601String(),
       };
 }

@@ -4,7 +4,6 @@ import 'package:agora_care/app/authentication/email_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -142,19 +141,20 @@ class _LoginPageState extends State<LoginPage> {
                   if (kDebugMode) {
                     print("The email is $email");
                   }
-                  final user = FirebaseAuth.instance.currentUser;
-                  if (kDebugMode) {
-                    print("The Use details are$user");
-                  }
-                  if (user!.emailVerified == true) {
-                    return login();
-                  } else {
-                    Get.snackbar(
-                        "Email Verification", "Go and verify your mail",
-                        duration: const Duration(seconds: 5));
-                  }
+                  // final user = FirebaseAuth.instance.currentUser;
+                  // if (kDebugMode) {
+                  //   print("The User details is $user");
+                  // }
+                  // if (FirebaseAuth.instance.currentUser.uid == true) {
+                  return await login();
+                  // } else {
+                  //   Get.snackbar(
+                  //       "Email Verification", "Go and verify your mail",
+                  //       duration: const Duration(seconds: 5));
+                  // }
                 },
               ),
+              const Gap(40),
             ],
           ),
         ),

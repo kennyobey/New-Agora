@@ -155,12 +155,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'assets/svgs/calender.svg',
                         ),
                         const Gap(5),
-                        customDescriptionText(
-                          '20',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          colors: AppColor().textColor,
-                        ),
+                        Obx(() {
+                          return customDescriptionText(
+                            // '20',
+                            _authContoller.liveUser.value.weeks == null
+                                ? '0'
+                                : _authContoller.liveUser.value.weeks
+                                    .toString(),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            colors: AppColor().textColor,
+                          );
+                        }),
                         const Gap(5),
                         customDescriptionText(
                           'Weeks',

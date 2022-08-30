@@ -3,7 +3,6 @@
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
@@ -14,17 +13,17 @@ import 'database_service.dart';
 class AuthControllers extends GetxController {
   final bool isLoading = false;
 
-  DateTime? lastUpdated;
-  HelperFunction? sharePref;
+  // DateTime? lastUpdated;
+  // HelperFunction? sharePref;
 
-  Rx<String> streak = Rx("");
-  String get getStreak => streak.value;
+  // Rx<String> streak = Rx("");
+  // String get getStreak => streak.value;
+  // FirebaseDatabase refDatabase = FirebaseDatabase.instance;
 
   Rx<UserModel> liveUser = UserModel().obs;
   UserModel get users => liveUser.value;
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  FirebaseDatabase refDatabase = FirebaseDatabase.instance;
   final _userDoc = FirebaseFirestore.instance.collection("users");
 
   @override
@@ -36,10 +35,13 @@ class AuthControllers extends GetxController {
           await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
       liveUser(newUser);
 
-      if (newUser.lastLoginTime!.difference(now).inDays >= 1) {
+      if (newUser.lastLoginTime!.difference(now).inDays >= 1 &&
+          newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
         _userDoc.doc(FirebaseAuth.instance.currentUser!.uid).update({
+          "weeks": FieldValue.increment(1),
           "streak": FieldValue.increment(1),
-          "lastLoginTime": DateTime.now().toIso8601String()
+          "lastLoginTime": DateTime.now().toIso8601String(),
+          "weeklyLoginTime": DateTime.now().toIso8601String(),
         });
         final newUser =
             await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
@@ -97,21 +99,28 @@ class AuthControllers extends GetxController {
         return;
       }
       final userModel = await getUserByModel(user.uid);
-      if (userModel.lastLoginTime == null) {
-        userModel.lastLoginTime = now;
+      if (userModel.lastLoginTime == null ||
+          userModel.weeklyLoginTime == null) {
         userModel.updatedAt = now;
+        userModel.lastLoginTime = now;
+        userModel.weeklyLoginTime = now;
 
         _userDoc.doc(user.uid).update({
+          "weeks": FieldValue.increment(1),
           "streak": FieldValue.increment(1),
-          "lastLoginTime": DateTime.now().toIso8601String()
+          "weeklyLoginTime": DateTime.now().toIso8601String(),
+          "lastLoginTime": DateTime.now().toIso8601String(),
         });
         final newUser = await getUserByModel(user.uid);
         liveUser(newUser);
       } else {
-        if (userModel.lastLoginTime!.difference(now).inDays >= 1) {
+        if (userModel.lastLoginTime!.difference(now).inDays >= 1 &&
+            userModel.weeklyLoginTime!.difference(now).inDays >= 1) {
           _userDoc.doc(user.uid).update({
+            "weeks": FieldValue.increment(1),
             "streak": FieldValue.increment(1),
-            "lastLoginTime": DateTime.now().toIso8601String()
+            "weeklyLoginTime": DateTime.now().toIso8601String(),
+            "lastLoginTime": DateTime.now().toIso8601String(),
           });
           final newUser = await getUserByModel(user.uid);
           liveUser(newUser);
@@ -120,7 +129,7 @@ class AuthControllers extends GetxController {
           }
         }
       }
-      Get.to(const UserNavScreen());
+      Get.to(() => const UserNavScreen());
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
@@ -128,7 +137,7 @@ class AuthControllers extends GetxController {
 
   //Update Profile
   Future userChanges(String username, String fullName, String gender,
-      String address, String postalCode, String profilePics) async {
+      String address, String postalCode, String profilePic) async {
     try {
       if (kDebugMode) {
         print("user detail update profile ${liveUser.value.toJson()}");
@@ -147,7 +156,7 @@ class AuthControllers extends GetxController {
           'gender': gender,
           'address': address,
           'postalCode': postalCode,
-          'profilePics': profilePics,
+          'profilePic': profilePic,
         });
         final newUser = await getUserByModel(users.uid!);
         liveUser(newUser);
@@ -162,7 +171,6 @@ class AuthControllers extends GetxController {
     try {
       await HelperFunction.saveUserLoggedInStatus(false);
       await HelperFunction.saveUserEmailSF("");
-      //await HelperFunction.saveUserNameSF("");
       await auth.signOut();
     } catch (e) {
       return null;
