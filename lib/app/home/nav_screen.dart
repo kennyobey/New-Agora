@@ -5,6 +5,7 @@ import 'package:agora_care/app/profile/profile_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/widget/global_bottom_modal.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -141,7 +142,9 @@ class _UserNavScreenState extends State<UserNavScreen> {
       context: context,
       builder: (context) => GlobalBottomDialogue(
         back: () {
-          print('back pressed');
+          if (kDebugMode) {
+            print('back pressed');
+          }
           Get.close(1);
         },
         next: () async {
@@ -150,7 +153,9 @@ class _UserNavScreenState extends State<UserNavScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => UserNavScreen(tabIndex: 2)));
-          print('next pressed');
+          if (kDebugMode) {
+            print('next pressed');
+          }
         },
       ),
     );

@@ -1,7 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/app/cells/create_cell.dart';
-import 'package:agora_care/app/home/quote_details.dart';
 import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/members.dart';
@@ -176,7 +175,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     width: MediaQuery.of(context).size.width,
                     child: GestureDetector(
                       onTap: () {
-                        print("object");
+                        if (kDebugMode) {
+                          print("post quote card");
+                        }
                         Get.to(
                           () => const PostQoute(),
                           transition: Transition.downToUp,
@@ -195,7 +196,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     right: 70,
                     child: InkWell(
                       onTap: (() {
-                        print("object");
+                        if (kDebugMode) {
+                          print("post quote button");
+                        }
                         Get.to(
                           () => const PostQoute(),
                           transition: Transition.downToUp,

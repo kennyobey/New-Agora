@@ -14,7 +14,6 @@ import 'package:get/get.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
 import '../group_screen/group_screen.dart';
-import '../home/admin_home_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
