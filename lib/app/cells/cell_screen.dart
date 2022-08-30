@@ -4,7 +4,6 @@ import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/cell_controller.dart';
 import 'package:agora_care/services/database_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,10 +18,11 @@ class CellsScreen extends StatefulWidget {
 }
 
 class _CellsScreenState extends State<CellsScreen> {
-  final _cellContoller = Get.find<CellControllers>();
+  // final _authContoller = Get.find<AuthControllers>();
+  final _cellController = Get.find<CellControllers>();
   String userName = "";
   String email = "";
-  // final _authContoller = Get.find<AuthControllers>();
+
   Stream? groups;
   final bool _isLoading = false;
   String groupName = "";
@@ -51,8 +51,9 @@ class _CellsScreenState extends State<CellsScreen> {
 
   @override
   void initState() {
-    super.initState();
+    _cellController.getCells();
     gettingUserData();
+    super.initState();
   }
 
   // string manipulation
@@ -79,12 +80,6 @@ class _CellsScreenState extends State<CellsScreen> {
       });
     });
   }
-
-  Stream<List<CellModel>> getCells() => FirebaseFirestore.instance
-      .collection('groups')
-      .snapshots()
-      .map((snapshot) =>
-          snapshot.docs.map((doc) => CellModel.fromJson(doc.data())).toList());
 
   @override
   Widget build(BuildContext context) {
@@ -128,44 +123,44 @@ class _CellsScreenState extends State<CellsScreen> {
             const Gap(20),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.1,
-              child: StreamBuilder<List<CellModel>>(
-                  // stream: _cellContoller.getCells().asStream(),
-                  stream: getCells(),
-                  builder: (context, snapshot) {
+              child: StreamBuilder(
+                  stream: _cellController.getCells(),
+                  builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
-                      print('SnapShot data${snapshot.data}');
                       final cells = snapshot.data!;
-                      if (snapshot.data != null) {
-                        if (snapshot.data!.isNotEmpty) {
-                          return ListView.builder(
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.horizontal,
-                            // itemCount: colorList.length,
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              int reverseIndex =
-                                  snapshot.data!.length - index - 1;
+                      // if (snapshot.data['groups'] != null) {
+                      //   if (snapshot.data['groups'].length != 0) {
+                      //     return ListView.builder(
+                      //       padding: EdgeInsets.zero,
+                      //       scrollDirection: Axis.horizontal,
+                      //       // itemCount: colorList.length,
+                      //       itemCount: snapshot.data['groups'].length,
+                      //       itemBuilder: (BuildContext context, int index) {
+                      //         int reverseIndex =
+                      //             snapshot.data['groups'].length - index - 1;
 
-                              return recommendedCells(
-                                groupId: getId(
-                                    snapshot.data![reverseIndex].toString()),
-                                // groupId: cells.map((e) => null),
-                                colors: colorList[index],
-                                title: getName(
-                                    snapshot.data![reverseIndex].toString()),
-                                assetName: 'assets/svgs/bank.svg',
-                                // cellModel: cells[index],
-                              );
-                            },
-                          );
-                        } else {
-                          return customDescriptionText(
-                              'No Available Group to join');
-                        }
-                      } else {
-                        return customDescriptionText(
-                            'No Available Group to join');
-                      }
+                      //         return recommendedCells(
+                      //           groupId: getId(
+                      //               snapshot.data['groups'][reverseIndex]),
+                      //           colors: colorList[index],
+                      //           title: getName(
+                      //               snapshot.data['groups'][reverseIndex]),
+                      //           assetName: 'assets/svgs/bank.svg',
+                      //         );
+                      //       },
+                      // );
+
+                      return ListView(
+                        children: cells.map(recommendedCells).toList(),
+                      );
+                      //   } else {
+                      //     return customDescriptionText(
+                      //         'No Available Group to join');
+                      //   }
+                      // } else {
+                      //   return customDescriptionText(
+                      //       'No Available Group to join');
+                      // }
                     } else {
                       return Center(
                         child: CircularProgressIndicator(
@@ -183,6 +178,7 @@ class _CellsScreenState extends State<CellsScreen> {
                   fontWeight: FontWeight.w700,
                   colors: AppColor().filledTextField,
                 ),
+                // ListView(),
                 const Gap(5),
                 SvgPicture.asset(
                   'assets/svgs/arrow_right.svg',
@@ -241,43 +237,43 @@ class _CellsScreenState extends State<CellsScreen> {
     );
   }
 
-  GestureDetector recommendedCells({
-    Color? colors,
-    String? groupId,
-    String? title,
-    String? assetName,
-    // CellModel? cellModel,
-  }) {
-    return GestureDetector(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.only(right: 10, bottom: 10),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-          width: MediaQuery.of(context).size.width * 0.35,
-          height: MediaQuery.of(context).size.height * 0.2,
-          decoration: BoxDecoration(
-            color: colors,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                assetName!,
-                height: 30,
-                color: AppColor().whiteColor,
-              ),
-              const Gap(10),
-              customTitleText(
-                title!,
-                textAlign: TextAlign.left,
-                colors: AppColor().whiteColor,
-                size: 16,
-              ),
-            ],
-          ),
+  Widget recommendedCells(
+    CellModel? cellModel,
+    // {
+    // Color? colors,
+    //   String? groupId,
+    //   String? title,
+    // String? assetName,
+    // }
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10, bottom: 10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+        width: MediaQuery.of(context).size.width * 0.35,
+        height: MediaQuery.of(context).size.height * 0.2,
+        decoration: BoxDecoration(
+          // color: colors,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              // assetName!,
+              'assets/svgs/bank.svg',
+              height: 30,
+              color: AppColor().whiteColor,
+            ),
+            const Gap(10),
+            customTitleText(
+              cellModel!.groupName!,
+              textAlign: TextAlign.left,
+              colors: AppColor().whiteColor,
+              size: 16,
+            ),
+          ],
         ),
       ),
     );

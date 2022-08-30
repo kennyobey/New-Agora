@@ -2,7 +2,6 @@
 
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/model/cells_model.dart';
-import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,11 +22,11 @@ class CellControllers extends GetxController {
   // String get getStreak => streak.value;
   // FirebaseDatabase refDatabase = FirebaseDatabase.instance;
 
-  Rx<UserModel> liveUser = UserModel().obs;
-  UserModel get users => liveUser.value;
+  Rx<CellModel> availableCell = CellModel().obs;
+  CellModel get allCell => availableCell.value;
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  final _userDoc = FirebaseFirestore.instance.collection("users");
+  final _cellsDoc = FirebaseFirestore.instance.collection("groups");
 
   @override
   void onInit() async {
@@ -35,22 +34,22 @@ class CellControllers extends GetxController {
     final now = DateTime.now();
     if (FirebaseAuth.instance.currentUser != null) {
       final newUser =
-          await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
-      liveUser(newUser);
+          await getCellsByModel(FirebaseAuth.instance.currentUser!.uid);
+      availableCell(newUser);
 
-      if (newUser.lastLoginTime!.difference(now).inDays >= 1 &&
+      if (newUser.recentMessageTime!.difference(now).inDays >= 1 &&
           newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
-        _userDoc.doc(FirebaseAuth.instance.currentUser!.uid).update({
+        _cellsDoc.doc(FirebaseAuth.instance.currentUser!.uid).update({
           "weeks": FieldValue.increment(1),
           "streak": FieldValue.increment(1),
-          "lastLoginTime": DateTime.now().toIso8601String(),
+          "recentMessageTime": DateTime.now().toIso8601String(),
           "weeklyLoginTime": DateTime.now().toIso8601String(),
         });
         final newUser =
-            await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
-        liveUser(newUser);
+            await getCellsByModel(FirebaseAuth.instance.currentUser!.uid);
+        availableCell(newUser);
         if (kDebugMode) {
-          print("user value gotten user ${liveUser.value.toJson()}");
+          print("user value gotten user ${availableCell.value.toJson()}");
         }
       }
     }
@@ -75,34 +74,34 @@ class CellControllers extends GetxController {
       if (user == null) {
         return;
       }
-      final userModel = await getUserByModel(user.uid);
-      if (userModel.lastLoginTime == null ||
-          userModel.weeklyLoginTime == null) {
-        userModel.updatedAt = now;
-        userModel.lastLoginTime = now;
-        userModel.weeklyLoginTime = now;
+      final cellsModel = await getCellsByModel(user.uid);
+      if (cellsModel.recentMessageTime == null ||
+          cellsModel.weeklyLoginTime == null) {
+        cellsModel.updatedAt = now;
+        cellsModel.recentMessageTime = now;
+        cellsModel.weeklyLoginTime = now;
 
-        _userDoc.doc(user.uid).update({
+        _cellsDoc.doc(user.uid).update({
           "weeks": FieldValue.increment(1),
           "streak": FieldValue.increment(1),
           "weeklyLoginTime": DateTime.now().toIso8601String(),
-          "lastLoginTime": DateTime.now().toIso8601String(),
+          "recentMessageTime": DateTime.now().toIso8601String(),
         });
-        final newUser = await getUserByModel(user.uid);
-        liveUser(newUser);
+        final newUser = await getCellsByModel(user.uid);
+        availableCell(newUser);
       } else {
-        if (userModel.lastLoginTime!.difference(now).inDays >= 1 &&
-            userModel.weeklyLoginTime!.difference(now).inDays >= 1) {
-          _userDoc.doc(user.uid).update({
+        if (cellsModel.recentMessageTime!.difference(now).inDays >= 1 &&
+            cellsModel.weeklyLoginTime!.difference(now).inDays >= 1) {
+          _cellsDoc.doc(user.uid).update({
             "weeks": FieldValue.increment(1),
             "streak": FieldValue.increment(1),
             "weeklyLoginTime": DateTime.now().toIso8601String(),
-            "lastLoginTime": DateTime.now().toIso8601String(),
+            "recentMessageTime": DateTime.now().toIso8601String(),
           });
-          final newUser = await getUserByModel(user.uid);
-          liveUser(newUser);
+          final newUser = await getCellsByModel(user.uid);
+          availableCell(newUser);
           if (kDebugMode) {
-            print("user value gotten user ${liveUser.value.toJson()}");
+            print("user value gotten user ${availableCell.value.toJson()}");
           }
         }
       }
@@ -113,21 +112,21 @@ class CellControllers extends GetxController {
   }
 
   //Update Profile
-  Future userChanges(String username, String fullName, String gender,
+  Future cellsChanges(String username, String fullName, String gender,
       String address, String postalCode, String profilePic) async {
     try {
       if (kDebugMode) {
-        print("user detail update profile ${liveUser.value.toJson()}");
+        print("user detail update profile ${availableCell.value.toJson()}");
       }
-      if (liveUser.value.uid != null) {
+      if (availableCell.value.groupId != null) {
         if (kDebugMode) {
           print('I reach here');
         }
 
         if (kDebugMode) {
-          print('USER ID is: ${users.uid}');
+          print('USER ID is: ${allCell.groupId}');
         }
-        _userDoc.doc(users.uid).update({
+        _cellsDoc.doc(allCell.groupId).update({
           'username': username,
           'fullName': fullName,
           'gender': gender,
@@ -135,8 +134,8 @@ class CellControllers extends GetxController {
           'postalCode': postalCode,
           'profilePic': profilePic,
         });
-        final newUser = await getUserByModel(users.uid!);
-        liveUser(newUser);
+        final newUser = await getCellsByModel(allCell.groupId!);
+        availableCell(newUser);
       }
     } on FirebaseAuthException catch (e) {
       return e.message;
@@ -155,11 +154,11 @@ class CellControllers extends GetxController {
     }
   }
 
-  // Get Users Data by Id
-  Future<UserModel> getUserByModel(String id) async {
-    final result = await _userDoc.doc(id).get();
-    final user = UserModel.fromJson(result.data()!);
+  // Get Cells Data by Id
+  Future<CellModel> getCellsByModel(String id) async {
+    final result = await _cellsDoc.doc(id).get();
+    final cells = CellModel.fromJson(result.data()!);
 
-    return user;
+    return cells;
   }
 }

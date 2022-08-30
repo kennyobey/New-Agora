@@ -13,6 +13,7 @@ class CellModel {
     this.groupId,
     this.email,
     this.fullName,
+    this.description,
     this.recentMessageSender,
     this.groupName,
     this.members,
@@ -31,10 +32,11 @@ class CellModel {
 
   final String? groupId;
   final String? groupName;
+  final String? description;
   final String? email;
   final String? fullName;
   final String? recentMessageSender;
-  final String? members;
+  final List<dynamic>? members;
   final String? recentMessage;
   final String? profilePic;
   final int? streak;
@@ -51,13 +53,16 @@ class CellModel {
         groupId: json["groupId"],
         email: json["email"],
         fullName: json["fullName"],
+        description: json["description"],
         recentMessageSender: json["recentMessageSender"],
         groupName: json["groupName"],
-        members: json["members"],
+        members: json["members"] == null
+            ? null
+            : List<dynamic>.from(json["members"].map((x) => x)),
         recentMessage: json["recentMessage"],
         profilePic: json["profilePic"],
         streak: json["streak"],
-        likes: json["likes"],
+        likes: json["streak"],
         replies: json["replies"],
         weeks: json["weeks"],
         admin: json["admin"],
@@ -77,9 +82,11 @@ class CellModel {
         "groupId": groupId,
         "email": email,
         "fullName": fullName,
+        "description": description,
         "recentMessageSender": recentMessageSender,
         "groupName": groupName,
-        "members": members,
+        "members":
+            members == null ? null : List<dynamic>.from(members!.map((x) => x)),
         "recentMessage": recentMessage,
         "profilePic": profilePic,
         "streak": streak,
