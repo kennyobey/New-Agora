@@ -1,4 +1,3 @@
-import 'package:agora_care/app/model/cells_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
@@ -17,12 +16,12 @@ class CellsScreen extends StatefulWidget {
   State<CellsScreen> createState() => _CellsScreenState();
 }
 
+final _cellContoller = Get.find<CellControllers>();
+
 class _CellsScreenState extends State<CellsScreen> {
-  // final _authContoller = Get.find<AuthControllers>();
-  final _cellController = Get.find<CellControllers>();
   String userName = "";
   String email = "";
-
+  // final _authContoller = Get.find<AuthControllers>();
   Stream? groups;
   final bool _isLoading = false;
   String groupName = "";
@@ -51,9 +50,8 @@ class _CellsScreenState extends State<CellsScreen> {
 
   @override
   void initState() {
-    _cellController.getCells();
-    gettingUserData();
     super.initState();
+    gettingUserData();
   }
 
   // string manipulation
@@ -124,43 +122,38 @@ class _CellsScreenState extends State<CellsScreen> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.1,
               child: StreamBuilder(
-                  stream: _cellController.getCells(),
+                  stream: groups,
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
-                      final cells = snapshot.data!;
-                      // if (snapshot.data['groups'] != null) {
-                      //   if (snapshot.data['groups'].length != 0) {
-                      //     return ListView.builder(
-                      //       padding: EdgeInsets.zero,
-                      //       scrollDirection: Axis.horizontal,
-                      //       // itemCount: colorList.length,
-                      //       itemCount: snapshot.data['groups'].length,
-                      //       itemBuilder: (BuildContext context, int index) {
-                      //         int reverseIndex =
-                      //             snapshot.data['groups'].length - index - 1;
+                      if (snapshot.data['groups'] != null) {
+                        if (snapshot.data['groups'].length != 0) {
+                          return ListView.builder(
+                            padding: EdgeInsets.zero,
+                            scrollDirection: Axis.horizontal,
+                            // itemCount: colorList.length,
+                            itemCount: snapshot.data['groups'].length,
+                            itemBuilder: (BuildContext context, int index) {
+                              int reverseIndex =
+                                  snapshot.data['groups'].length - index - 1;
 
-                      //         return recommendedCells(
-                      //           groupId: getId(
-                      //               snapshot.data['groups'][reverseIndex]),
-                      //           colors: colorList[index],
-                      //           title: getName(
-                      //               snapshot.data['groups'][reverseIndex]),
-                      //           assetName: 'assets/svgs/bank.svg',
-                      //         );
-                      //       },
-                      // );
-
-                      return ListView(
-                        children: cells.map(recommendedCells).toList(),
-                      );
-                      //   } else {
-                      //     return customDescriptionText(
-                      //         'No Available Group to join');
-                      //   }
-                      // } else {
-                      //   return customDescriptionText(
-                      //       'No Available Group to join');
-                      // }
+                              return recommendedCells(
+                                groupId: getId(
+                                    snapshot.data['groups'][reverseIndex]),
+                                colors: colorList[index],
+                                title: getName(
+                                    snapshot.data['groups'][reverseIndex]),
+                                assetName: 'assets/svgs/bank.svg',
+                              );
+                            },
+                          );
+                        } else {
+                          return customDescriptionText(
+                              'No Available Group to join');
+                        }
+                      } else {
+                        return customDescriptionText(
+                            'No Available Group to join');
+                      }
                     } else {
                       return Center(
                         child: CircularProgressIndicator(
@@ -237,43 +230,42 @@ class _CellsScreenState extends State<CellsScreen> {
     );
   }
 
-  Widget recommendedCells(
-    CellModel? cellModel,
-    // {
-    // Color? colors,
-    //   String? groupId,
-    //   String? title,
-    // String? assetName,
-    // }
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10, bottom: 10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-        width: MediaQuery.of(context).size.width * 0.35,
-        height: MediaQuery.of(context).size.height * 0.2,
-        decoration: BoxDecoration(
-          // color: colors,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              // assetName!,
-              'assets/svgs/bank.svg',
-              height: 30,
-              color: AppColor().whiteColor,
-            ),
-            const Gap(10),
-            customTitleText(
-              cellModel!.groupName!,
-              textAlign: TextAlign.left,
-              colors: AppColor().whiteColor,
-              size: 16,
-            ),
-          ],
+  GestureDetector recommendedCells({
+    Color? colors,
+    String? groupId,
+    String? title,
+    String? assetName,
+  }) {
+    return GestureDetector(
+      onTap: () {},
+      child: Padding(
+        padding: const EdgeInsets.only(right: 10, bottom: 10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+          width: MediaQuery.of(context).size.width * 0.35,
+          height: MediaQuery.of(context).size.height * 0.2,
+          decoration: BoxDecoration(
+            color: colors,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                assetName!,
+                height: 30,
+                color: AppColor().whiteColor,
+              ),
+              const Gap(10),
+              customTitleText(
+                title!,
+                textAlign: TextAlign.left,
+                colors: AppColor().whiteColor,
+                size: 16,
+              ),
+            ],
+          ),
         ),
       ),
     );
