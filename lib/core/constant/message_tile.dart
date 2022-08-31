@@ -55,14 +55,6 @@ class _MessageTileState extends State<MessageTile> {
                 Colors.white),
         child: Row(
           children: [
-            Text(
-              widget.sender,
-              textAlign: TextAlign.start,
-              style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: -0.5),
             SvgPicture.asset(
               'assets/svgs/bankofspain.svg',
               height: 50,
