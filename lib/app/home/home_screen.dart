@@ -5,6 +5,7 @@ import 'package:agora_care/app/home/quote_details.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -38,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     if (kDebugMode) {
       print("testing user is ${_authContoller.liveUser.value.toJson()}");
+      print("testing user admin is ${_authContoller.liveUser.value.admin}");
     }
     return Scaffold(
       appBar: AppBar(

@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:agora_care/app/home/admin_home_screen.dart';
 import 'package:agora_care/app/onboarding/quote.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
@@ -234,9 +235,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Settings',
-                // onTap: () {
-                //   Get.to(() => const AccountStatement());
-                // },
+                onTap: () {
+                  Get.to(() => const AdminHomeScreen());
+                },
               ),
               const Gap(15),
               CustomContainer(
