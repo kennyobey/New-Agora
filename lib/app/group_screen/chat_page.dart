@@ -90,7 +90,7 @@ class _ChatPageState extends State<ChatPage> {
                     width: MediaQuery.of(context).size.width,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 18),
+                          horizontal: 15, vertical: 18),
                       width: MediaQuery.of(context).size.width,
                       color: Colors.grey[700],
                       child: Row(children: [
