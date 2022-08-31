@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/constant/message_tile.dart';
 import '../../core/widget.dart';
@@ -48,6 +49,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -67,52 +69,66 @@ class _ChatPageState extends State<ChatPage> {
               icon: const Icon(Icons.info))
         ],
       ),
-      body: Stack(
-        children: <Widget>[
-          // chat messages here
-          chatMessages(),
-          Container(
-            alignment: Alignment.bottomCenter,
+      body: Column(
+        children: [
+          SvgPicture.asset(
+            'assets/svgs/chat_frame.svg',
+            height: MediaQuery.of(context).size.height * 0.2,
             width: MediaQuery.of(context).size.width,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              width: MediaQuery.of(context).size.width,
-              color: Colors.grey[700],
-              child: Row(children: [
-                Expanded(
-                    child: TextFormField(
-                  controller: messageController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    hintText: "Send a message...",
-                    hintStyle: TextStyle(color: Colors.white, fontSize: 16),
-                    border: InputBorder.none,
-                  ),
-                )),
-                const SizedBox(
-                  width: 12,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    sendMessage();
-                  },
+          ),
+          Expanded(
+            child: Stack(
+              children: <Widget>[
+                // chat messages here
+                chatMessages(),
+
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  width: MediaQuery.of(context).size.width,
                   child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                        child: Icon(
-                      Icons.send,
-                      color: Colors.white,
-                    )),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 18),
+                    width: MediaQuery.of(context).size.width,
+                    color: Colors.grey[700],
+                    child: Row(children: [
+                      Expanded(
+                          child: TextFormField(
+                        controller: messageController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          hintText: "Send a message...",
+                          hintStyle:
+                              TextStyle(color: Colors.white, fontSize: 16),
+                          border: InputBorder.none,
+                        ),
+                      )),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          sendMessage();
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: const Center(
+                              child: Icon(
+                            Icons.send,
+                            color: Colors.white,
+                          )),
+                        ),
+                      )
+                    ]),
                   ),
                 )
-              ]),
+              ],
             ),
-          )
+          ),
         ],
       ),
     );
