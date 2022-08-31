@@ -51,7 +51,7 @@ class _MessageTileState extends State<MessageTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.sender.toUpperCase(),
+              widget.sender,
               textAlign: TextAlign.start,
               style: const TextStyle(
                   fontSize: 13,

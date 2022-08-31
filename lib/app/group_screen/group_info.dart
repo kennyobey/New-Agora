@@ -1,5 +1,9 @@
+import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../core/widget.dart';
 import '../../services/database_service.dart';
@@ -21,6 +25,7 @@ class GroupInfo extends StatefulWidget {
 }
 
 class _GroupInfoState extends State<GroupInfo> {
+  final _authContoller = Get.find<AuthControllers>();
   Stream? members;
   @override
   void initState() {
@@ -52,8 +57,11 @@ class _GroupInfoState extends State<GroupInfo> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text("Group Info"),
+        backgroundColor: AppColor().whiteColor,
+        title: customTitleText(
+          "Group Info",
+          colors: AppColor().primaryColor,
+        ),
         actions: [
           IconButton(
               onPressed: () {
@@ -62,9 +70,9 @@ class _GroupInfoState extends State<GroupInfo> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text("Exit"),
-                        content:
-                            const Text("Are you sure you exit the group? "),
+                        title: customDescriptionText("Exit"),
+                        content: customDescriptionText(
+                            "Are you sure you exit the group? "),
                         actions: [
                           IconButton(
                             onPressed: () {
@@ -75,6 +83,7 @@ class _GroupInfoState extends State<GroupInfo> {
                               color: Colors.red,
                             ),
                           ),
+                          //Leave Chat
                           IconButton(
                             onPressed: () async {
                               DatabaseService(
@@ -134,7 +143,11 @@ class _GroupInfoState extends State<GroupInfo> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Text("Admin: ${getName(widget.adminName)}")
+                      customDescriptionText(
+                        _authContoller.liveUser.value.admin == true
+                            ? "Admin: ${getName(widget.adminName)}"
+                            : "Admin: ${_authContoller.liveUser.value.fullName!}",
+                      ),
                     ],
                   )
                 ],
@@ -154,32 +167,34 @@ class _GroupInfoState extends State<GroupInfo> {
         if (snapshot.hasData) {
           if (snapshot.data['members'] != null) {
             if (snapshot.data['members'].length != 0) {
-              return ListView.builder(
-                itemCount: snapshot.data['members'].length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: Text(
-                          getName(snapshot.data['members'][index])
-                              .substring(0, 1)
-                              .toUpperCase(),
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
+              return Expanded(
+                child: ListView.builder(
+                  itemCount: snapshot.data['members'].length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 10),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Theme.of(context).primaryColor,
+                          child: Text(
+                            getName(snapshot.data['members'][index])
+                                .substring(0, 1)
+                                .toUpperCase(),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
+                        title: Text(getName(snapshot.data['members'][index])),
+                        subtitle: Text(getId(snapshot.data['members'][index])),
                       ),
-                      title: Text(getName(snapshot.data['members'][index])),
-                      subtitle: Text(getId(snapshot.data['members'][index])),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             } else {
               return const Center(

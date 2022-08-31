@@ -1,6 +1,9 @@
 import 'package:agora_care/core/custom_form_field.dart';
+import 'package:agora_care/services/auth_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 import '../../core/constant/colors.dart';
 import '../../core/customWidgets.dart';
@@ -13,11 +16,8 @@ class PostQoute extends StatefulWidget {
 }
 
 class _PostQouteState extends State<PostQoute> {
+  final _authContoller = Get.find<AuthControllers>();
   final _quoteController = TextEditingController();
-
-  Future creatQuote({required String dailyQuote}) async {
-    return;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +54,12 @@ class _PostQouteState extends State<PostQoute> {
               buttonText: 'Post quote',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
-              onTap: () {
+              onTap: () async {
+                if (kDebugMode) {
+                  print('uploading quote');
+                }
                 final dailyQuote = _quoteController.text;
+                await _authContoller.creatQuote(dailyQuote: dailyQuote);
               },
             ),
             const Gap(40)

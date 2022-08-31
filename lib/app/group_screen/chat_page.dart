@@ -1,8 +1,10 @@
+import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/core/customWidgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../core/constant/message_tile.dart';
-import '../../core/widget.dart';
 import '../../services/database_service.dart';
 import 'group_info.dart';
 
@@ -51,20 +53,26 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        title: Text(widget.groupName),
-        backgroundColor: Theme.of(context).primaryColor,
+        title: customTitleText(
+          widget.groupName,
+          colors: AppColor().primaryColor,
+        ),
+        backgroundColor: AppColor().whiteColor,
         actions: [
           IconButton(
               onPressed: () {
-                nextScreen(
-                    context,
-                    GroupInfo(
-                      groupId: widget.groupId,
-                      groupName: widget.groupName,
-                      adminName: admin,
-                    ));
+                Get.to(
+                  () => GroupInfo(
+                    groupId: widget.groupId,
+                    groupName: widget.groupName,
+                    adminName: admin,
+                  ),
+                );
               },
-              icon: const Icon(Icons.info))
+              icon: Icon(
+                Icons.info,
+                color: AppColor().primaryColor,
+              ))
         ],
       ),
       body: Stack(
@@ -80,21 +88,28 @@ class _ChatPageState extends State<ChatPage> {
               color: Colors.grey[700],
               child: Row(children: [
                 Expanded(
-                    child: TextFormField(
-                  controller: messageController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    hintText: "Send a message...",
-                    hintStyle: TextStyle(color: Colors.white, fontSize: 16),
-                    border: InputBorder.none,
+                  child: TextFormField(
+                    cursorColor: AppColor().primaryColor,
+                    controller: messageController,
+                    style: const TextStyle(color: Colors.white),
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(
+                      hintText: "Send a message...",
+                      hintStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      border: InputBorder.none,
+                    ),
                   ),
-                )),
+                ),
                 const SizedBox(
                   width: 12,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    sendMessage();
+                  onTap: () async {
+                    await sendMessage();
                   },
                   child: Container(
                     height: 50,

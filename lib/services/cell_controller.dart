@@ -15,8 +15,8 @@ class CellControllers extends GetxController {
   final _authController = Get.find<AuthControllers>();
   final bool isLoading = false;
 
-  // DateTime? lastUpdated;
-  // HelperFunction? sharePref;
+  final CollectionReference groupCollection =
+      FirebaseFirestore.instance.collection("groups");
 
   // Rx<String> streak = Rx("");
   // String get getStreak => streak.value;

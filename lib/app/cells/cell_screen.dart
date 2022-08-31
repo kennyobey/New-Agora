@@ -1,9 +1,12 @@
+import 'package:agora_care/app/group_screen/chat_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -16,12 +19,11 @@ class CellsScreen extends StatefulWidget {
   State<CellsScreen> createState() => _CellsScreenState();
 }
 
-final _cellContoller = Get.find<CellControllers>();
-
 class _CellsScreenState extends State<CellsScreen> {
+  final _cellContoller = Get.find<CellControllers>();
+  final _authContoller = Get.find<AuthControllers>();
   String userName = "";
   String email = "";
-  // final _authContoller = Get.find<AuthControllers>();
   Stream? groups;
   final bool _isLoading = false;
   String groupName = "";
@@ -140,9 +142,11 @@ class _CellsScreenState extends State<CellsScreen> {
                                 groupId: getId(
                                     snapshot.data['groups'][reverseIndex]),
                                 colors: colorList[index],
-                                title: getName(
+                                groupName: getName(
                                     snapshot.data['groups'][reverseIndex]),
                                 assetName: 'assets/svgs/bank.svg',
+                                userName:
+                                    _authContoller.liveUser.value.username!,
                               );
                             },
                           );
@@ -198,14 +202,13 @@ class _CellsScreenState extends State<CellsScreen> {
                               int reverseIndex =
                                   snapshot.data['groups'].length - index - 1;
                               return otherCells(
-                                colors: colorList[index],
-                                groupId: getId(
-                                    snapshot.data['groups'][reverseIndex]),
-                                title: getName(
-                                    snapshot.data['groups'][reverseIndex]),
-                                assetName: 'assets/svgs/bank.svg',
-                                assetName2: 'assets/svgs/people.svg',
-                              );
+                                  colors: colorList[index],
+                                  groupId: getId(
+                                      snapshot.data['groups'][reverseIndex]),
+                                  title: getName(
+                                      snapshot.data['groups'][reverseIndex]),
+                                  assetName: 'assets/svgs/bank.svg',
+                                  assetName2: 'assets/svgs/people.svg');
                             },
                           );
                         } else {
@@ -233,11 +236,23 @@ class _CellsScreenState extends State<CellsScreen> {
   GestureDetector recommendedCells({
     Color? colors,
     String? groupId,
-    String? title,
+    String? groupName,
     String? assetName,
+    String? userName,
   }) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        if (kDebugMode) {
+          print('Joining Group');
+        }
+        Get.to(
+          () => ChatPage(
+            groupId: groupId!,
+            groupName: groupName!,
+            userName: userName!,
+          ),
+        );
+      },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),
         child: Container(
@@ -259,7 +274,7 @@ class _CellsScreenState extends State<CellsScreen> {
               ),
               const Gap(10),
               customTitleText(
-                title!,
+                groupName!,
                 textAlign: TextAlign.left,
                 colors: AppColor().whiteColor,
                 size: 16,

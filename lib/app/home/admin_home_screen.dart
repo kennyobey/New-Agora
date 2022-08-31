@@ -22,9 +22,9 @@ class AdminHomeScreen extends StatefulWidget {
 
 class _AdminHomeScreenState extends State<AdminHomeScreen>
     with TickerProviderStateMixin {
+  final _authContoller = Get.find<AuthControllers>();
   ScrollController? _scrollController;
   TabController? _tabController;
-  final _authContoller = Get.find<AuthControllers>();
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
     AppColor().blueColor,
@@ -157,12 +157,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     'assets/svgs/calender.svg',
                   ),
                   const Gap(5),
-                  customDescriptionText(
-                    '20',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().textColor,
-                  ),
+                  Obx(() {
+                    return customDescriptionText(
+                      // '20',
+                      _authContoller.liveUser.value.weeks == null
+                          ? '0'
+                          : _authContoller.liveUser.value.weeks.toString(),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      colors: AppColor().textColor,
+                    );
+                  }),
                   const Gap(5),
                   customDescriptionText(
                     'Weeks',
@@ -198,25 +203,35 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     top: 60,
                     left: 70,
                     right: 70,
-                    child: InkWell(
-                      onTap: (() {
-                        if (kDebugMode) {
-                          print("post quote button");
-                        }
-                        Get.to(
-                          () => const PostQoute(),
-                          transition: Transition.downToUp,
-                        );
-                      }),
-                      child: Column(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/svgs/fluent_tap-single-48-filled.svg',
-                            // height: MediaQuery.of(context).size.height * 0.2,
-                            // width: MediaQuery.of(context).size.width,
-                          ),
-                        ],
-                      ),
+                    child: Column(
+                      children: [
+                        FutureBuilder(
+                            future: _authContoller.getQuote(),
+                            builder: (context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data != null) {
+                                  return customDescriptionText(
+                                    snapshot.data['dailyQuotes'].toString(),
+                                    // snapshot.hasData.toString(),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    textAlign: TextAlign.center,
+                                    colors: AppColor().whiteColor,
+                                  );
+                                } else {
+                                  return SvgPicture.asset(
+                                    'assets/svgs/fluent_tap-single-48-filled.svg',
+                                  );
+                                }
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColor().primaryColor,
+                                  ),
+                                );
+                              }
+                            }),
+                      ],
                     ),
                   ),
                 ],

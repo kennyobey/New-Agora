@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../app/group_screen/chat_page.dart';
-import '../widget.dart';
 
 class GroupTile extends StatefulWidget {
   final String userName;
@@ -27,13 +27,13 @@ class _GroupTileState extends State<GroupTile> {
         if (kDebugMode) {
           print('Joining Group');
         }
-        nextScreen(
-            context,
-            ChatPage(
-              groupId: widget.groupId,
-              groupName: widget.groupName,
-              userName: widget.userName,
-            ));
+        Get.to(
+          () => ChatPage(
+            groupId: widget.groupId,
+            groupName: widget.groupName,
+            userName: widget.userName,
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),

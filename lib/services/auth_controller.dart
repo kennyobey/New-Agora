@@ -14,18 +14,16 @@ import 'database_service.dart';
 class AuthControllers extends GetxController {
   final bool isLoading = false;
 
-  // DateTime? lastUpdated;
-  // HelperFunction? sharePref;
-
-  // Rx<String> streak = Rx("");
-  // String get getStreak => streak.value;
-  // FirebaseDatabase refDatabase = FirebaseDatabase.instance;
+  final CollectionReference quotesCollection =
+      FirebaseFirestore.instance.collection("quotes");
 
   Rx<UserModel> liveUser = UserModel().obs;
   UserModel get users => liveUser.value;
 
   FirebaseAuth auth = FirebaseAuth.instance;
   final _userDoc = FirebaseFirestore.instance.collection("users");
+
+  final _newQuote = FirebaseFirestore.instance.collection("quotes");
 
   @override
   void onInit() async {
@@ -44,6 +42,16 @@ class AuthControllers extends GetxController {
           "lastLoginTime": DateTime.now().toIso8601String(),
           "weeklyLoginTime": DateTime.now().toIso8601String(),
         });
+        // _userDocQuote
+        //     .collection('dailyQuote')
+        //     .doc(FirebaseAuth.instance.currentUser!.uid)
+        //     .update({
+        //   "weeks": FieldValue.increment(1),
+        //   "streak": FieldValue.increment(1),
+        //   "lastLoginTime": DateTime.now().toIso8601String(),
+        //   "weeklyLoginTime": DateTime.now().toIso8601String(),
+        // });
+
         final newUser =
             await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
         liveUser(newUser);
@@ -54,23 +62,7 @@ class AuthControllers extends GetxController {
     }
   }
 
-  // _initialScreen(User? user) async {
-  //   if (user == null) {
-  //     if (kDebugMode) {
-  //       print('login page');
-  //     }
-  //     Get.offAll(() => const LoginPage());
-  //   } else {
-  //     final userModel = await getUserByModel(user.uid);
-  //     sharePref?.getUser(userModel.uid!);
-  //     Get.offAll(() => const UserNavScreen(
-  //         // email: user.email ?? "User email",
-  //         // name: user.displayName ?? "User name",
-  //         ));
-  //   }
-  // }
-
-  //register
+  //Register
   Future registerUserWithEmailandPassword(String email, String password) async {
     try {
       User user = (await auth.createUserWithEmailAndPassword(
@@ -87,7 +79,7 @@ class AuthControllers extends GetxController {
     }
   }
 
-  // login
+  // Login
   Future loginWithUserNameandPassword(String email, String password) async {
     try {
       User user = (await auth.signInWithEmailAndPassword(
@@ -136,6 +128,26 @@ class AuthControllers extends GetxController {
     }
   }
 
+  //Fetch  Stream dailyQuote
+  Stream getDailyQuote() {
+    // final quotes = FirebaseFirestore.instance
+    //     .collection('quotes')
+    //     .snapshots()
+    //     .map((snapshot) => snapshot.docs.map((doc) => doc.data()));
+    final quotes = quotesCollection.doc('dailyQuotes').snapshots();
+
+    return quotes;
+  }
+
+  //Fetch Once dailyQuote
+  Future getQuote() async {
+    final result = await quotesCollection.doc("dailyQuotes").get();
+    if (kDebugMode) {
+      print("Result of quote is: ${result.data()}");
+    }
+    return result.data();
+  }
+
   //Update Profile
   Future userChanges(String username, String fullName, String gender,
       String address, String postalCode, String profilePic) async {
@@ -143,6 +155,8 @@ class AuthControllers extends GetxController {
       if (kDebugMode) {
         print("user detail update profile ${liveUser.value.toJson()}");
       }
+      final userDocQuote =
+          FirebaseFirestore.instance.collection("quotes").doc("dailyQuotes");
       if (liveUser.value.uid != null) {
         if (kDebugMode) {
           print('I reach here');
@@ -151,6 +165,7 @@ class AuthControllers extends GetxController {
         if (kDebugMode) {
           print('USER ID is: ${users.uid}');
         }
+        userDocQuote.get().toString();
         _userDoc.doc(users.uid).update({
           'username': username,
           'fullName': fullName,
@@ -158,13 +173,35 @@ class AuthControllers extends GetxController {
           'address': address,
           'postalCode': postalCode,
           'profilePic': profilePic,
+          'dailyQuote': userDocQuote,
         });
+
         final newUser = await getUserByModel(users.uid!);
         liveUser(newUser);
       }
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
+  }
+
+  // Create Quotes
+  Future creatQuote({required String dailyQuote}) async {
+    final docUser =
+        FirebaseFirestore.instance.collection("quotes").doc('dailyQuotes');
+
+    // Saving to model
+    // final user = UserModel(
+    //   dailyQuote: dailyQuote,
+    // );
+    // final json = user.toJson();
+
+    // Direct Saving
+    final json = {
+      "dailyQuotes": dailyQuote,
+    };
+
+    // Create reference and write data to Firebase
+    await docUser.set(json);
   }
 
   // Sign Out
@@ -182,6 +219,13 @@ class AuthControllers extends GetxController {
   // Get Users Data by Id
   Future<UserModel> getUserByModel(String id) async {
     final result = await _userDoc.doc(id).get();
+    final user = UserModel.fromJson(result.data()!);
+
+    return user;
+  }
+
+  Future<UserModel> getQuoteByModel(String id) async {
+    final result = await _newQuote.doc().get();
     final user = UserModel.fromJson(result.data()!);
 
     return user;

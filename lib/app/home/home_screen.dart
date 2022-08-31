@@ -151,13 +151,39 @@ class _HomeScreenState extends State<HomeScreen> {
                     right: 70,
                     child: Column(
                       children: [
-                        customDescriptionText(
-                          '“Be yourself everyone else is already taken.”',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          textAlign: TextAlign.center,
-                          colors: AppColor().whiteColor,
-                        ),
+                        StreamBuilder(
+                            stream: _authContoller.getDailyQuote(),
+                            builder: (context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data != null) {
+                                  return customDescriptionText(
+                                    snapshot.data['dailyQuotes'].toString(),
+                                    // snapshot.hasData.toString(),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    textAlign: TextAlign.center,
+                                    colors: AppColor().whiteColor,
+                                  );
+                                } else if (snapshot.data == null) {
+                                  return SvgPicture.asset(
+                                    'assets/svgs/fluent_tap-single-48-filled.svg',
+                                  );
+                                } else {
+                                  return customDescriptionText(
+                                    'No Quote Today',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    textAlign: TextAlign.center,
+                                    colors: AppColor().whiteColor,
+                                  );
+                                }
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                      color: AppColor().primaryColor),
+                                );
+                              }
+                            }),
                       ],
                     ),
                   ),
