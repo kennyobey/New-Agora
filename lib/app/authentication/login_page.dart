@@ -1,9 +1,12 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable, override_on_non_overriding_member, unused_field
 
 import 'package:agora_care/app/authentication/email_page.dart';
+import 'package:agora_care/app/home/admin_home_screen.dart';
+import 'package:agora_care/app/home/home_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -173,4 +176,17 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
+
+  //   checkRole(DocumentSnapshot snapshot) {
+  //   if (snapshot.data == null) {
+  //     return const Center(
+  //       child: Text('no data set in the userId document in firestore'),
+  //     );
+  //   }
+  //   if (snapshot.data['role'] == 'admin') {
+  //     return  const AdminHomeScreen();
+  //   } else {
+  //     return const HomeScreen();
+  //   }
+  // }
 }

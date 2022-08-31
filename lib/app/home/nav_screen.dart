@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
+import 'admin_home_screen.dart';
 import 'home_screen.dart';
 
 class UserNavScreen extends StatefulWidget {
@@ -30,9 +31,9 @@ class _UserNavScreenState extends State<UserNavScreen> {
   void initState() {
     _screens = [
       //Home Screen
-      _authController.liveUser.value.role != 'admin'
+      _authController.liveUser.value.admin != true
           ? const HomeScreen()
-          : const HomeScreen(),
+          : const AdminHomeScreen(),
 
       // Cells Screens
       const CellsScreen(),
