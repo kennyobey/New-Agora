@@ -18,6 +18,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
+import '../group_screen/chat_page.dart';
+
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({Key? key}) : super(key: key);
 
@@ -389,87 +391,139 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                               index -
                                               1;
 
-                                      return Container(
-                                        margin: const EdgeInsets.only(
-                                            left: 0,
-                                            right: 0,
-                                            top: 10,
-                                            bottom: 10),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Row(
-                                            children: [
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  Cells(
-                                                    members: "3000 members",
-                                                    time:
-                                                        "Last activity: 7th May 2022",
-                                                    groupId: getId(
-                                                        snapshot.data['groups']
-                                                            [reverseIndex]),
-                                                    groupName: getName(
-                                                        snapshot.data['groups']
-                                                            [reverseIndex]),
-                                                    assetName:
-                                                        'assets/svgs/bank.svg',
-                                                    userName: _authContoller
-                                                        .liveUser
-                                                        .value
-                                                        .username!,
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
+                                    return Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 0,
+                                          right: 0,
+                                          top: 10,
+                                          bottom: 10),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Cells(
+                                                  members: "3000 members",
+                                                  time:
+                                                      "Last activity: 7th May 2022",
+                                                  groupId: getId(
+                                                      snapshot.data['groups']
+                                                          [reverseIndex]),
+                                                  groupName: getName(
+                                                      snapshot.data['groups']
+                                                          [reverseIndex]),
+                                                  assetName:
+                                                      'assets/svgs/bank.svg',
+                                                  userName: _authContoller
+                                                      .liveUser.value.username!,
+                                                ),
+                                              ],
+                                            )
+                                          ],
                                         ),
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  return customDescriptionText(
-                                      'No Available Group to join');
-                                }
+                                      ),
+                                    );
+                                  },
+                                );
                               } else {
                                 return customDescriptionText(
                                     'No Available Group to join');
                               }
                             } else {
-                              return Center(
-                                child: CircularProgressIndicator(
-                                    color: Theme.of(context).primaryColor),
-                              );
+                              return customDescriptionText(
+                                  'No Available Group to join');
                             }
-                          },
-                        ),
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                  color: Theme.of(context).primaryColor),
+                            );
+                          }
+                        },
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        child: StreamBuilder<List<UserList>>(
-                            stream: _authContoller.readtUserList(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                return customDescriptionText('Error');
-                              } else if (snapshot.hasData) {
-                                final myuser = snapshot.data!;
-                                return ListView(
-                                  children: myuser.map(buildUser).toList(),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      child: StreamBuilder(
+                        stream: _authContoller.readtUserList(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data != null) {
+                              if (snapshot.data.length != 0) {
+                                return ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 0,
+                                          right: 0,
+                                          top: 10,
+                                          bottom: 10),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Members(
+                                                  title: getName(snapshot
+                                                              .data['username']
+                                                          [index])
+                                                      .substring(0, 1)
+                                                      .toUpperCase(),
+                                                  active: "Active 19hrs ago",
+                                                  streak: _authContoller
+                                                              .liveUser
+                                                              .value
+                                                              .streak ==
+                                                          null
+                                                      ? '0'
+                                                      : _authContoller
+                                                          .liveUser.value.streak
+                                                          .toString(),
+                                                  weeks: "4 weeks",
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               } else {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                      color: Theme.of(context).primaryColor),
-                                );
+                                return customDescriptionText(
+                                    'No Available Group to join');
                               }
-                            }),
+                            } else {
+                              return customDescriptionText(
+                                  'No Available Group to join');
+                            }
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                  color: Theme.of(context).primaryColor),
+                            );
+                          }
+                        },
                       ),
                       Obx(() {
                         return SizedBox(

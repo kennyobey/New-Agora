@@ -14,6 +14,7 @@ class AppColor {
   Color blackColor = const Color(0xff000000);
   Color textColor = const Color(0xff4E4B66);
   Color fillColor = const Color(0xFFF3F3F3);
+  Color chatBox = const Color(0xFFDEDEDE);
 
   Color boxColor = const Color(0xFFF3F3F3);
   Color pinkColor = const Color(0xffF07979);
