@@ -1,5 +1,7 @@
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 
 class DatabaseService {
   final String? uid;
@@ -12,6 +14,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("cells");
   final CollectionReference groupCollection =
       FirebaseFirestore.instance.collection("groups");
+
+  final _authController = Get.find<AuthControllers>();
 
   // saving the userdata
   Future savingUserData(String email) async {
@@ -41,7 +45,8 @@ class DatabaseService {
     DocumentReference groupDocumentReference = await groupCollection.add({
       "groupName": groupName,
       "groupIcon": "",
-      "admin": "${id}_$email",
+      // "admin": "${id}_$email",
+      "admin": _authController.liveUser.value.role,
       "members": [],
       "groupId": "",
       "recentMessage": "",

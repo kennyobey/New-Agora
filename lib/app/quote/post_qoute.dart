@@ -1,5 +1,5 @@
 import 'package:agora_care/core/custom_form_field.dart';
-import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/quote_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -16,8 +16,10 @@ class PostQoute extends StatefulWidget {
 }
 
 class _PostQouteState extends State<PostQoute> {
-  final _authContoller = Get.find<AuthControllers>();
-  final _quoteController = TextEditingController();
+  final _quoteTextController = TextEditingController();
+  final _quoteController = Get.find<QuoteControllers>();
+
+  DateTime createdTime = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class _PostQouteState extends State<PostQoute> {
               keyType: TextInputType.text,
               validatorText: '** Field cannot be empty',
               color: AppColor().lightTextColor,
-              textEditingController: _quoteController,
+              textEditingController: _quoteTextController,
               fillColor: AppColor().fillColor,
             ),
             const Spacer(),
@@ -58,8 +60,11 @@ class _PostQouteState extends State<PostQoute> {
                 if (kDebugMode) {
                   print('uploading quote');
                 }
-                final dailyQuote = _quoteController.text;
-                await _authContoller.creatQuote(dailyQuote: dailyQuote);
+                final dailyQuote = _quoteTextController.text;
+                await _quoteController.creatQuote(
+                  dailyQuote: dailyQuote,
+                  createdAt: createdTime,
+                );
               },
             ),
             const Gap(40)

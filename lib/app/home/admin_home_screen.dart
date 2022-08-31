@@ -1,14 +1,15 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/app/cells/create_cell.dart';
+import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/quote/post_qoute.dart';
 import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/core/constant/members.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
+import 'package:agora_care/services/quote_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -27,6 +28,8 @@ class AdminHomeScreen extends StatefulWidget {
 class _AdminHomeScreenState extends State<AdminHomeScreen>
     with TickerProviderStateMixin {
   final _authContoller = Get.find<AuthControllers>();
+
+  final _quoteContoller = Get.find<QuoteControllers>();
   final _memberDoc = FirebaseFirestore.instance.collection("users");
 
   String userName = "";
@@ -245,13 +248,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     right: 70,
                     child: Column(
                       children: [
-                        FutureBuilder(
-                            future: _authContoller.getQuote(),
+                        StreamBuilder(
+                            stream: _quoteContoller.getDailyQuote(),
                             builder: (context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
                                 if (snapshot.data != null) {
                                   return customDescriptionText(
-                                    snapshot.data['dailyQuotes'].toString(),
+                                    snapshot.data!.docs.last
+                                        .data()!['dailyQuote']
+                                        .toString(),
                                     // snapshot.hasData.toString(),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -321,327 +326,238 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 color: AppColor().lightTextColor.withOpacity(0.3),
               ),
               Expanded(
-                  child: NestedScrollView(
-                controller: _scrollController,
-                headerSliverBuilder: (BuildContext context, bool isScroll) {
-                  return [
-                    SliverAppBar(
-                      stretch: true,
-                      pinned: true,
-                      automaticallyImplyLeading: false,
-                      backgroundColor: Colors.white,
-                      bottom: PreferredSize(
-                        preferredSize: const Size.fromHeight(10),
-                        child: TabBar(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          indicatorSize: TabBarIndicatorSize.label,
-                          controller: _tabController,
-                          isScrollable: true,
-                          tabs: [
-                            customDescriptionText(
-                              "Cells",
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              colors: AppColor().lightTextColor,
-                            ),
-                            customDescriptionText(
-                              "Members",
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              colors: AppColor().lightTextColor,
-                            ),
-                            customDescriptionText(
-                              "Qoutes",
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              colors: AppColor().lightTextColor,
-                            ),
-                          ],
+                child: NestedScrollView(
+                  controller: _scrollController,
+                  headerSliverBuilder: (BuildContext context, bool isScroll) {
+                    return [
+                      SliverAppBar(
+                        stretch: true,
+                        pinned: true,
+                        automaticallyImplyLeading: false,
+                        backgroundColor: Colors.white,
+                        bottom: PreferredSize(
+                          preferredSize: const Size.fromHeight(10),
+                          child: TabBar(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            indicatorSize: TabBarIndicatorSize.label,
+                            controller: _tabController,
+                            isScrollable: true,
+                            tabs: [
+                              customDescriptionText(
+                                "Cells",
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                colors: AppColor().lightTextColor,
+                              ),
+                              customDescriptionText(
+                                "Members",
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                colors: AppColor().lightTextColor,
+                              ),
+                              customDescriptionText(
+                                "Qoutes",
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                colors: AppColor().lightTextColor,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ];
+                  },
+                  body: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: StreamBuilder(
+                          stream: groups,
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data['groups'] != null) {
+                                if (snapshot.data['groups'].length != 0) {
+                                  return ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: snapshot.data['groups'].length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      int reverseIndex =
+                                          snapshot.data['groups'].length -
+                                              index -
+                                              1;
+
+                                      return Container(
+                                        margin: const EdgeInsets.only(
+                                            left: 0,
+                                            right: 0,
+                                            top: 10,
+                                            bottom: 10),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          child: Row(
+                                            children: [
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Cells(
+                                                    members: "3000 members",
+                                                    time:
+                                                        "Last activity: 7th May 2022",
+                                                    groupId: getId(
+                                                        snapshot.data['groups']
+                                                            [reverseIndex]),
+                                                    groupName: getName(
+                                                        snapshot.data['groups']
+                                                            [reverseIndex]),
+                                                    assetName:
+                                                        'assets/svgs/bank.svg',
+                                                    userName: _authContoller
+                                                        .liveUser
+                                                        .value
+                                                        .username!,
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  return customDescriptionText(
+                                      'No Available Group to join');
+                                }
+                              } else {
+                                return customDescriptionText(
+                                    'No Available Group to join');
+                              }
+                            } else {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                    color: Theme.of(context).primaryColor),
+                              );
+                            }
+                          },
                         ),
                       ),
-                    )
-                  ];
-                },
-                body: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      child: StreamBuilder(
-                        stream: groups,
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data['groups'] != null) {
-                              if (snapshot.data['groups'].length != 0) {
-                                return ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: snapshot.data['groups'].length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    int reverseIndex =
-                                        snapshot.data['groups'].length -
-                                            index -
-                                            1;
-
-                                    return Container(
-                                      margin: const EdgeInsets.only(
-                                          left: 0,
-                                          right: 0,
-                                          top: 10,
-                                          bottom: 10),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        child: Row(
-                                          children: [
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Cells(
-                                                  members: "3000 members",
-                                                  time:
-                                                      "Last activity: 7th May 2022",
-                                                  groupId: getId(
-                                                      snapshot.data['groups']
-                                                          [reverseIndex]),
-                                                  groupName: getName(
-                                                      snapshot.data['groups']
-                                                          [reverseIndex]),
-                                                  assetName:
-                                                      'assets/svgs/bank.svg',
-                                                  userName: _authContoller
-                                                      .liveUser.value.username!,
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: StreamBuilder<List<UserList>>(
+                            stream: _authContoller.readtUserList(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return customDescriptionText('Error');
+                              } else if (snapshot.hasData) {
+                                final myuser = snapshot.data!;
+                                return ListView(
+                                  children: myuser.map(buildUser).toList(),
                                 );
                               } else {
-                                return customDescriptionText(
-                                    'No Available Group to join');
-                              }
-                            } else {
-                              return customDescriptionText(
-                                  'No Available Group to join');
-                            }
-                          } else {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      child: StreamBuilder(
-                        stream: _authContoller.readtUserList(),
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data != null) {
-                              if (snapshot.data.length != 0) {
-                                return ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: snapshot.data.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Container(
-                                      margin: const EdgeInsets.only(
-                                          left: 0,
-                                          right: 0,
-                                          top: 10,
-                                          bottom: 10),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        child: Row(
-                                          children: [
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Members(
-                                                  title: getName(snapshot
-                                                              .data['username']
-                                                          [index])
-                                                      .substring(0, 1)
-                                                      .toUpperCase(),
-                                                  active: "Active 19hrs ago",
-                                                  streak: _authContoller
-                                                              .liveUser
-                                                              .value
-                                                              .streak ==
-                                                          null
-                                                      ? '0'
-                                                      : _authContoller
-                                                          .liveUser.value.streak
-                                                          .toString(),
-                                                  weeks: "4 weeks",
-                                                )
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                      color: Theme.of(context).primaryColor),
                                 );
-                              } else {
-                                return customDescriptionText(
-                                    'No Available Group to join');
                               }
-                            } else {
-                              return customDescriptionText(
-                                  'No Available Group to join');
-                            }
-                          } else {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor),
-                            );
-                          }
-                        },
+                            }),
                       ),
-                    ),
-                    // ListView.builder(
-                    //     // itemCount: books == null ? 0 : books!.length,
-                    //     itemBuilder: (_, i) {
-                    //   return Container(
-                    //     margin: const EdgeInsets.only(
-                    //         left: 0, right: 0, top: 10, bottom: 10),
-                    //     child: Container(
-                    //         padding: const EdgeInsets.all(8),
-                    //         child: Row(children: [
-                    //           const SizedBox(
-                    //             width: 10,
-                    //           ),
-                    //           Column(
-                    //             crossAxisAlignment: CrossAxisAlignment.start,
-                    //             mainAxisAlignment:
-                    //                 MainAxisAlignment.spaceEvenly,
-                    //             children: [
-                    //               Members(
-                    //                   title: "Kehinde",
-                    //                   active: "Active 19hrs ago",
-                    //                   streak: _authContoller
-                    //                               .liveUser.value.streak ==
-                    //                           null
-                    //                       ? '0'
-                    //                       : _authContoller.liveUser.value.streak
-                    //                           .toString(),
-                    //                   weeks: "4 weeks")
-                    //             ],
-                    //           )
-                    //         ])),
-                    //   );
-                    // }),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.20,
-                        child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount:
-                                      (orientation == Orientation.landscape)
-                                          ? 2
-                                          : 2),
-                          padding: EdgeInsets.zero,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: imageName.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return recentQuotes(
-                              assetName: imageName[index],
-                              views: '14,000',
-                              messages: '400',
-                              shares: '40',
-                            );
-                          },
-                        )),
-                  ],
+                      Obx(() {
+                        return SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.20,
+                            child: GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          (orientation == Orientation.landscape)
+                                              ? 2
+                                              : 2),
+                              padding: EdgeInsets.zero,
+                              scrollDirection: Axis.horizontal,
+                              // itemCount: imageName.length,
+                              itemCount: _quoteContoller.allQuotes.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final item = _quoteContoller.allQuotes[index];
+                                return recentQuotes(
+                                  assetName: imageName[index],
+                                  views: item.likes.toString(),
+                                  messages: '400',
+                                  shares: '40',
+                                );
+                              },
+                            ));
+                      }),
+                    ],
+                  ),
                 ),
-              ))
-              // Row(
-              //   children: [
-              //     customDescriptionText(
-              //       'Popular cells'.toUpperCase(),
-              //       fontSize: 12,
-              //       fontWeight: FontWeight.w700,
-              //       colors: AppColor().filledTextField,
-              //     ),
-              //     const Gap(5),
-              //     SvgPicture.asset(
-              //       'assets/svgs/arrow_right.svg',
-              //     ),
-              //   ],
-              // ),
-              // const Gap(20),
-              // SizedBox(
-              //   height: MediaQuery.of(context).size.height * 0.1,
-              //   child: ListView.builder(
-              //     padding: EdgeInsets.zero,
-              //     scrollDirection: Axis.horizontal,
-              //     itemCount: colorList.length,
-              //     itemBuilder: (BuildContext context, int index) {
-              //       return recommendedCells(
-              //         colors: colorList[index],
-              //         title: 'Cephas',
-              //         assetName: 'assets/svgs/bank.svg',
-              //       );
-              //     },
-              //   ),
-              // ),
-              // const Gap(30),
-              // Row(
-              //   children: [
-              //     customDescriptionText(
-              //       'Recent quotes'.toUpperCase(),
-              //       fontSize: 12,
-              //       fontWeight: FontWeight.w700,
-              //       colors: AppColor().filledTextField,
-              //     ),
-              //     const Gap(5),
-              //     SvgPicture.asset(
-              //       'assets/svgs/arrow_right.svg',
-              //     ),
-              //   ],
-              // ),
-              // SizedBox(
-              //   height: MediaQuery.of(context).size.height * 0.25,
-              //   child: ListView.builder(
-              //     padding: EdgeInsets.zero,
-              //     scrollDirection: Axis.horizontal,
-              //     itemCount: imageName.length,
-              //     itemBuilder: (BuildContext context, int index) {
-              //       return recentQuotes(
-              //         assetName: imageName[index],
-              //         views: '14,000',
-              //         messages: '400',
-              //         shares: '40',
-              //       );
-              //     },
-              //   ),
-              // ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget buildUser(UserList user) => ListTile(
+        leading: Image.asset(
+          'assets/images/chatPic.png',
+          height: 50,
+          width: 50,
+        ),
+        title: customTitleText(
+          user.username!,
+          size: 14,
+          fontWeight: FontWeight.w700,
+          colors: AppColor().lightTextColor,
+        ),
+        subtitle: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            customDescriptionText(
+              'active',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              colors: AppColor().lightTextColor,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SvgPicture.asset(
+                  'assets/svgs/streak.svg',
+                ),
+                const Gap(5),
+                customDescriptionText(
+                  '${user.streak!.toString()} streak',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  colors: AppColor().lightTextColor,
+                ),
+                const Gap(10),
+                SvgPicture.asset(
+                  'assets/svgs/calender.svg',
+                ),
+                const Gap(5),
+                customDescriptionText(
+                  '${user.weeks!.toString()} weeks',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  colors: AppColor().lightTextColor,
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
 
   GestureDetector recommendedCells({
     Color? colors,

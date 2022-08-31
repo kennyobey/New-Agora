@@ -2,12 +2,15 @@
 
 import 'package:agora_care/app/cells/cell_screen.dart';
 import 'package:agora_care/app/group_screen/chat_page.dart';
+import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/app/quote/quote_details.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
+import 'package:agora_care/services/quote_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,10 +27,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _authContoller = Get.find<AuthControllers>();
+  final _quoteContoller = Get.find<QuoteControllers>();
   String userName = "";
   String email = "";
   String groupName = "";
   Stream? groups;
+
+  final _newQuote = FirebaseFirestore.instance.collection("quotes");
 
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
@@ -47,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     gettingUserData();
+    _quoteContoller.getQuotes();
   }
 
   // string manipulation
@@ -173,6 +180,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: GestureDetector(
                       onTap: () {
+                        // _quoteContoller.viewPost(
+                        //     _quoteContoller.allQuotes.last.views.toString());
+                        _quoteContoller.viewPost(_newQuote.id);
                         Get.to(
                           () => const QuoteDetails(),
                           transition: Transition.downToUp,
@@ -192,12 +202,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         StreamBuilder(
-                            stream: _authContoller.getDailyQuote(),
+                            stream: _quoteContoller.getDailyQuote(),
                             builder: (context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
                                 if (snapshot.data != null) {
                                   return customDescriptionText(
-                                    snapshot.data['dailyQuotes'].toString(),
+                                    snapshot.data!.docs.last
+                                        .data()!['dailyQuote']
+                                        .toString(),
                                     // snapshot.hasData.toString(),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -352,22 +364,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.25,
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: imageName.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return recentQuotes(
-                      assetName: imageName[index],
-                      views: '14,000',
-                      messages: '400',
-                      shares: '40',
-                    );
-                  },
-                ),
-              ),
+              Obx(() {
+                // if (_quoteContoller.quoteStatus == QuoteStatus.LOADING) {
+                //   return customDescriptionText('No Recent Quotes');
+                // } else {
+                return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.horizontal,
+                      // itemCount: imageName.length,
+                      itemCount: _quoteContoller.allQuotes.length > 4
+                          ? 4
+                          : _quoteContoller.allQuotes.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = _quoteContoller.allQuotes[index];
+                        if (kDebugMode) {
+                          print('Like is now ${item.likes!}');
+                        }
+                        return recentQuotes(
+                          assetName: imageName[index],
+                          // assetName: 'assets/images/image1.png',
+                          quoteModel: item,
+                        );
+                      },
+                    ));
+                // }
+              }),
             ],
           ),
         ),
@@ -429,9 +452,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Padding recentQuotes({
-    String? views,
-    String? shares,
-    String? messages,
+    // String? views,
+    // String? shares,
+    // String? messages,
+    QuoteModel? quoteModel,
     String? assetName,
   }) {
     return Padding(
@@ -462,19 +486,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   'assets/svgs/eye.svg',
                 ),
                 const Gap(5),
-                customDescriptionText(
-                  views!,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
+                Obx(() {
+                  return customDescriptionText(
+                    quoteModel!.views == null
+                        ? '0'
+                        : quoteModel.views.toString(),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  );
+                }),
                 const Gap(10),
                 SvgPicture.asset(
                   'assets/svgs/messages.svg',
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  messages!,
+                  quoteModel!.chats!.toString(),
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,
@@ -485,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  shares!,
+                  quoteModel.share!.toString(),
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,

@@ -1,6 +1,7 @@
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
-import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/quote_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,7 +17,8 @@ class QuoteDetails extends StatefulWidget {
 
 class _QuoteDetailsState extends State<QuoteDetails> {
   final commentController = TextEditingController();
-  final _authContoller = Get.find<AuthControllers>();
+
+  final _quoteContoller = Get.find<QuoteControllers>();
 
   @override
   Widget build(BuildContext context) {
@@ -90,13 +92,16 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                           //   textAlign: TextAlign.center,
                           //   colors: AppColor().filledTextField,
                           // ),
-                          StreamBuilder(
-                              stream: _authContoller.getDailyQuote(),
+                          StreamBuilder<QuerySnapshot<Object?>>(
+                              stream: _quoteContoller.getDailyQuote(),
                               builder: (context, AsyncSnapshot snapshot) {
                                 if (snapshot.hasData) {
                                   if (snapshot.data != null) {
                                     return customDescriptionText(
-                                      snapshot.data['dailyQuotes'].toString(),
+                                      snapshot.data!.docs.last
+                                          .data()!['dailyQuote']
+                                          .toString(),
+
                                       // snapshot.hasData.toString(),
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,

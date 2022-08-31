@@ -17,6 +17,8 @@ class AuthControllers extends GetxController {
 
   final CollectionReference quotesCollection =
       FirebaseFirestore.instance.collection("quotes");
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection("users");
 
   Rx<UserModel> liveUser = UserModel().obs;
   UserModel get users => liveUser.value;
@@ -43,15 +45,6 @@ class AuthControllers extends GetxController {
           "lastLoginTime": DateTime.now().toIso8601String(),
           "weeklyLoginTime": DateTime.now().toIso8601String(),
         });
-        // _userDocQuote
-        //     .collection('dailyQuote')
-        //     .doc(FirebaseAuth.instance.currentUser!.uid)
-        //     .update({
-        //   "weeks": FieldValue.increment(1),
-        //   "streak": FieldValue.increment(1),
-        //   "lastLoginTime": DateTime.now().toIso8601String(),
-        //   "weeklyLoginTime": DateTime.now().toIso8601String(),
-        // });
 
         final newUser =
             await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
@@ -129,26 +122,6 @@ class AuthControllers extends GetxController {
     }
   }
 
-  //Fetch  Stream dailyQuote
-  Stream getDailyQuote() {
-    // final quotes = FirebaseFirestore.instance
-    //     .collection('quotes')
-    //     .snapshots()
-    //     .map((snapshot) => snapshot.docs.map((doc) => doc.data()));
-    final quotes = quotesCollection.doc('dailyQuotes').snapshots();
-
-    return quotes;
-  }
-
-  //Fetch Once dailyQuote
-  Future getQuote() async {
-    final result = await quotesCollection.doc("dailyQuotes").get();
-    if (kDebugMode) {
-      print("Result of quote is: ${result.data()}");
-    }
-    return result.data();
-  }
-
   //Update Profile
   Future userChanges(String username, String fullName, String gender,
       String address, String postalCode, String profilePic) async {
@@ -185,26 +158,6 @@ class AuthControllers extends GetxController {
     }
   }
 
-  // Create Quotes
-  Future creatQuote({required String dailyQuote}) async {
-    final docUser =
-        FirebaseFirestore.instance.collection("quotes").doc('dailyQuotes');
-
-    // Saving to model
-    // final user = UserModel(
-    //   dailyQuote: dailyQuote,
-    // );
-    // final json = user.toJson();
-
-    // Direct Saving
-    final json = {
-      "dailyQuotes": dailyQuote,
-    };
-
-    // Create reference and write data to Firebase
-    await docUser.set(json);
-  }
-
   // Sign Out
   Future signOut() async {
     try {
@@ -225,8 +178,7 @@ class AuthControllers extends GetxController {
     return user;
   }
 
-  // Get Users Data by Id
-
+  // Get Users List
   Stream<List<UserList>> readtUserList() => FirebaseFirestore.instance
       .collection('users')
       .snapshots()

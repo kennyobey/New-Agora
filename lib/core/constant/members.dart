@@ -1,5 +1,5 @@
+import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 
@@ -7,18 +7,20 @@ import '../customWidgets.dart';
 import 'colors.dart';
 
 class Members extends StatelessWidget {
-  const Members({
+  Members({
     Key? key,
-    required this.title,
-    required this.active,
-    required this.streak,
-    required this.weeks,
+    // required this.title,
+    // required this.active,
+    // required this.streak,
+    // required this.weeks,
+    required this.userList,
   }) : super(key: key);
 
-  final String title;
-  final String active;
-  final String streak;
-  final String weeks;
+  // final String title;
+  // final String active;
+  // final String streak;
+  // final String weeks;
+  UserList userList;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,7 @@ class Members extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               customDescriptionText(
-                title,
+                userList.username!,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 colors: AppColor().lightTextColor,
@@ -52,7 +54,7 @@ class Members extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   customDescriptionText(
-                    active,
+                    'active',
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     colors: AppColor().lightTextColor,
@@ -63,7 +65,7 @@ class Members extends StatelessWidget {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    streak,
+                    userList.streak!.toString(),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().lightTextColor,
@@ -74,7 +76,7 @@ class Members extends StatelessWidget {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    weeks,
+                    userList.weeks!.toString(),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().lightTextColor,
