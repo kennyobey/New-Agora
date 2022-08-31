@@ -74,7 +74,7 @@ class _MessageTileState extends State<MessageTile> {
                       fontWeight: FontWeight.w700,
                       colors: AppColor().lightTextColor,
                     ),
-                    const Gap(70),
+                    const Gap(60),
                     SvgPicture.asset(
                       'assets/svgs/reply.svg',
                     ),

@@ -17,6 +17,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
+import '../group_screen/chat_page.dart';
+
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({Key? key}) : super(key: key);
 
@@ -384,43 +386,58 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                             index -
                                             1;
 
-                                    return Container(
-                                      margin: const EdgeInsets.only(
-                                          left: 0,
-                                          right: 0,
-                                          top: 10,
-                                          bottom: 10),
+                                    return InkWell(
+                                      onTap: () {
+                                        Get.to(
+                                          () => const ChatPage(
+                                            groupId: '',
+                                            groupName: '',
+                                            userName: '',
+                                          ),
+                                          transition: Transition.downToUp,
+                                        );
+                                      },
                                       child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        child: Row(
-                                          children: [
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Cells(
-                                                  members: "3000 members",
-                                                  time:
-                                                      "Last activity: 7th May 2022",
-                                                  groupId: getId(
-                                                      snapshot.data['groups']
-                                                          [reverseIndex]),
-                                                  groupName: getName(
-                                                      snapshot.data['groups']
-                                                          [reverseIndex]),
-                                                  assetName:
-                                                      'assets/svgs/bank.svg',
-                                                  userName: _authContoller
-                                                      .liveUser.value.username!,
-                                                ),
-                                              ],
-                                            )
-                                          ],
+                                        margin: const EdgeInsets.only(
+                                            left: 0,
+                                            right: 0,
+                                            top: 10,
+                                            bottom: 10),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          child: Row(
+                                            children: [
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Cells(
+                                                    members: "3000 members",
+                                                    time:
+                                                        "Last activity: 7th May 2022",
+                                                    groupId: getId(
+                                                        snapshot.data['groups']
+                                                            [reverseIndex]),
+                                                    groupName: getName(
+                                                        snapshot.data['groups']
+                                                            [reverseIndex]),
+                                                    assetName:
+                                                        'assets/svgs/bank.svg',
+                                                    userName: _authContoller
+                                                        .liveUser
+                                                        .value
+                                                        .username!,
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     );
