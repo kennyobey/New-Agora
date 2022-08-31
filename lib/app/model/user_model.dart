@@ -18,6 +18,7 @@ class UserModel {
     this.postalCode,
     this.address,
     this.profilePic,
+    this.dailyQuotes,
     this.streak = 0,
     this.weeks = 0,
     this.role,
@@ -35,6 +36,7 @@ class UserModel {
   final String? postalCode;
   final String? address;
   final String? profilePic;
+  final String? dailyQuotes;
   final int? streak;
   final int? weeks;
   final bool? admin;
@@ -52,6 +54,7 @@ class UserModel {
         postalCode: json["postalCode"],
         address: json["address"],
         profilePic: json["profilePic"],
+        dailyQuotes: json["dailyQuotes"],
         streak: json["streak"],
         weeks: json["weeks"],
         admin: json["admin"],
@@ -76,6 +79,7 @@ class UserModel {
         "postalCode": postalCode,
         "address": address,
         "profilePic": profilePic,
+        "dailyQuotes": dailyQuotes,
         "streak": streak,
         "weeks": weeks,
         "admin": admin,

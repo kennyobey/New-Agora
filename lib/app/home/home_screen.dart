@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/app/cells/cell_screen.dart';
-import 'package:agora_care/app/home/quote_details.dart';
+import 'package:agora_care/app/quote/quote_details.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';

@@ -13,23 +13,31 @@ class PostQoute extends StatefulWidget {
 }
 
 class _PostQouteState extends State<PostQoute> {
-  final TextEditingController _qouteController = TextEditingController();
+  final _quoteController = TextEditingController();
+
+  Future creatQuote({required String dailyQuote}) async {
+    return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColor().whiteColor,
+        elevation: 0,
+      ),
       body: Padding(
-        padding:
-            const EdgeInsets.only(left: 20.0, top: 50, right: 20, bottom: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Gap(50),
             customDescriptionText(
               "Post quote of the day",
               fontSize: 20,
               fontWeight: FontWeight.w700,
               colors: AppColor().lightTextColor,
             ),
+            const Gap(30),
             CustomTextField(
               label: 'Quote',
               hint: "Type in quote",
@@ -38,7 +46,7 @@ class _PostQouteState extends State<PostQoute> {
               keyType: TextInputType.text,
               validatorText: '** Field cannot be empty',
               color: AppColor().lightTextColor,
-              textEditingController: _qouteController,
+              textEditingController: _quoteController,
               fillColor: AppColor().fillColor,
             ),
             const Spacer(),
@@ -46,6 +54,9 @@ class _PostQouteState extends State<PostQoute> {
               buttonText: 'Post quote',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
+              onTap: () {
+                final dailyQuote = _quoteController.text;
+              },
             ),
             const Gap(40)
           ],

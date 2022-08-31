@@ -14,23 +14,26 @@ class CreateCell extends StatefulWidget {
 
 class _CreateCellState extends State<CreateCell> {
   final TextEditingController _qouteController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColor().whiteColor,
+        elevation: 0,
+      ),
       body: Padding(
-        padding:
-            const EdgeInsets.only(left: 20.0, top: 50, right: 20, bottom: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Gap(50),
             customDescriptionText(
               "Create a new cell",
               fontSize: 20,
               fontWeight: FontWeight.w700,
               colors: AppColor().lightTextColor,
             ),
-            const Gap(20),
+            const Gap(30),
             CustomTextField(
               label: 'Cell name',
               hint: "Enter the name of this cell",

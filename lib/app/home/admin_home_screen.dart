@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/app/cells/create_cell.dart';
+import 'package:agora_care/app/quote/post_qoute.dart';
 import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/members.dart';
@@ -11,8 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-
-import 'post_qoute.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({Key? key}) : super(key: key);
@@ -111,7 +110,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
               Center(
                 child: Obx(() {
                   return customTitleText(
-                    'Good afternoon, ${_authContoller.liveUser.value.fullName}',
+                    'Good afternoon, ${_authContoller.liveUser.value.role}',
                     size: 20,
                     spacing: -0.1,
                     fontWeight: FontWeight.w700,
