@@ -55,37 +55,42 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
       print("testing user is ${_authContoller.liveUser.value.toJson()}");
     }
     return Scaffold(
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(30),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomRight,
+        child: GestureDetector(
+          onTap: () => Get.to(
+            () => const CreateCell(),
+            transition: Transition.downToUp,
           ),
-          color: AppColor().addCellColor,
-        ),
-        width: 150,
-        height: 60,
-        alignment: Alignment.center,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: () {
-                Get.to(
-                  () => const CreateCell(),
-                  transition: Transition.downToUp,
-                );
-              },
-              icon: const Icon(Icons.add),
-              color: Colors.white,
-              iconSize: 30,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.35,
+            padding: const EdgeInsets.symmetric(
+              vertical: 10,
             ),
-            customDescriptionText(
-              "Add Cell",
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              colors: AppColor().whiteColor,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(20),
+              ),
+              color: AppColor().addCellColor,
             ),
-          ],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                const Gap(5),
+                customDescriptionText(
+                  "Add Cell",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  colors: AppColor().whiteColor,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
       appBar: AppBar(
