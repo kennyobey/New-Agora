@@ -62,7 +62,7 @@ class _MessageTileState extends State<MessageTile> {
             ),
             const Gap(5),
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              //mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 customDescriptionText(
@@ -71,13 +71,16 @@ class _MessageTileState extends State<MessageTile> {
                   fontWeight: FontWeight.w700,
                   colors: AppColor().lightTextColor,
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
                 customDescriptionText(
                   widget.message,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
+                  colors: AppColor().lightTextColor,
+                ),
+                customDescriptionText(
+                  widget.message,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
                   colors: AppColor().lightTextColor,
                 ),
               ],
@@ -85,6 +88,100 @@ class _MessageTileState extends State<MessageTile> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ChatWidget extends StatefulWidget {
+  const ChatWidget({Key? key}) : super(key: key);
+
+  @override
+  State<ChatWidget> createState() => _ChatWidgetState();
+}
+
+class _ChatWidgetState extends State<ChatWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Expanded(
+        //   child: ListView.builder(
+        //       padding: EdgeInsets.zero,
+        //       scrollDirection: Axis.vertical,
+        //       itemCount: 10,
+        //       itemBuilder: (BuildContext context, int index) {
+        //         return
+        ListTile(
+          leading: Image.asset('assets/images/chatPic.png'),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  customTitleText(
+                    'Melish karuntha',
+                    size: 14,
+                    fontWeight: FontWeight.w700,
+                    colors: AppColor().primaryColor,
+                  ),
+                  const Gap(10),
+                  SvgPicture.asset(
+                    'assets/svgs/comment_verify.svg',
+                  ),
+                  const Spacer(),
+                  SvgPicture.asset(
+                    'assets/svgs/reply.svg',
+                  ),
+                  const Gap(10),
+                  SvgPicture.asset(
+                    'assets/svgs/thumb.svg',
+                  ),
+                ],
+              ),
+              customDescriptionText(
+                'Lorem ipsum ad amet sit lorema akad mu il shaprew',
+                width: MediaQuery.of(context).size.width * 0.6,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                colors: AppColor().primaryColor,
+              ),
+            ],
+          ),
+          subtitle: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              customDescriptionText(
+                '19hrs',
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                colors: AppColor().lightbackgroundColor,
+              ),
+              const Gap(20),
+              customDescriptionText(
+                '143 likes',
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                colors: AppColor().lightbackgroundColor,
+              ),
+              // const Spacer(),
+            ],
+          ),
+          // trailing: Row(
+          //   children: [
+          //     SvgPicture.asset(
+          //       'assets/svgs/reply.svg',
+          //     ),
+          //     SvgPicture.asset(
+          //       'assets/svgs/thumb.svg',
+          //     ),
+          //   ],
+          // ),
+          isThreeLine: true,
+        ),
+        //         ;
+        //       }),
+        // ),
+      ],
     );
   }
 }
