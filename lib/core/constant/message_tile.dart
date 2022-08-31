@@ -1,4 +1,9 @@
+import 'package:agora_care/core/constant/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gap/gap.dart';
+
+import '../customWidgets.dart';
 
 class MessageTile extends StatefulWidget {
   final String message;
@@ -44,11 +49,11 @@ class _MessageTileState extends State<MessageTile> {
                     topRight: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ),
-            color: widget.sentByMe
-                ? Theme.of(context).primaryColor
-                : Colors.grey[700]),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+            color:
+                // color: widget.sentByMe
+                //     ? Theme.of(context).primaryColor
+                Colors.white),
+        child: Row(
           children: [
             Text(
               widget.sender,
@@ -58,13 +63,33 @@ class _MessageTileState extends State<MessageTile> {
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   letterSpacing: -0.5),
+            SvgPicture.asset(
+              'assets/svgs/bankofspain.svg',
+              height: 50,
+              width: 50,
             ),
-            const SizedBox(
-              height: 8,
+            const Gap(5),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                customDescriptionText(
+                  widget.sender,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  colors: AppColor().lightTextColor,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                customDescriptionText(
+                  widget.message,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  colors: AppColor().lightTextColor,
+                ),
+              ],
             ),
-            Text(widget.message,
-                textAlign: TextAlign.start,
-                style: const TextStyle(fontSize: 16, color: Colors.white))
           ],
         ),
       ),
