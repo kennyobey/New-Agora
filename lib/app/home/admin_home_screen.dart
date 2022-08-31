@@ -6,7 +6,11 @@ import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/members.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/database_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,6 +27,14 @@ class AdminHomeScreen extends StatefulWidget {
 class _AdminHomeScreenState extends State<AdminHomeScreen>
     with TickerProviderStateMixin {
   final _authContoller = Get.find<AuthControllers>();
+  final _memberDoc = FirebaseFirestore.instance.collection("users");
+
+  String userName = "";
+  String email = "";
+  String groupName = "";
+  Stream? groups;
+  Stream? members;
+
   ScrollController? _scrollController;
   TabController? _tabController;
   final List<Color> colorList = <Color>[
@@ -42,8 +54,35 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
   @override
   void initState() {
     super.initState();
+    gettingUserData();
+    // _authContoller.readtUserList();
     _tabController = TabController(length: 3, vsync: this);
     _scrollController = ScrollController();
+  }
+
+  // string manipulation
+  String getId(String res) {
+    return res.substring(0, res.indexOf("_"));
+  }
+
+  String getName(String res) {
+    return res.substring(res.indexOf("_") + 1);
+  }
+
+  gettingUserData() async {
+    await HelperFunction.getUserEmailFromSF().then((value) {
+      setState(() {
+        email = value!;
+      });
+    });
+    // getting the list of snapshots in our stream
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+        .getUserGroups()
+        .then((snapshot) {
+      setState(() {
+        groups = snapshot;
+      });
+    });
   }
 
   @override
@@ -52,6 +91,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
 
     if (kDebugMode) {
       print("testing user is ${_authContoller.liveUser.value.toJson()}");
+      print("testing user admin is ${_authContoller.liveUser.value.admin}");
     }
     return Scaffold(
       floatingActionButton: Align(
@@ -273,14 +313,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                   ),
                 ],
               ),
-              const Gap(20),
+              const Gap(5),
               Divider(
                 thickness: 1,
                 indent: 50,
                 endIndent: 50,
                 color: AppColor().lightTextColor.withOpacity(0.3),
               ),
-
               Expanded(
                   child: NestedScrollView(
                 controller: _scrollController,
@@ -293,43 +332,32 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                       backgroundColor: Colors.white,
                       bottom: PreferredSize(
                         preferredSize: const Size.fromHeight(10),
-                        child: Container(
-                            margin: const EdgeInsets.only(bottom: 0, left: 0),
-                            child: TabBar(
-                              indicatorPadding: const EdgeInsets.all(0),
-                              indicatorSize: TabBarIndicatorSize.label,
-                              labelPadding: const EdgeInsets.only(right: 20),
-                              controller: _tabController,
-                              isScrollable: true,
-                              // indicator: BoxDecoration(
-                              //     borderRadius: BorderRadius.circular(10),
-                              //     boxShadow: [
-                              //       BoxShadow(
-                              //           color: Colors.grey.withOpacity(0.2),
-                              //           blurRadius: 7,
-                              //           offset: const Offset(0, 0))
-                              //     ]),
-                              tabs: [
-                                customDescriptionText(
-                                  "Cells",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  colors: AppColor().lightTextColor,
-                                ),
-                                customDescriptionText(
-                                  "Members",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  colors: AppColor().lightTextColor,
-                                ),
-                                customDescriptionText(
-                                  "Qoutes",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  colors: AppColor().lightTextColor,
-                                ),
-                              ],
-                            )),
+                        child: TabBar(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          indicatorSize: TabBarIndicatorSize.label,
+                          controller: _tabController,
+                          isScrollable: true,
+                          tabs: [
+                            customDescriptionText(
+                              "Cells",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              colors: AppColor().lightTextColor,
+                            ),
+                            customDescriptionText(
+                              "Members",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              colors: AppColor().lightTextColor,
+                            ),
+                            customDescriptionText(
+                              "Qoutes",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              colors: AppColor().lightTextColor,
+                            ),
+                          ],
+                        ),
                       ),
                     )
                   ];
@@ -337,59 +365,192 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 body: TabBarView(
                   controller: _tabController,
                   children: [
-                    ListView.builder(
-                        // itemCount: books == null ? 0 : books!.length,
-                        itemBuilder: (_, i) {
-                      return Container(
-                        margin: const EdgeInsets.only(
-                            left: 0, right: 0, top: 10, bottom: 10),
-                        child: Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Row(children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: const [
-                                  Cells(
-                                      title: "Cephas",
-                                      members: "3000 members",
-                                      time: "Last activity: 7th May 2022"),
-                                ],
-                              )
-                            ])),
-                      );
-                    }),
-                    ListView.builder(
-                        // itemCount: books == null ? 0 : books!.length,
-                        itemBuilder: (_, i) {
-                      return Container(
-                        margin: const EdgeInsets.only(
-                            left: 0, right: 0, top: 10, bottom: 10),
-                        child: Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Row(children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: const [
-                                  Members(
-                                      title: "Kehinde",
-                                      active: "Active 19hrs ago",
-                                      streak: "16 streak",
-                                      weeks: "4 weeks")
-                                ],
-                              )
-                            ])),
-                      );
-                    }),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      child: StreamBuilder(
+                        stream: groups,
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data['groups'] != null) {
+                              if (snapshot.data['groups'].length != 0) {
+                                return ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: snapshot.data['groups'].length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    int reverseIndex =
+                                        snapshot.data['groups'].length -
+                                            index -
+                                            1;
+
+                                    return Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 0,
+                                          right: 0,
+                                          top: 10,
+                                          bottom: 10),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Cells(
+                                                  members: "3000 members",
+                                                  time:
+                                                      "Last activity: 7th May 2022",
+                                                  groupId: getId(
+                                                      snapshot.data['groups']
+                                                          [reverseIndex]),
+                                                  groupName: getName(
+                                                      snapshot.data['groups']
+                                                          [reverseIndex]),
+                                                  assetName:
+                                                      'assets/svgs/bank.svg',
+                                                  userName: _authContoller
+                                                      .liveUser.value.username!,
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              } else {
+                                return customDescriptionText(
+                                    'No Available Group to join');
+                              }
+                            } else {
+                              return customDescriptionText(
+                                  'No Available Group to join');
+                            }
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                  color: Theme.of(context).primaryColor),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      child: StreamBuilder(
+                        stream: _authContoller.readtUserList(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data != null) {
+                              if (snapshot.data.length != 0) {
+                                return ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 0,
+                                          right: 0,
+                                          top: 10,
+                                          bottom: 10),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Members(
+                                                  title: getName(snapshot
+                                                              .data['username']
+                                                          [index])
+                                                      .substring(0, 1)
+                                                      .toUpperCase(),
+                                                  active: "Active 19hrs ago",
+                                                  streak: _authContoller
+                                                              .liveUser
+                                                              .value
+                                                              .streak ==
+                                                          null
+                                                      ? '0'
+                                                      : _authContoller
+                                                          .liveUser.value.streak
+                                                          .toString(),
+                                                  weeks: "4 weeks",
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              } else {
+                                return customDescriptionText(
+                                    'No Available Group to join');
+                              }
+                            } else {
+                              return customDescriptionText(
+                                  'No Available Group to join');
+                            }
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                  color: Theme.of(context).primaryColor),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    // ListView.builder(
+                    //     // itemCount: books == null ? 0 : books!.length,
+                    //     itemBuilder: (_, i) {
+                    //   return Container(
+                    //     margin: const EdgeInsets.only(
+                    //         left: 0, right: 0, top: 10, bottom: 10),
+                    //     child: Container(
+                    //         padding: const EdgeInsets.all(8),
+                    //         child: Row(children: [
+                    //           const SizedBox(
+                    //             width: 10,
+                    //           ),
+                    //           Column(
+                    //             crossAxisAlignment: CrossAxisAlignment.start,
+                    //             mainAxisAlignment:
+                    //                 MainAxisAlignment.spaceEvenly,
+                    //             children: [
+                    //               Members(
+                    //                   title: "Kehinde",
+                    //                   active: "Active 19hrs ago",
+                    //                   streak: _authContoller
+                    //                               .liveUser.value.streak ==
+                    //                           null
+                    //                       ? '0'
+                    //                       : _authContoller.liveUser.value.streak
+                    //                           .toString(),
+                    //                   weeks: "4 weeks")
+                    //             ],
+                    //           )
+                    //         ])),
+                    //   );
+                    // }),
                     SizedBox(
                         height: MediaQuery.of(context).size.height * 0.20,
                         child: GridView.builder(

@@ -24,9 +24,9 @@ class _CellsScreenState extends State<CellsScreen> {
   final _authContoller = Get.find<AuthControllers>();
   String userName = "";
   String email = "";
+  String groupName = "";
   Stream? groups;
   final bool _isLoading = false;
-  String groupName = "";
 
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
@@ -202,13 +202,16 @@ class _CellsScreenState extends State<CellsScreen> {
                               int reverseIndex =
                                   snapshot.data['groups'].length - index - 1;
                               return otherCells(
-                                  colors: colorList[index],
-                                  groupId: getId(
-                                      snapshot.data['groups'][reverseIndex]),
-                                  title: getName(
-                                      snapshot.data['groups'][reverseIndex]),
-                                  assetName: 'assets/svgs/bank.svg',
-                                  assetName2: 'assets/svgs/people.svg');
+                                colors: colorList[index],
+                                groupId: getId(
+                                    snapshot.data['groups'][reverseIndex]),
+                                groupName: getName(
+                                    snapshot.data['groups'][reverseIndex]),
+                                assetName: 'assets/svgs/bank.svg',
+                                assetName2: 'assets/svgs/people.svg',
+                                userName:
+                                    _authContoller.liveUser.value.username!,
+                              );
                             },
                           );
                         } else {
@@ -289,12 +292,24 @@ class _CellsScreenState extends State<CellsScreen> {
   GestureDetector otherCells({
     Color? colors,
     String? groupId,
-    String? title,
+    String? groupName,
     String? assetName,
+    String? userName,
     String? assetName2,
   }) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        if (kDebugMode) {
+          print('Joining Group');
+        }
+        Get.to(
+          () => ChatPage(
+            groupId: groupId!,
+            groupName: groupName!,
+            userName: userName!,
+          ),
+        );
+      },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),
         child: Container(
@@ -331,7 +346,7 @@ class _CellsScreenState extends State<CellsScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   customTitleText(
-                    title!,
+                    groupName!,
                     textAlign: TextAlign.left,
                     colors: AppColor().textColor,
                     size: 16,

@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison, unused_field
 
 import 'package:agora_care/app/authentication/login_page.dart';
+import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -224,10 +225,11 @@ class AuthControllers extends GetxController {
     return user;
   }
 
-  Future<UserModel> getQuoteByModel(String id) async {
-    final result = await _newQuote.doc().get();
-    final user = UserModel.fromJson(result.data()!);
+  // Get Users Data by Id
 
-    return user;
-  }
+  Stream<List<UserList>> readtUserList() => FirebaseFirestore.instance
+      .collection('users')
+      .snapshots()
+      .map((snapshot) =>
+          snapshot.docs.map((doc) => UserList.fromJson(doc.data())).toList());
 }
