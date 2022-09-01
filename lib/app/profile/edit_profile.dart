@@ -120,9 +120,9 @@ class _EditProfileState extends State<EditProfile> {
                   const Gap(30),
                   CustomTextField(
                     label: 'Username',
-                    hint: _authContoller.liveUser.value.username == null
+                    hint: _authContoller.liveUser.value!.username == null
                         ? 'Enter username'
-                        : _authContoller.liveUser.value.username!,
+                        : _authContoller.liveUser.value!.username!,
                     keyType: TextInputType.name,
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
@@ -132,9 +132,9 @@ class _EditProfileState extends State<EditProfile> {
                   const Gap(15),
                   CustomTextField(
                     label: 'Fullname',
-                    hint: _authContoller.liveUser.value.fullName == null
+                    hint: _authContoller.liveUser.value!.fullName == null
                         ? 'Enter fullname'
-                        : _authContoller.liveUser.value.fullName!,
+                        : _authContoller.liveUser.value!.fullName!,
                     keyType: TextInputType.name,
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
@@ -222,9 +222,11 @@ class _EditProfileState extends State<EditProfile> {
                                 children: [
                                   const Gap(10),
                                   customDescriptionText(
-                                    _authContoller.liveUser.value.gender == null
+                                    _authContoller.liveUser.value!.gender ==
+                                            null
                                         ? 'Gender'
-                                        : _authContoller.liveUser.value.gender!,
+                                        : _authContoller
+                                            .liveUser.value!.gender!,
                                     colors: AppColor().lightTextColor,
                                   ),
                                 ],
@@ -235,9 +237,9 @@ class _EditProfileState extends State<EditProfile> {
                   const Gap(15),
                   CustomTextField(
                     label: 'City',
-                    hint: _authContoller.liveUser.value.postalCode == null
+                    hint: _authContoller.liveUser.value!.postalCode == null
                         ? 'Enter city and postcode'
-                        : _authContoller.liveUser.value.postalCode!,
+                        : _authContoller.liveUser.value!.postalCode!,
                     keyType: TextInputType.text,
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
@@ -247,9 +249,9 @@ class _EditProfileState extends State<EditProfile> {
                   const Gap(15),
                   CustomTextField(
                     label: 'Address',
-                    hint: _authContoller.liveUser.value.address == null
+                    hint: _authContoller.liveUser.value!.address == null
                         ? 'Enter address'
-                        : _authContoller.liveUser.value.address!,
+                        : _authContoller.liveUser.value!.address!,
                     keyType: TextInputType.streetAddress,
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,

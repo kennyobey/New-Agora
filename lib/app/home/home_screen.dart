@@ -85,8 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
-      print("testing user is ${_authContoller.liveUser.value.toJson()}");
-      print("testing user admin is ${_authContoller.liveUser.value.admin}");
+      print("testing user is ${_authContoller.liveUser.value!.toJson()}");
+      print("testing user admin is ${_authContoller.liveUser.value!.admin}");
     }
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Center(
                 child: Obx(() {
                   return customTitleText(
-                    'Good afternoon, ${_authContoller.liveUser.value.fullName}',
+                    'Good afternoon, ${_authContoller.liveUser.value!.fullName}',
                     size: 20,
                     spacing: -0.1,
                     fontWeight: FontWeight.w700,
@@ -126,9 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Obx(() {
                     return customDescriptionText(
                       // '5',
-                      _authContoller.liveUser.value.streak == null
+                      _authContoller.liveUser.value!.streak == null
                           ? '0'
-                          : _authContoller.liveUser.value.streak.toString(),
+                          : _authContoller.liveUser.value!.streak.toString(),
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       colors: AppColor().textColor,
@@ -157,9 +157,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Obx(() {
                     return customDescriptionText(
                       // '20',
-                      _authContoller.liveUser.value.weeks == null
+                      _authContoller.liveUser.value!.weeks == null
                           ? '0'
-                          : _authContoller.liveUser.value.weeks.toString(),
+                          : _authContoller.liveUser.value!.weeks.toString(),
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       colors: AppColor().textColor,
@@ -349,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       snapshot.data['groups'][reverseIndex]),
                                   assetName: 'assets/svgs/bank.svg',
                                   userName:
-                                      _authContoller.liveUser.value.username!,
+                                      _authContoller.liveUser.value!.username!,
                                 );
                               },
                             );

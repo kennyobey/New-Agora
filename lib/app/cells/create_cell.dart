@@ -86,7 +86,7 @@ class _CreateCellState extends State<CreateCell> {
                 });
                 DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
                     .createGroup(
-                  _authController.liveUser.value.email!,
+                  _authController.liveUser.value!.email!,
                   FirebaseAuth.instance.currentUser!.uid,
                   _cellNameController.text,
                 )

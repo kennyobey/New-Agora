@@ -144,9 +144,9 @@ class _GroupInfoState extends State<GroupInfo> {
                         height: 5,
                       ),
                       customDescriptionText(
-                        _authContoller.liveUser.value.admin == true
+                        _authContoller.liveUser.value!.admin == true
                             ? "Admin: ${getName(widget.adminName)}"
-                            : "Admin: ${_authContoller.liveUser.value.fullName!}",
+                            : "Admin: ${_authContoller.liveUser.value!.fullName!}",
                       ),
                     ],
                   )

@@ -45,7 +45,7 @@ class DatabaseService {
       "groupName": groupName,
       "groupIcon": "",
       // "admin": "${id}_$email",
-      "admin": _authController.liveUser.value.role,
+      "admin": _authController.liveUser.value!.role,
       "members": [],
       "groupId": "",
       "recentMessage": "",

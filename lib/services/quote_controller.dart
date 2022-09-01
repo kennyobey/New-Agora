@@ -101,7 +101,7 @@ class QuoteControllers extends GetxController {
   Future sharePost(String quoteId) async {
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.update(_newQuote.doc(quoteId), {
-        "share": FieldValue.arrayUnion([_authController.liveUser.value.uid!])
+        "share": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
       });
     });
   }
@@ -109,7 +109,7 @@ class QuoteControllers extends GetxController {
   Future likePost(String quoteId) async {
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.update(_newQuote.doc(quoteId), {
-        "likes": FieldValue.arrayUnion([_authController.liveUser.value.uid!])
+        "likes": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
       });
     });
   }
@@ -117,7 +117,7 @@ class QuoteControllers extends GetxController {
   Future unLikePost(String quoteId) async {
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.update(_newQuote.doc(quoteId), {
-        "likes": FieldValue.arrayRemove([_authController.liveUser.value.uid!])
+        "likes": FieldValue.arrayRemove([_authController.liveUser.value!.uid!])
       });
     });
   }
