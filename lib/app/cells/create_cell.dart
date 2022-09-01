@@ -1,6 +1,12 @@
 import 'package:agora_care/core/custom_form_field.dart';
+import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/database_service.dart';
+import 'package:agora_care/services/quote_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 import '../../core/constant/colors.dart';
 import '../../core/customWidgets.dart';
@@ -13,7 +19,16 @@ class CreateCell extends StatefulWidget {
 }
 
 class _CreateCellState extends State<CreateCell> {
-  final TextEditingController _qouteController = TextEditingController();
+  final _cellNameController = TextEditingController();
+  final _qouteTextController = TextEditingController();
+  final _authController = Get.find<AuthControllers>();
+  final _qouteController = Get.find<QuoteControllers>();
+
+  bool _isLoading = false;
+
+  String email = "";
+  String userName = "";
+  String groupName = "";
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +57,7 @@ class _CreateCellState extends State<CreateCell> {
               keyType: TextInputType.text,
               validatorText: '** Field cannot be empty',
               color: AppColor().lightTextColor,
-              textEditingController: _qouteController,
+              textEditingController: _cellNameController,
               fillColor: AppColor().fillColor,
             ),
             const Gap(20),
@@ -54,7 +69,7 @@ class _CreateCellState extends State<CreateCell> {
               keyType: TextInputType.text,
               validatorText: '** Field cannot be empty',
               color: AppColor().lightTextColor,
-              textEditingController: _qouteController,
+              textEditingController: _qouteTextController,
               fillColor: AppColor().fillColor,
             ),
             const Spacer(),
@@ -62,6 +77,23 @@ class _CreateCellState extends State<CreateCell> {
               buttonText: 'Create Cell',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
+              onTap: () async {
+                if (kDebugMode) {
+                  print('Creating Cell');
+                }
+                setState(() {
+                  _isLoading = true;
+                });
+                DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+                    .createGroup(
+                  _authController.liveUser.value!.email!,
+                  FirebaseAuth.instance.currentUser!.uid,
+                  _cellNameController.text,
+                )
+                    .whenComplete(() {
+                  _isLoading = false;
+                });
+              },
             ),
             const Gap(40)
           ],

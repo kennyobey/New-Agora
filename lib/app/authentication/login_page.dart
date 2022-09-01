@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                   //   print("The User details is $user");
                   // }
                   // if (FirebaseAuth.instance.currentUser.uid == true) {
-                  return await login();
+                  await login();
                   // } else {
                   //   Get.snackbar(
                   //       "Email Verification", "Go and verify your mail",

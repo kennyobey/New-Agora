@@ -7,7 +7,6 @@ import 'dart:ui';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/quote_controller.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,14 +19,21 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 
-class QuoteDetails extends StatefulWidget {
-  const QuoteDetails({Key? key}) : super(key: key);
+// ignore: must_be_immutable
+class SelectedQuoteDetails extends StatefulWidget {
+  String quoteId;
+  String quoteText;
+  SelectedQuoteDetails({
+    Key? key,
+    required this.quoteId,
+    required this.quoteText,
+  }) : super(key: key);
 
   @override
-  State<QuoteDetails> createState() => _QuoteDetailsState();
+  State<SelectedQuoteDetails> createState() => _SelectedQuoteDetailsState();
 }
 
-class _QuoteDetailsState extends State<QuoteDetails> {
+class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
   var scr = GlobalKey();
   final commentController = TextEditingController();
 
@@ -130,42 +136,49 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                           //   textAlign: TextAlign.center,
                           //   colors: AppColor().filledTextField,
                           // ),
-                          StreamBuilder<QuerySnapshot<Object?>>(
-                              stream: _quoteContoller.getDailyQuote(),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  if (snapshot.data != null) {
-                                    return customDescriptionText(
-                                      snapshot.data!.docs.last
-                                          .data()!['dailyQuote']
-                                          .toString(),
+                          // StreamBuilder<QuerySnapshot<Object?>>(
+                          //     stream: _quoteContoller.getDailyQuote(),
+                          //     builder: (context, AsyncSnapshot snapshot) {
+                          //       if (snapshot.hasData) {
+                          //         if (snapshot.data != null) {
+                          //           return customDescriptionText(
+                          //             snapshot.data!.docs.last
+                          //                 .data()!['dailyQuote']
+                          //                 .toString(),
 
-                                      // snapshot.hasData.toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().filledTextField,
-                                    );
-                                  } else if (snapshot.data == null) {
-                                    return SvgPicture.asset(
-                                      'assets/svgs/fluent_tap-single-48-filled.svg',
-                                    );
-                                  } else {
-                                    return customDescriptionText(
-                                      'No Quote Today',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().whiteColor,
-                                    );
-                                  }
-                                } else {
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                        color: AppColor().primaryColor),
-                                  );
-                                }
-                              }),
+                          //             // snapshot.hasData.toString(),
+                          //             fontSize: 20,
+                          //             fontWeight: FontWeight.w700,
+                          //             textAlign: TextAlign.center,
+                          //             colors: AppColor().filledTextField,
+                          //           );
+                          //         } else if (snapshot.data == null) {
+                          //           return SvgPicture.asset(
+                          //             'assets/svgs/fluent_tap-single-48-filled.svg',
+                          //           );
+                          //         } else {
+                          //           return customDescriptionText(
+                          //             'No Quote Today',
+                          //             fontSize: 16,
+                          //             fontWeight: FontWeight.w700,
+                          //             textAlign: TextAlign.center,
+                          //             colors: AppColor().whiteColor,
+                          //           );
+                          //         }
+                          //       } else {
+                          //         return Center(
+                          //           child: CircularProgressIndicator(
+                          //               color: AppColor().primaryColor),
+                          //         );
+                          //       }
+                          //     }),
+                          customDescriptionText(
+                            widget.quoteText,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            textAlign: TextAlign.center,
+                            colors: AppColor().filledTextField,
+                          ),
                           const Gap(30),
                           Divider(
                             thickness: 1,

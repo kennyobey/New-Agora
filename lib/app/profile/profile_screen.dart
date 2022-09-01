@@ -84,9 +84,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Obx(() {
                               return customDescriptionText(
-                                _authContoller.liveUser.value.fullName == null
+                                _authContoller.liveUser.value!.fullName == null
                                     ? 'Your Name'
-                                    : _authContoller.liveUser.value.fullName!,
+                                    : _authContoller.liveUser.value!.fullName!,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 colors: AppColor().filledTextField,
@@ -94,9 +94,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }),
                             const Gap(5),
                             customDescriptionText(
-                              _authContoller.liveUser.value.email == null
+                              _authContoller.liveUser.value!.email == null
                                   ? 'example@mail.com'
-                                  : _authContoller.liveUser.value.email!,
+                                  : _authContoller.liveUser.value!.email!,
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                               colors: Colors.black,
@@ -127,9 +127,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Obx(() {
                           return customDescriptionText(
                             // '5',
-                            _authContoller.liveUser.value.streak == null
+                            _authContoller.liveUser.value!.streak == null
                                 ? '0'
-                                : _authContoller.liveUser.value.streak
+                                : _authContoller.liveUser.value!.streak
                                     .toString(),
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -159,9 +159,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Obx(() {
                           return customDescriptionText(
                             // '20',
-                            _authContoller.liveUser.value.weeks == null
+                            _authContoller.liveUser.value!.weeks == null
                                 ? '0'
-                                : _authContoller.liveUser.value.weeks
+                                : _authContoller.liveUser.value!.weeks
                                     .toString(),
                             fontSize: 16,
                             fontWeight: FontWeight.w700,

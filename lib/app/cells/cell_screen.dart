@@ -146,7 +146,7 @@ class _CellsScreenState extends State<CellsScreen> {
                                     snapshot.data['groups'][reverseIndex]),
                                 assetName: 'assets/svgs/bank.svg',
                                 userName:
-                                    _authContoller.liveUser.value.username!,
+                                    _authContoller.liveUser.value!.username!,
                               );
                             },
                           );
@@ -210,7 +210,7 @@ class _CellsScreenState extends State<CellsScreen> {
                                 assetName: 'assets/svgs/bank.svg',
                                 assetName2: 'assets/svgs/people.svg',
                                 userName:
-                                    _authContoller.liveUser.value.username!,
+                                    _authContoller.liveUser.value!.username!,
                               );
                             },
                           );
