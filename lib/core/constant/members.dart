@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

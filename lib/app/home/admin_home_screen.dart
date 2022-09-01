@@ -10,7 +10,6 @@ import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +29,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
   final _authContoller = Get.find<AuthControllers>();
 
   final _quoteContoller = Get.find<QuoteControllers>();
-  final _memberDoc = FirebaseFirestore.instance.collection("users");
 
   String userName = "";
   String email = "";

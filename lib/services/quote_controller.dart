@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison, unused_field
+// ignore_for_file: unnecessary_null_comparison, unused_field, constant_identifier_names
 
 import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/app/model/user_model.dart';

@@ -102,9 +102,9 @@ class _ChatPageState extends State<ChatPage> {
                   height: 50,
                   width: 50,
                 ),
-                Gap(5),
+                const Gap(5),
                 Expanded(
-                  child: Container(
+                  child: SizedBox(
                     //alignment: Alignment.bottomCenter,
                     width: MediaQuery.of(context).size.width,
                     child: Container(

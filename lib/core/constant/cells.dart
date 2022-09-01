@@ -9,7 +9,7 @@ import '../customWidgets.dart';
 import 'colors.dart';
 
 class Cells extends StatelessWidget {
-  Cells({
+  const Cells({
     Key? key,
     required this.groupId,
     required this.members,
