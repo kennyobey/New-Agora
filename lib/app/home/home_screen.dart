@@ -364,6 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
+              const Gap(20),
               Obx(() {
                 // if (_quoteContoller.quoteStatus == QuoteStatus.LOADING) {
                 //   return customDescriptionText('No Recent Quotes');

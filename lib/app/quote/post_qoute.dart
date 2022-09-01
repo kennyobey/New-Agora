@@ -52,21 +52,92 @@ class _PostQouteState extends State<PostQoute> {
               fillColor: AppColor().fillColor,
             ),
             const Spacer(),
-            CustomFillButton(
-              buttonText: 'Post quote',
-              textColor: AppColor().button1Color,
-              buttonColor: AppColor().primaryColor,
-              onTap: () async {
-                if (kDebugMode) {
-                  print('uploading quote');
-                }
-                final dailyQuote = _quoteTextController.text;
-                await _quoteController.creatQuote(
-                  dailyQuote: dailyQuote,
-                  createdAt: createdTime,
-                );
-              },
-            ),
+            // Obx(() {
+            //   return InkWell(
+            //     onTap: () async {
+            //       if (_quoteController.quoteQuoteStatus != QuoteQuoteStatus.LOADING) {
+            //         if (kDebugMode) {
+            //           print('uploading quote');
+            //         }
+            //         await _quoteController.creatQuote(
+            //           dailyQuote: _quoteTextController.text,
+            //           createdAt: createdTime,
+            //         );
+            //       }
+            //     },
+            //     child: CustomFillButton(
+            //       buttonText: 'Post quote',
+            //       textColor: AppColor().button1Color,
+            //       buttonColor: AppColor().primaryColor,
+            //       // onTap: () async {
+            //       //   if (_quoteController.quoteQuoteStatus != QuoteQuoteStatus.LOADING) {
+            //       //     if (kDebugMode) {
+            //       //       print('uploading quote');
+            //       //     }
+            //       //     await _quoteController.creatQuote(
+            //       //       dailyQuote: _quoteTextController.text,
+            //       //       createdAt: createdTime,
+            //       //     );
+            //       //     // } else {
+            //       //     //   (_quoteController.quoteQuoteStatus == QuoteQuoteStatus.LOADING)
+            //       //     //       ? SizedBox(
+            //       //     //           width: 15,
+            //       //     //           height: 15,
+            //       //     //           child: Center(
+            //       //     //             child: CircularProgressIndicator(
+            //       //     //               color: AppColor().whiteColor,
+            //       //     //             ),
+            //       //     //           ),
+            //       //     //         )
+            //       //     //       : (_quoteController.quoteQuoteStatus != QuoteQuoteStatus.LOADING);
+            //       //   }
+            //       // },
+            //     ),
+            //   );
+            // }),
+            Obx(() {
+              return InkWell(
+                onTap: () async {
+                  if (_quoteController.quoteStatus != QuoteStatus.LOADING) {
+                    await Future.delayed(
+                      const Duration(milliseconds: 300),
+                    );
+                    if (kDebugMode) {
+                      print('uploading quote');
+                    }
+                    await _quoteController.creatQuote(
+                      dailyQuote: _quoteTextController.text,
+                      createdAt: createdTime,
+                    );
+                  }
+                },
+                child: Container(
+                  height: 45,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: AppColor().primaryColor,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: (_quoteController.quoteStatus == QuoteStatus.LOADING)
+                      ? SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppColor().whiteColor,
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: customDescriptionText(
+                            'Post quote',
+                            colors: AppColor().button1Color,
+                            fontSize: 16,
+                          ),
+                        ),
+                ),
+              );
+            }),
             const Gap(40)
           ],
         ),

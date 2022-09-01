@@ -84,11 +84,11 @@ class QuoteControllers extends GetxController {
         List<QuoteModel> list = [];
         for (var element in event.docs) {
           final quote = QuoteModel.fromJson(element.data()!);
-          _quoteStatus(QuoteStatus.SUCCESS);
           list.add(quote);
           if (kDebugMode) {
             print('quote is:${quote.toJson()}');
           }
+          _quoteStatus(QuoteStatus.SUCCESS);
         }
         _quoteList(list);
       });
@@ -129,26 +129,33 @@ class QuoteControllers extends GetxController {
     required String dailyQuote,
     required DateTime createdAt,
   }) async {
-    final docUser = FirebaseFirestore.instance.collection("quotes").doc();
+    _quoteStatus(QuoteStatus.LOADING);
+    try {
+      final docUser = FirebaseFirestore.instance.collection("quotes").doc();
 
-    // Saving to model
-    final user = QuoteModel(
-      dailyQuote: dailyQuote,
-      likes: [],
-      share: [],
-      reply: [],
-      chats: [],
-      views: 0,
-      createdAt: createdAt,
-    );
-    final json = user.toJson();
+      // Saving to model
+      final user = QuoteModel(
+        dailyQuote: dailyQuote,
+        likes: [],
+        share: [],
+        reply: [],
+        chats: [],
+        views: 0,
+        createdAt: createdAt,
+      );
+      final json = user.toJson();
 
-    // Direct Saving
-    // final json = {
-    //   "dailyQuotes": dailyQuote,
-    // };
+      // Direct Saving
+      // final json = {
+      //   "dailyQuotes": dailyQuote,
+      // };
 
-    // Create reference and write data to Firebase
-    await docUser.set(json);
+      // Create reference and write data to Firebase
+      await docUser.set(json);
+
+      _quoteStatus(QuoteStatus.SUCCESS);
+    } catch (ex) {
+      //
+    }
   }
 }
