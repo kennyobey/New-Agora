@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison, unused_field
 
 import 'package:agora_care/app/authentication/login_page.dart';
+import 'package:agora_care/app/home/admin_nav_screen.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -116,7 +117,11 @@ class AuthControllers extends GetxController {
           }
         }
       }
-      Get.to(() => UserNavScreen());
+      if (userModel.admin == true) {
+        Get.to(() => AdminUserNavScreen());
+      } else {
+        Get.to(() => UserNavScreen());
+      }
     } on FirebaseAuthException catch (e) {
       return e.message;
     }

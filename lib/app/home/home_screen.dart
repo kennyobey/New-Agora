@@ -283,15 +283,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     'assets/svgs/share.svg',
                   ),
                   const Gap(5),
-                  customDescriptionText(
-                    _quoteContoller.allQuotes.last.share!.length == null
-                        ? '0'
-                        : _quoteContoller.allQuotes.last.share!.length
-                            .toString(),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    colors: AppColor().textColor,
-                  ),
+                  Obx(() {
+                    return customDescriptionText(
+                      _quoteContoller.allQuotes.last.share!.length == null
+                          ? '0'
+                          : _quoteContoller.allQuotes.last.share!.length
+                              .toString(),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      colors: AppColor().textColor,
+                    );
+                  }),
                 ],
               ),
               const Gap(20),
@@ -484,7 +486,10 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         _quoteContoller.viewPost(quoteModel!.id!);
         Get.to(
-          () => const SelectedQuoteDetails(),
+          () => SelectedQuoteDetails(
+            quoteId: quoteModel.id!,
+            quoteText: quoteModel.dailyQuote!,
+          ),
           transition: Transition.downToUp,
         );
       },

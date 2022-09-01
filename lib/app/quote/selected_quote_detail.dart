@@ -1,26 +1,68 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously
+
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/quote_controller.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:share_plus/share_plus.dart';
 
+// ignore: must_be_immutable
 class SelectedQuoteDetails extends StatefulWidget {
-  const SelectedQuoteDetails({Key? key}) : super(key: key);
+  String quoteId;
+  String quoteText;
+  SelectedQuoteDetails({
+    Key? key,
+    required this.quoteId,
+    required this.quoteText,
+  }) : super(key: key);
 
   @override
   State<SelectedQuoteDetails> createState() => _SelectedQuoteDetailsState();
 }
 
 class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
+  var scr = GlobalKey();
   final commentController = TextEditingController();
 
   final _quoteContoller = Get.find<QuoteControllers>();
+
+  bool isLiked = false;
+
+  Future getPdf(Uint8List screenShot, time, tempPath) async {
+    pw.Document pdf = pw.Document();
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (context) {
+          return pw.Expanded(
+            child: pw.Image(
+              pw.MemoryImage(screenShot),
+              fit: pw.BoxFit.contain,
+            ),
+          );
+        },
+      ),
+    );
+    var pathurl = '$tempPath/$time.pdf';
+    if (kDebugMode) {
+      print('PATH URL: $pathurl');
+      File pdfFile = File(pathurl);
+      pdfFile.writeAsBytesSync(await pdf.save());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,42 +136,49 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                           //   textAlign: TextAlign.center,
                           //   colors: AppColor().filledTextField,
                           // ),
-                          StreamBuilder<QuerySnapshot<Object?>>(
-                              stream: _quoteContoller.getDailyQuote(),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  if (snapshot.data != null) {
-                                    return customDescriptionText(
-                                      snapshot.data!.docs.last
-                                          .data()!['dailyQuote']
-                                          .toString(),
+                          // StreamBuilder<QuerySnapshot<Object?>>(
+                          //     stream: _quoteContoller.getDailyQuote(),
+                          //     builder: (context, AsyncSnapshot snapshot) {
+                          //       if (snapshot.hasData) {
+                          //         if (snapshot.data != null) {
+                          //           return customDescriptionText(
+                          //             snapshot.data!.docs.last
+                          //                 .data()!['dailyQuote']
+                          //                 .toString(),
 
-                                      // snapshot.hasData.toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().filledTextField,
-                                    );
-                                  } else if (snapshot.data == null) {
-                                    return SvgPicture.asset(
-                                      'assets/svgs/fluent_tap-single-48-filled.svg',
-                                    );
-                                  } else {
-                                    return customDescriptionText(
-                                      'No Quote Today',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().whiteColor,
-                                    );
-                                  }
-                                } else {
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                        color: AppColor().primaryColor),
-                                  );
-                                }
-                              }),
+                          //             // snapshot.hasData.toString(),
+                          //             fontSize: 20,
+                          //             fontWeight: FontWeight.w700,
+                          //             textAlign: TextAlign.center,
+                          //             colors: AppColor().filledTextField,
+                          //           );
+                          //         } else if (snapshot.data == null) {
+                          //           return SvgPicture.asset(
+                          //             'assets/svgs/fluent_tap-single-48-filled.svg',
+                          //           );
+                          //         } else {
+                          //           return customDescriptionText(
+                          //             'No Quote Today',
+                          //             fontSize: 16,
+                          //             fontWeight: FontWeight.w700,
+                          //             textAlign: TextAlign.center,
+                          //             colors: AppColor().whiteColor,
+                          //           );
+                          //         }
+                          //       } else {
+                          //         return Center(
+                          //           child: CircularProgressIndicator(
+                          //               color: AppColor().primaryColor),
+                          //         );
+                          //       }
+                          //     }),
+                          customDescriptionText(
+                            widget.quoteText,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            textAlign: TextAlign.center,
+                            colors: AppColor().filledTextField,
+                          ),
                           const Gap(30),
                           Divider(
                             thickness: 1,
@@ -147,18 +196,20 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                               const Gap(5),
                               Column(
                                 children: [
-                                  customDescriptionText(
-                                    _quoteContoller
-                                                .allQuotes.last.share!.length ==
-                                            null
-                                        ? '0'
-                                        : _quoteContoller
-                                            .allQuotes.last.share!.length
-                                            .toString(),
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    colors: AppColor().textColor,
-                                  ),
+                                  Obx(() {
+                                    return customDescriptionText(
+                                      _quoteContoller.allQuotes.last.share!
+                                                  .length ==
+                                              null
+                                          ? '0'
+                                          : _quoteContoller
+                                              .allQuotes.last.share!.length
+                                              .toString(),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      colors: AppColor().textColor,
+                                    );
+                                  }),
                                   customDescriptionText(
                                     'shares',
                                     fontSize: 12,
@@ -180,18 +231,21 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                               const Gap(5),
                               Column(
                                 children: [
-                                  customDescriptionText(
-                                    _quoteContoller
-                                                .allQuotes.last.likes!.length ==
-                                            null
-                                        ? '0'
-                                        : _quoteContoller
-                                            .allQuotes.last.likes!.length
-                                            .toString(),
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    colors: AppColor().textColor,
-                                  ),
+                                  const Gap(5),
+                                  Obx(() {
+                                    return customDescriptionText(
+                                      _quoteContoller.allQuotes.last.likes!
+                                                  .length ==
+                                              null
+                                          ? '0'
+                                          : _quoteContoller
+                                              .allQuotes.last.likes!.length
+                                              .toString(),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      colors: AppColor().textColor,
+                                    );
+                                  }),
                                   customDescriptionText(
                                     'likes',
                                     fontSize: 12,
@@ -275,13 +329,50 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                               colors: AppColor().primaryColor,
                             ),
                             const Spacer(),
-                            SvgPicture.asset(
-                              'assets/svgs/share.svg',
-                              height: 24,
+                            InkWell(
+                              onTap: () async {
+                                await _quoteContoller.sharePost(
+                                    _quoteContoller.allQuotes.last.id!);
+                                RenderRepaintBoundary boundary =
+                                    scr.currentContext!.findRenderObject()
+                                        as RenderRepaintBoundary;
+                                var image = await boundary.toImage();
+                                var byteData = await image.toByteData(
+                                    format: ImageByteFormat.png);
+                                var pngBytes = byteData!.buffer.asUint8List();
+                                String tempPath =
+                                    (await getTemporaryDirectory()).path;
+                                var dates = DateTime.now().toLocal().toString();
+                                await getPdf(pngBytes, dates, tempPath);
+                                var pathurl = '$tempPath/$dates.pdf';
+                                await Share.shareFiles([pathurl]);
+                              },
+                              child: SvgPicture.asset(
+                                'assets/svgs/share.svg',
+                                height: 24,
+                              ),
                             ),
                             const Gap(10),
-                            SvgPicture.asset(
-                              'assets/svgs/heart.svg',
+                            InkWell(
+                              onTap: () async {
+                                isLiked
+                                    ? _quoteContoller.likePost(
+                                        _quoteContoller.allQuotes.last.id!)
+                                    : _quoteContoller.unLikePost(
+                                        _quoteContoller.allQuotes.last.id!);
+
+                                setState(() {
+                                  isLiked = !isLiked;
+                                });
+                              },
+                              child: isLiked
+                                  ? SvgPicture.asset(
+                                      'assets/svgs/heart.svg',
+                                    )
+                                  : Icon(
+                                      CupertinoIcons.heart_fill,
+                                      color: AppColor().errorColor,
+                                    ),
                             ),
                           ],
                         ),

@@ -10,17 +10,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import 'home_screen.dart';
+import 'admin_home_screen.dart';
 
-class UserNavScreen extends StatefulWidget {
+class AdminUserNavScreen extends StatefulWidget {
   int? tabIndex;
-  UserNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
+  AdminUserNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
 
   @override
-  _UserNavScreenState createState() => _UserNavScreenState();
+  _AdminUserNavScreenState createState() => _AdminUserNavScreenState();
 }
 
-class _UserNavScreenState extends State<UserNavScreen> {
+class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
   final _authController = Get.find<AuthControllers>();
   late List<Widget> _screens;
 
@@ -30,7 +30,7 @@ class _UserNavScreenState extends State<UserNavScreen> {
   void initState() {
     _screens = [
       //Home Screen
-      const HomeScreen(),
+      const AdminHomeScreen(),
 
       // Cells Screens
       const CellsScreen(),
@@ -146,11 +146,11 @@ class _UserNavScreenState extends State<UserNavScreen> {
           Get.close(1);
         },
         next: () async {
-          // await Get.to(() => UserNavScreen(tabIndex: 1));
+          // await Get.to(() => AdminUserNavScreen(tabIndex: 1));
           await Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => UserNavScreen(tabIndex: 2)));
+                  builder: (context) => AdminUserNavScreen(tabIndex: 2)));
           if (kDebugMode) {
             print('next pressed');
           }

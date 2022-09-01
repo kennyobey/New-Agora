@@ -114,8 +114,18 @@ class QuoteControllers extends GetxController {
     });
   }
 
+  Future unLikePost(String quoteId) async {
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_newQuote.doc(quoteId), {
+        "likes": FieldValue.arrayRemove([_authController.liveUser.value.uid!])
+      });
+    });
+  }
+
   Future viewPost(String quoteId) async {
-    print("quote id is ${quoteId}");
+    if (kDebugMode) {
+      print("quote id is $quoteId");
+    }
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.update(
         _newQuote.doc(quoteId),
