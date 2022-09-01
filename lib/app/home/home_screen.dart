@@ -4,6 +4,7 @@ import 'package:agora_care/app/cells/cell_screen.dart';
 import 'package:agora_care/app/group_screen/chat_page.dart';
 import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/app/quote/quote_details.dart';
+import 'package:agora_care/app/quote/selected_quote_detail.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
@@ -182,7 +183,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         // _quoteContoller.viewPost(
                         //     _quoteContoller.allQuotes.last.views.toString());
-                        _quoteContoller.viewPost(_newQuote.id);
+                        if (kDebugMode) {
+                          print(
+                              'quote id is ${_quoteContoller.allQuotes.last.id!}');
+                        }
+                        _quoteContoller
+                            .viewPost(_quoteContoller.allQuotes.last.id!);
                         Get.to(
                           () => const QuoteDetails(),
                           transition: Transition.downToUp,
@@ -248,19 +254,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     'assets/svgs/eye.svg',
                   ),
                   const Gap(5),
-                  customDescriptionText(
-                    '14,000',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    colors: AppColor().textColor,
-                  ),
+                  Obx(() {
+                    return customDescriptionText(
+                      _quoteContoller.allQuotes.last.views! == null
+                          ? '0'
+                          : _quoteContoller.allQuotes.last.views!.toString(),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      colors: AppColor().textColor,
+                    );
+                  }),
                   const Gap(10),
                   SvgPicture.asset(
                     'assets/svgs/messages.svg',
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    '400',
+                    _quoteContoller.allQuotes.last.reply!.length == null
+                        ? '0'
+                        : _quoteContoller.allQuotes.last.reply!.length
+                            .toString(),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().textColor,
@@ -271,7 +284,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    '40',
+                    _quoteContoller.allQuotes.last.share!.length == null
+                        ? '0'
+                        : _quoteContoller.allQuotes.last.share!.length
+                            .toString(),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().textColor,
@@ -316,7 +332,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: EdgeInsets.zero,
                               scrollDirection: Axis.horizontal,
                               // itemCount: colorList.length,
-                              itemCount: snapshot.data['groups'].length,
+                              itemCount: snapshot.data['groups'].length > 4
+                                  ? 4
+                                  : snapshot.data['groups'].length,
                               itemBuilder: (BuildContext context, int index) {
                                 int reverseIndex =
                                     snapshot.data['groups'].length - index - 1;
@@ -452,76 +470,90 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Padding recentQuotes({
+  GestureDetector recentQuotes({
     // String? views,
     // String? shares,
     // String? messages,
     QuoteModel? quoteModel,
     String? assetName,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.5,
-        height: MediaQuery.of(context).size.height * 0.25,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.2,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(assetName!),
-                  fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        if (kDebugMode) {
+          print('selected quote id is ${_quoteContoller.allQuotes.last.id!}');
+        }
+        _quoteContoller.viewPost(quoteModel!.id!);
+        Get.to(
+          () => const SelectedQuoteDetails(),
+          transition: Transition.downToUp,
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.height * 0.25,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.2,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(assetName!),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                borderRadius: BorderRadius.circular(10),
               ),
-            ),
-            const Gap(10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Gap(5),
-                SvgPicture.asset(
-                  'assets/svgs/eye.svg',
-                ),
-                const Gap(5),
-                Obx(() {
-                  return customDescriptionText(
+              const Gap(10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Gap(5),
+                  SvgPicture.asset(
+                    'assets/svgs/eye.svg',
+                  ),
+                  const Gap(5),
+                  customDescriptionText(
                     quoteModel!.views == null
                         ? '0'
                         : quoteModel.views.toString(),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().textColor,
-                  );
-                }),
-                const Gap(10),
-                SvgPicture.asset(
-                  'assets/svgs/messages.svg',
-                ),
-                const Gap(5),
-                customDescriptionText(
-                  quoteModel!.chats!.toString(),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
-                const Gap(10),
-                SvgPicture.asset(
-                  'assets/svgs/share.svg',
-                ),
-                const Gap(5),
-                customDescriptionText(
-                  quoteModel.share!.toString(),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
-              ],
-            ),
-          ],
+                  ),
+                  const Gap(10),
+                  SvgPicture.asset(
+                    'assets/svgs/messages.svg',
+                  ),
+                  const Gap(5),
+                  customDescriptionText(
+                    quoteModel.reply!.length == null
+                        ? '0'
+                        : quoteModel.reply!.length.toString(),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  ),
+                  const Gap(10),
+                  SvgPicture.asset(
+                    'assets/svgs/share.svg',
+                  ),
+                  const Gap(5),
+                  customDescriptionText(
+                    quoteModel.share!.length == null
+                        ? '0'
+                        : quoteModel.share!.length.toString(),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

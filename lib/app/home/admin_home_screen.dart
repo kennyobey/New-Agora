@@ -286,7 +286,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  '14,000',
+                  _quoteContoller.allQuotes.last.views == null
+                      ? '0'
+                      : _quoteContoller.allQuotes.last.views!.toString(),
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,
@@ -297,7 +299,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  '400',
+                  _quoteContoller.allQuotes.last.reply!.length == null
+                      ? '0'
+                      : _quoteContoller.allQuotes.last.reply!.length.toString(),
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,
@@ -308,7 +312,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  '40',
+                  _quoteContoller.allQuotes.last.share!.length == null
+                      ? '0'
+                      : _quoteContoller.allQuotes.last.share!.length.toString(),
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,
@@ -378,7 +384,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                 return ListView.builder(
                                   padding: EdgeInsets.zero,
                                   scrollDirection: Axis.vertical,
-                                  itemCount: snapshot.data['groups'].length,
+                                  itemCount: snapshot.data['groups'].length > 4
+                                      ? 4
+                                      : snapshot.data['groups'].length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     int reverseIndex =
@@ -445,16 +453,19 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                 );
                               } else {
                                 return customDescriptionText(
-                                    'No Available Group to join');
+                                  'No Available Group to join',
+                                );
                               }
                             } else {
                               return customDescriptionText(
-                                  'No Available Group to join');
+                                'No Available Group to join',
+                              );
                             }
                           } else {
                             return Center(
                               child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor),
+                                color: Theme.of(context).primaryColor,
+                              ),
                             );
                           }
                         },

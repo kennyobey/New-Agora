@@ -10,14 +10,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class QuoteDetails extends StatefulWidget {
-  const QuoteDetails({Key? key}) : super(key: key);
+class SelectedQuoteDetails extends StatefulWidget {
+  const SelectedQuoteDetails({Key? key}) : super(key: key);
 
   @override
-  State<QuoteDetails> createState() => _QuoteDetailsState();
+  State<SelectedQuoteDetails> createState() => _SelectedQuoteDetailsState();
 }
 
-class _QuoteDetailsState extends State<QuoteDetails> {
+class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
   final commentController = TextEditingController();
 
   final _quoteContoller = Get.find<QuoteControllers>();

@@ -2,6 +2,7 @@ import 'package:agora_care/core/custom_form_field.dart';
 import 'package:agora_care/services/quote_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -20,6 +21,16 @@ class _PostQouteState extends State<PostQoute> {
   final _quoteController = Get.find<QuoteControllers>();
 
   DateTime createdTime = DateTime.now();
+
+  String? selectedColor;
+  Color color = AppColor().pinkColor;
+
+  final List<Color> colorList = <Color>[
+    AppColor().pinkColor,
+    AppColor().blueColor,
+    AppColor().backgroundColor,
+    AppColor().primaryColor,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -51,50 +62,31 @@ class _PostQouteState extends State<PostQoute> {
               textEditingController: _quoteTextController,
               fillColor: AppColor().fillColor,
             ),
+            const Gap(20),
+            Container(
+              height: 45,
+              decoration: BoxDecoration(
+                color: color,
+                border: Border.all(
+                  width: 1,
+                  color: AppColor().button2Color,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            const Gap(30),
+            Center(
+              child: CustomFillButton(
+                buttonText: 'Pick Color',
+                textColor: AppColor().button1Color,
+                buttonColor: AppColor().primaryColor,
+                width: MediaQuery.of(context).size.width * 0.3,
+                onTap: () {
+                  pickColor(context);
+                },
+              ),
+            ),
             const Spacer(),
-            // Obx(() {
-            //   return InkWell(
-            //     onTap: () async {
-            //       if (_quoteController.quoteQuoteStatus != QuoteQuoteStatus.LOADING) {
-            //         if (kDebugMode) {
-            //           print('uploading quote');
-            //         }
-            //         await _quoteController.creatQuote(
-            //           dailyQuote: _quoteTextController.text,
-            //           createdAt: createdTime,
-            //         );
-            //       }
-            //     },
-            //     child: CustomFillButton(
-            //       buttonText: 'Post quote',
-            //       textColor: AppColor().button1Color,
-            //       buttonColor: AppColor().primaryColor,
-            //       // onTap: () async {
-            //       //   if (_quoteController.quoteQuoteStatus != QuoteQuoteStatus.LOADING) {
-            //       //     if (kDebugMode) {
-            //       //       print('uploading quote');
-            //       //     }
-            //       //     await _quoteController.creatQuote(
-            //       //       dailyQuote: _quoteTextController.text,
-            //       //       createdAt: createdTime,
-            //       //     );
-            //       //     // } else {
-            //       //     //   (_quoteController.quoteQuoteStatus == QuoteQuoteStatus.LOADING)
-            //       //     //       ? SizedBox(
-            //       //     //           width: 15,
-            //       //     //           height: 15,
-            //       //     //           child: Center(
-            //       //     //             child: CircularProgressIndicator(
-            //       //     //               color: AppColor().whiteColor,
-            //       //     //             ),
-            //       //     //           ),
-            //       //     //         )
-            //       //     //       : (_quoteController.quoteQuoteStatus != QuoteQuoteStatus.LOADING);
-            //       //   }
-            //       // },
-            //     ),
-            //   );
-            // }),
             Obx(() {
               return InkWell(
                 onTap: () async {
@@ -108,6 +100,7 @@ class _PostQouteState extends State<PostQoute> {
                     await _quoteController.creatQuote(
                       dailyQuote: _quoteTextController.text,
                       createdAt: createdTime,
+                      // colors: color,
                     );
                   }
                 },
@@ -130,7 +123,7 @@ class _PostQouteState extends State<PostQoute> {
                         )
                       : Center(
                           child: customDescriptionText(
-                            'Post quote',
+                            'Post Quote',
                             colors: AppColor().button1Color,
                             fontSize: 16,
                           ),
@@ -144,4 +137,45 @@ class _PostQouteState extends State<PostQoute> {
       ),
     );
   }
+
+  void pickColor(BuildContext context) => showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: customDescriptionText(
+            'Pick Color',
+            colors: AppColor().button1Color,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              buildColorPicker(),
+              CustomFillButton(
+                buttonText: 'Select',
+                textColor: AppColor().button1Color,
+                buttonColor: AppColor().primaryColor,
+                width: MediaQuery.of(context).size.width * 0.3,
+                onTap: () {
+                  Get.close(1);
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+
+  Widget buildColorPicker() => BlockPicker(
+        pickerColor: color,
+        // enableAlpha: false,
+        // showLabel: false,
+        availableColors: [
+          AppColor().pinkColor,
+          AppColor().blueColor,
+          AppColor().backgroundColor,
+          AppColor().primaryColor,
+        ],
+        onColorChanged: (color) => setState(() {
+          this.color = color;
+        }),
+      );
 }

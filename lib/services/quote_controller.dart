@@ -65,7 +65,7 @@ class QuoteControllers extends GetxController {
 
 //Fetch  Stream dailyQuote
   Stream<QuerySnapshot<Object?>> getDailyQuote() {
-    final quotes = quotesCollection.snapshots();
+    final quotes = quotesCollection.orderBy("createdAt").snapshots();
     // getQuotes();
     return quotes;
   }
@@ -80,13 +80,14 @@ class QuoteControllers extends GetxController {
   Future getQuotes() async {
     _quoteStatus(QuoteStatus.LOADING);
     try {
-      quotesCollection.snapshots().listen((event) {
+      quotesCollection.orderBy("createdAt").snapshots().listen((event) {
         List<QuoteModel> list = [];
         for (var element in event.docs) {
-          final quote = QuoteModel.fromJson(element.data()!);
+          final quote = QuoteModel.fromJson(element.data()!, element.id);
           list.add(quote);
           if (kDebugMode) {
-            print('quote is:${quote.toJson()}');
+            // print('ID is: ${element.id}');
+            // print('quote is:${quote.toJson()} ID is:');
           }
           _quoteStatus(QuoteStatus.SUCCESS);
         }
@@ -114,6 +115,7 @@ class QuoteControllers extends GetxController {
   }
 
   Future viewPost(String quoteId) async {
+    print("quote id is ${quoteId}");
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.update(
         _newQuote.doc(quoteId),
@@ -127,21 +129,23 @@ class QuoteControllers extends GetxController {
   // Create Quotes
   Future creatQuote({
     required String dailyQuote,
+    // required Color colors,
     required DateTime createdAt,
   }) async {
-    _quoteStatus(QuoteStatus.LOADING);
+    // _quoteStatus(QuoteStatus.LOADING);
     try {
-      final docUser = FirebaseFirestore.instance.collection("quotes").doc();
+      final docUser = FirebaseFirestore.instance.collection("quotes");
 
       // Saving to model
       final user = QuoteModel(
         dailyQuote: dailyQuote,
+        // color: colors,
         likes: [],
         share: [],
         reply: [],
         chats: [],
         views: 0,
-        createdAt: createdAt,
+        createdAt: DateTime.now(),
       );
       final json = user.toJson();
 
@@ -151,9 +155,9 @@ class QuoteControllers extends GetxController {
       // };
 
       // Create reference and write data to Firebase
-      await docUser.set(json);
+      await docUser.add(json);
 
-      _quoteStatus(QuoteStatus.SUCCESS);
+      // _quoteStatus(QuoteStatus.SUCCESS);
     } catch (ex) {
       //
     }

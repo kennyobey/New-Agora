@@ -4,15 +4,19 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 QuoteModel quoteModelFromJson(String str) =>
-    QuoteModel.fromJson(json.decode(str));
+    QuoteModel.fromJson(json.decode(str), "");
 
 String quoteModelToJson(QuoteModel data) => json.encode(data.toJson());
 
 class QuoteModel {
   QuoteModel({
+    this.id,
     this.likes,
     this.share,
+    this.color,
     this.chats,
     this.views = 0,
     this.reply,
@@ -20,16 +24,20 @@ class QuoteModel {
     this.createdAt,
   });
 
+  final String? id;
   final List<dynamic>? likes;
   final List<dynamic>? share;
   final List<dynamic>? chats;
   final String? dailyQuote;
   final int? views;
+  final Color? color;
   final List<dynamic>? reply;
   DateTime? createdAt;
 
-  factory QuoteModel.fromJson(dynamic json) => QuoteModel(
+  factory QuoteModel.fromJson(dynamic json, String id) => QuoteModel(
+        id: id,
         dailyQuote: json["dailyQuote"],
+        color: json["color"],
         likes: json["likes"] == null
             ? null
             : List<dynamic>.from(json["likes"].map((x) => x)),
@@ -49,7 +57,9 @@ class QuoteModel {
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "dailyQuote": dailyQuote,
+        "color": color,
         "likes":
             likes == null ? null : List<dynamic>.from(likes!.map((x) => x)),
         "share":
