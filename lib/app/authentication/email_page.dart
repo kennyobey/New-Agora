@@ -170,9 +170,9 @@ class _EmailPageState extends State<EmailPage> {
 
   register() async {
     if (formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      // setState(() {
+      //   _isLoading = true;
+      // });
       final userCredential = _authContoller
           .registerUserWithEmailandPassword(
         _emailController.text.trim(),
