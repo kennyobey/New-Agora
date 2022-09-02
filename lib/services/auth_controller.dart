@@ -37,6 +37,7 @@ class AuthControllers extends GetxController {
     if (FirebaseAuth.instance.currentUser != null) {
       final newUser =
           await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
+      print("new user value is ${newUser.toJson()}");
       liveUser(newUser);
 
       if (newUser.lastLoginTime!.difference(now).inDays >= 1 &&
@@ -72,6 +73,7 @@ class AuthControllers extends GetxController {
         await DatabaseService(uid: user.uid).savingUserData(email);
         return true;
       }
+
       DateTime now = DateTime.now();
       final userModel = await getUserByModel(user.uid);
       if (userModel.lastLoginTime == null ||
@@ -110,6 +112,7 @@ class AuthControllers extends GetxController {
       Get.to(() => const WelComePage());
       // }
     } on FirebaseAuthException catch (e) {
+      print(e);
       return e.message;
     }
   }
@@ -127,6 +130,7 @@ class AuthControllers extends GetxController {
         return;
       }
       final userModel = await getUserByModel(user.uid);
+      liveUser(userModel);
       if (userModel.lastLoginTime == null ||
           userModel.weeklyLoginTime == null) {
         userModel.updatedAt = now;
@@ -163,6 +167,7 @@ class AuthControllers extends GetxController {
         Get.to(() => UserNavScreen());
       }
     } on FirebaseAuthException catch (e) {
+      print(e);
       return e.message;
     }
   }
@@ -172,20 +177,20 @@ class AuthControllers extends GetxController {
       String address, String postalCode, String profilePic) async {
     try {
       if (kDebugMode) {
-        print("user detail update profile ${liveUser.value!.toJson()}");
+        print(
+            "user detail update profile ${FirebaseAuth.instance.currentUser!.uid} ");
       }
       final userDocQuote =
           FirebaseFirestore.instance.collection("quotes").doc("dailyQuotes");
-      if (liveUser.value != null) {
+      if (FirebaseAuth.instance.currentUser == null) {
         if (kDebugMode) {
           print('I reach here');
+          return;
         }
-
-        if (kDebugMode) {
-          print('USER ID is: ${users!.uid}');
-        }
-        userDocQuote.get().toString();
-        _userDoc.doc(users!.uid).update({
+      }
+        // if (kDebugMode) {}
+        // userDocQuote.get().toString();
+        final up = {
           'username': username,
           'fullName': fullName,
           'gender': gender,
@@ -193,11 +198,15 @@ class AuthControllers extends GetxController {
           'postalCode': postalCode,
           'profilePic': profilePic,
           'dailyQuote': userDocQuote,
-        });
+        };
+        print("valuw od chages is $up");
+        await _userDoc.doc(FirebaseAuth.instance.currentUser!.uid).update(up);
 
-        final newUser = await getUserByModel(users!.uid!);
+        final newUser =
+            await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
         liveUser(newUser);
-      }
+        print("new user update is ${newUser.toJson()}");
+      
     } on FirebaseAuthException catch (e) {
       return e.message;
     }

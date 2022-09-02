@@ -64,7 +64,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyType;
   final TextEditingController? textEditingController;
   final TextInputAction? keyAction;
-  final ValueChanged<String>? validate;
+  final String? Function(String?)? validate;
   final ValueChanged<String>? onSubmited;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
@@ -124,18 +124,15 @@ class CustomTextField extends StatelessWidget {
                 enabled: enabled,
                 keyboardType: keyType,
                 textInputAction: keyAction,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return validatorText;
-                  } else if (value != null) {
-                    return RegExp(
-                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                            .hasMatch(value)
-                        ? null
-                        : "Please enter a valid email";
-                  }
-                  return null;
-                },
+                validator: validate ??
+                    (value) {
+                      if (value == null || value.isEmpty) {
+                        return validatorText;
+                      } else if (value != null) {
+                        return null;
+                      }
+                      return null;
+                    },
                 initialValue: initialValue,
                 decoration: InputDecoration(
                   fillColor: fillColor ?? AppColor().whiteColor,

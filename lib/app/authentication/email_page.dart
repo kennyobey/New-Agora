@@ -106,7 +106,13 @@ class _EmailPageState extends State<EmailPage> {
                       label: 'Email Address',
                       hint: 'Enter email address',
                       keyType: TextInputType.emailAddress,
-                      validatorText: '** Field cannot be empty',
+                      // validate: (val) {
+                      //   if (val == null || val.isEmpty || val.isEmail) {
+                      //     return "Enter valid email address";
+                      //   } else {
+                      //     return null;
+                      //   }
+                      // },
                       color: AppColor().lightTextColor,
                       onChanged: (val) {
                         setState(() {
@@ -206,6 +212,11 @@ class _EmailPageState extends State<EmailPage> {
           } else {
             showSnackbar(context, AppColor().errorColor, value);
           }
+        } else {
+          showSnackbar(context, AppColor().errorColor, value);
+          setState(() {
+            _isLoading = false;
+          });
         }
       });
     }
