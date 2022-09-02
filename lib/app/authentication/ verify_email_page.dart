@@ -1,13 +1,10 @@
 import 'dart:async';
 
 import 'package:agora_care/app/authentication/login_page.dart';
-import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -221,11 +218,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Open Mail App"),
-          content: Text("No mail apps installed"),
-          actions: <Widget>[
-            FlatButton(
-              child: Text("OK"),
+          title: customTitleText("Open Mail App"),
+          content: customDescriptionText("No mail apps installed"),
+          actions: [
+            TextButton(
+              child: customTitleText("OK"),
               onPressed: () {
                 Navigator.pop(context);
               },

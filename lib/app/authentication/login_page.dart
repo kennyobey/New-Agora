@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: AppColor().primaryColor,
               ),
             )
           : Form(

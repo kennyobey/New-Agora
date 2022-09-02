@@ -59,7 +59,7 @@ class _EmailPageState extends State<EmailPage> {
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: AppColor().primaryColor,
               ),
             )
           : Form(
@@ -203,10 +203,8 @@ class _EmailPageState extends State<EmailPage> {
             // saving the shared preference
             await HelperFunction.saveUserLoggedInStatus(true);
             await HelperFunction.saveUserEmailSF(email);
-            //await HelperFunction.saveUserNameSF(fullName);
-            // nextScreenReplace(context, const VerifyEmailPage());
           } else {
-            showSnackbar(context, Colors.red, value);
+            showSnackbar(context, AppColor().errorColor, value);
           }
         }
       });

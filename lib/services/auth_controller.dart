@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison, unused_field
 
 import 'package:agora_care/app/authentication/login_page.dart';
+import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/app/home/admin_nav_screen.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
@@ -61,7 +62,9 @@ class AuthControllers extends GetxController {
   Future registerUserWithEmailandPassword(String email, String password) async {
     try {
       User user = (await auth.createUserWithEmailAndPassword(
-              email: email, password: password))
+        email: email,
+        password: password,
+      ))
           .user!;
 
       if (user != null) {
@@ -69,6 +72,43 @@ class AuthControllers extends GetxController {
         await DatabaseService(uid: user.uid).savingUserData(email);
         return true;
       }
+      DateTime now = DateTime.now();
+      final userModel = await getUserByModel(user.uid);
+      if (userModel.lastLoginTime == null ||
+          userModel.weeklyLoginTime == null) {
+        userModel.updatedAt = now;
+        userModel.lastLoginTime = now;
+        userModel.weeklyLoginTime = now;
+
+        _userDoc.doc(user.uid).update({
+          "weeks": FieldValue.increment(1),
+          "streak": FieldValue.increment(1),
+          "weeklyLoginTime": DateTime.now().toIso8601String(),
+          "lastLoginTime": DateTime.now().toIso8601String(),
+        });
+        final newUser = await getUserByModel(user.uid);
+        liveUser(newUser);
+      } else {
+        if (userModel.lastLoginTime!.difference(now).inDays >= 1 &&
+            userModel.weeklyLoginTime!.difference(now).inDays >= 1) {
+          _userDoc.doc(user.uid).update({
+            "weeks": FieldValue.increment(1),
+            "streak": FieldValue.increment(1),
+            "weeklyLoginTime": DateTime.now().toIso8601String(),
+            "lastLoginTime": DateTime.now().toIso8601String(),
+          });
+          final newUser = await getUserByModel(user.uid);
+          liveUser(newUser);
+          if (kDebugMode) {
+            print("user value gotten user ${liveUser.value!.toJson()}");
+          }
+        }
+      }
+      // if (userModel.admin == true) {
+      //   Get.to(() => AdminUserNavScreen());
+      // } else {
+      Get.to(() => const WelComePage());
+      // }
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
