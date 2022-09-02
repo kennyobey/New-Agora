@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
+import 'admin_home_screen.dart';
 import 'home_screen.dart';
 
 class UserNavScreen extends StatefulWidget {
@@ -28,13 +29,17 @@ class _UserNavScreenState extends State<UserNavScreen> {
 
   @override
   void initState() {
+    _authController.liveUser.value!.admin;
+    checkAdmin();
+
     _screens = [
       //Home Screen
-      const HomeScreen(),
+      _authController.liveUser.value!.admin != true
+          ? const HomeScreen()
+          : const AdminHomeScreen(),
 
       // Cells Screens
       const CellsScreen(),
-      // showGlobalBottomSheet(context),
 
       // Profile Screen
       const ProfileScreen(),
@@ -42,13 +47,17 @@ class _UserNavScreenState extends State<UserNavScreen> {
     super.initState();
   }
 
+  checkAdmin() {
+    if (_authController.liveUser.value!.admin != true) {
+      const HomeScreen();
+    } else {
+      const AdminHomeScreen();
+    }
+    setState(() {});
+  }
+
   int _selectedIndex = 0;
   int? newIndex;
-  // void _selectPage(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

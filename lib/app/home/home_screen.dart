@@ -256,9 +256,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Gap(5),
                   Obx(() {
                     return customDescriptionText(
-                      _quoteContoller.allQuotes.last.views! == null
+                      _quoteContoller.allQuotes.last.views!.length == null
                           ? '0'
-                          : _quoteContoller.allQuotes.last.views!.toString(),
+                          : _quoteContoller.allQuotes.last.views!.length
+                              .toString(),
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       colors: AppColor().textColor,
@@ -354,12 +355,28 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                             );
                           } else {
-                            return customDescriptionText(
-                                'No Available Group to join');
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Gap(30),
+                                Center(
+                                  child: customDescriptionText(
+                                      'No Available Cell to join'),
+                                ),
+                              ],
+                            );
                           }
                         } else {
-                          return customDescriptionText(
-                              'No Available Group to join');
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Gap(30),
+                              Center(
+                                child: customDescriptionText(
+                                    'No Available Cell to join'),
+                              ),
+                            ],
+                          );
                         }
                       } else {
                         return Center(
@@ -401,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (BuildContext context, int index) {
                         final item = _quoteContoller.allQuotes[index];
                         if (kDebugMode) {
-                          print('Like is now ${item.likes!}');
+                          print('Like is now ${item.likes!.length}');
                         }
                         return recentQuotes(
                           assetName: imageName[index],
@@ -522,9 +539,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    quoteModel!.views == null
+                    quoteModel!.views!.length == null
                         ? '0'
-                        : quoteModel.views.toString(),
+                        : quoteModel.views!.length.toString(),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().textColor,

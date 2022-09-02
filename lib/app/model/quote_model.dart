@@ -18,7 +18,8 @@ class QuoteModel {
     this.share,
     this.color,
     this.chats,
-    this.views = 0,
+    this.views,
+    // this.views = 0,
     this.reply,
     this.dailyQuote,
     this.createdAt,
@@ -28,8 +29,9 @@ class QuoteModel {
   final List<dynamic>? likes;
   final List<dynamic>? share;
   final List<dynamic>? chats;
+  final List<dynamic>? views;
   final String? dailyQuote;
-  final int? views;
+  // final int? views;
   final Color? color;
   final List<dynamic>? reply;
   DateTime? createdAt;
@@ -41,13 +43,16 @@ class QuoteModel {
         likes: json["likes"] == null
             ? null
             : List<dynamic>.from(json["likes"].map((x) => x)),
+        views: json["views"] == null
+            ? null
+            : List<dynamic>.from(json["views"].map((x) => x)),
         share: json["share"] == null
             ? null
             : List<dynamic>.from(json["share"].map((x) => x)),
         chats: json["chats"] == null
             ? null
             : List<dynamic>.from(json["chats"].map((x) => x)),
-        views: json["views"],
+        // views: json["views"],
         reply: json["reply"] == null
             ? null
             : List<dynamic>.from(json["reply"].map((x) => x)),
@@ -62,11 +67,13 @@ class QuoteModel {
         "color": color,
         "likes":
             likes == null ? null : List<dynamic>.from(likes!.map((x) => x)),
+        "views":
+            views == null ? null : List<dynamic>.from(views!.map((x) => x)),
         "share":
             share == null ? null : List<dynamic>.from(share!.map((x) => x)),
         "chats":
             chats == null ? null : List<dynamic>.from(chats!.map((x) => x)),
-        "views": views,
+        // "views": views,
         "reply":
             reply == null ? null : List<dynamic>.from(reply!.map((x) => x)),
         "createdAt": createdAt == null ? null : createdAt!.toIso8601String(),

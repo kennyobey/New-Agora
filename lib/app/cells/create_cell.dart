@@ -2,6 +2,7 @@ import 'package:agora_care/core/custom_form_field.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
+import 'package:agora_care/widget/bottom_modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -92,9 +93,29 @@ class _CreateCellState extends State<CreateCell> {
                   _cellNameController.text,
                 )
                     .whenComplete(() {
-                  _isLoading = false;
-                  setState(() {});
-                  Get.back();
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  showModalBottomSheet(
+                    isScrollControlled: true,
+                    backgroundColor: AppColor().whiteColor,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25),
+                        topRight: Radius.circular(25),
+                      ),
+                    ),
+                    context: context,
+                    builder: (context) => GlobalDialogue(
+                      text1: 'Cell created successfully',
+                      text2:
+                          'The cell is created and will be visible to all users',
+                      asset: 'assets/svgs/success.svg',
+                      action: () {
+                        Get.close(1);
+                      },
+                    ),
+                  );
                 });
               },
             ),

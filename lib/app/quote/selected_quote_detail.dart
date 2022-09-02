@@ -354,7 +354,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                             ),
                             const Gap(10),
                             InkWell(
-                              onTap: () async {
+                              onTap: () {
                                 isLiked
                                     ? _quoteContoller.likePost(
                                         _quoteContoller.allQuotes.last.id!)

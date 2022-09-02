@@ -130,7 +130,9 @@ class QuoteControllers extends GetxController {
       transaction.update(
         _newQuote.doc(quoteId),
         {
-          "views": FieldValue.increment(1),
+          "views":
+              FieldValue.arrayRemove([_authController.liveUser.value!.uid!]),
+          // "views": FieldValue.increment(1),
         },
       );
     });
@@ -154,7 +156,8 @@ class QuoteControllers extends GetxController {
         share: [],
         reply: [],
         chats: [],
-        views: 0,
+        views: [],
+        // views: 0,
         createdAt: DateTime.now(),
       );
       final json = user.toJson();
