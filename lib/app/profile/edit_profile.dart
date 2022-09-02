@@ -132,9 +132,9 @@ class _EditProfileState extends State<EditProfile> {
                   const Gap(15),
                   CustomTextField(
                     label: 'Fullname',
-                    hint: _authContoller.liveUser.value!.fullName == null
-                        ? 'Enter fullname'
-                        : _authContoller.liveUser.value!.fullName!,
+                    hint: _authContoller.liveUser.value!.username == null
+                        ? 'Enter username'
+                        : _authContoller.liveUser.value!.username!,
                     keyType: TextInputType.name,
                     validatorText: '** Field cannot be empty',
                     color: AppColor().lightTextColor,
