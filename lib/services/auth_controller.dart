@@ -72,6 +72,7 @@ class AuthControllers extends GetxController {
         await DatabaseService(uid: user.uid).savingUserData(email);
         return true;
       }
+
       DateTime now = DateTime.now();
       final userModel = await getUserByModel(user.uid);
       if (userModel.lastLoginTime == null ||
@@ -110,6 +111,7 @@ class AuthControllers extends GetxController {
       Get.to(() => const WelComePage());
       // }
     } on FirebaseAuthException catch (e) {
+      print(e);
       return e.message;
     }
   }
@@ -163,6 +165,7 @@ class AuthControllers extends GetxController {
         Get.to(() => UserNavScreen());
       }
     } on FirebaseAuthException catch (e) {
+      print(e);
       return e.message;
     }
   }

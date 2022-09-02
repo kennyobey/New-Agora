@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:agora_care/app/authentication/login_page.dart';
+import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +24,7 @@ class VerifyEmailPage extends StatefulWidget {
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
   final pinController = TextEditingController();
   String? pin;
+  late final bool _isLoading = false;
 
   StreamController<ErrorAnimationType>? changePinErrorController;
   @override
@@ -191,11 +193,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
             // ),
             const Expanded(child: SizedBox()),
             CustomFillButton(
+              isLoading: _isLoading,
               buttonText: 'Proceed',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
               onTap: () async {
-                Get.to(() => const LoginPage());
+                Get.to(() => const WelComePage());
                 // final user = FirebaseAuth.instance.currentUser;
                 // print("The Use details are$user");
                 // if (user?.emailVerified ?? false) {
