@@ -10,30 +10,30 @@ import 'package:get/get.dart';
 
 import 'routes/app_router.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  runApp(
-    DevicePreview(
-      enabled: true,
-      builder: (BuildContext context) => const AgoraCare(),
-    ),
-  );
-}
-
-// void main() async {
+// Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
 //   await Firebase.initializeApp();
 //   await SystemChrome.setPreferredOrientations([
 //     DeviceOrientation.portraitUp,
 //     DeviceOrientation.portraitDown,
 //   ]);
-//   runApp(const AgoraCare());
+//   runApp(
+//     DevicePreview(
+//       enabled: true,
+//       builder: (BuildContext context) => const AgoraCare(),
+//     ),
+//   );
 // }
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  runApp(const AgoraCare());
+}
 
 class AgoraCare extends StatelessWidget {
   const AgoraCare({Key? key}) : super(key: key);
