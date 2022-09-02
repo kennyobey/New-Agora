@@ -14,6 +14,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
+import '../home/home_screen.dart';
+import '../home/nav_screen.dart';
+import '../profile/profile_screen.dart';
+
 class CellsScreen extends StatefulWidget {
   const CellsScreen({Key? key}) : super(key: key);
 
@@ -29,7 +33,10 @@ class _CellsScreenState extends State<CellsScreen> {
   String groupName = "";
   Stream? groups;
   final bool _isLoading = false;
-
+  late List<Widget> _screens;
+  int tabIndex = 1;
+  int _selectedIndex = 1;
+  final _scaffoldState = GlobalKey();
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
     AppColor().blueColor,
@@ -56,6 +63,17 @@ class _CellsScreenState extends State<CellsScreen> {
   void initState() {
     super.initState();
     gettingUserData();
+    _screens = [
+      //Home Screen
+      const HomeScreen(),
+
+      // Cells Screens
+      const CellsScreen(),
+      // showGlobalBottomSheet(context),
+
+      // Profile Screen
+      const ProfileScreen(),
+    ];
   }
 
   // string manipulation
@@ -90,6 +108,72 @@ class _CellsScreenState extends State<CellsScreen> {
         backgroundColor: AppColor().whiteColor,
         elevation: 0,
         toolbarHeight: 0,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+        onTap: (newIndex) async => {
+          if (newIndex == 1)
+            {}
+          else
+            {
+              setState(() {
+                setState(() {
+                  tabIndex = newIndex;
+                  _selectedIndex = tabIndex!;
+                  // _selectPage;
+                });
+                Get.off(UserNavScreen(tabIndex: newIndex,));
+              })
+            }
+        },
+        backgroundColor: AppColor().whiteColor,
+        currentIndex: _selectedIndex,
+        elevation: 20,
+        key: _scaffoldState,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+            backgroundColor: Theme.of(context).bottomAppBarColor,
+            icon: SvgPicture.asset(
+              'assets/svgs/home.svg',
+            ),
+            label: '',
+            tooltip: 'Home',
+            activeIcon: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                SvgPicture.asset('assets/svgs/home_filled.svg'),
+                SvgPicture.asset('assets/svgs/home.svg'),
+              ],
+            ),
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: Theme.of(context).bottomAppBarColor,
+            icon: SvgPicture.asset('assets/svgs/people.svg'),
+            label: '',
+            tooltip: 'Cells',
+            activeIcon: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                SvgPicture.asset('assets/svgs/people_filled.svg'),
+                SvgPicture.asset('assets/svgs/people.svg'),
+              ],
+            ),
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: Theme.of(context).bottomAppBarColor,
+            label: '',
+            tooltip: 'Users',
+            icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
+            activeIcon: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
+                SvgPicture.asset('assets/svgs/user-tag.svg'),
+              ],
+            ),
+          ),
+        ],
       ),
       body: Container(
         color: AppColor().boxColor,
