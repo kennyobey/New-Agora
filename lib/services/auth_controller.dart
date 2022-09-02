@@ -206,9 +206,9 @@ class AuthControllers extends GetxController {
   // Sign Out
   Future signOut() async {
     try {
+      liveUser(null);
       await HelperFunction.saveUserLoggedInStatus(false);
       await HelperFunction.saveUserEmailSF("");
-      liveUser(null);
       await auth.signOut();
       Get.offAll(() => const LoginPage());
     } catch (e) {
