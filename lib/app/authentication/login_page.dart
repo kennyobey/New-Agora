@@ -54,111 +54,118 @@ class _LoginPageState extends State<LoginPage> {
         elevation: 0,
         toolbarHeight: 0,
       ),
-      body: Form(
-        key: formKey,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              IconButton(
-                padding: EdgeInsets.zero,
-                onPressed: () => Get.back(),
-                icon: Icon(
-                  CupertinoIcons.back,
-                  color: AppColor().filledTextField,
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
+            )
+          : Form(
+              key: formKey,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () => Get.back(),
+                      icon: Icon(
+                        CupertinoIcons.back,
+                        color: AppColor().filledTextField,
+                      ),
+                    ),
+                    const Gap(10),
+                    customTitleText(
+                      'Welcome! 👋',
+                      size: 32,
+                      spacing: -0.1,
+                      fontWeight: FontWeight.w800,
+                      colors: AppColor().filledTextField,
+                    ),
+                    const Gap(10),
+                    customDescriptionText(
+                      'Login to your account to proceed',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      colors: AppColor().lightTextColor,
+                    ),
+                    const Gap(20),
+                    CustomTextField(
+                      textEditingController: _emailController,
+                      label: 'Email Address',
+                      hint: 'Enter email address',
+                      keyType: TextInputType.emailAddress,
+                      validatorText: '** Field cannot be empty',
+                      color: AppColor().lightTextColor,
+                      onChanged: (val) {
+                        setState(() {
+                          email = val;
+                        });
+                      },
+                    ),
+                    const Gap(20),
+                    CustomPassWord(
+                      textEditingController: _passworController,
+                      obscureText: true,
+                      label: 'Password',
+                      hint: 'Enter password',
+                      keyType: TextInputType.text,
+                      validatorText: '** Field cannot be empty',
+                      color: AppColor().lightTextColor,
+                      onChanged: (val) {
+                        setState(() {
+                          password = val;
+                        });
+                      },
+                    ),
+                    const Gap(20),
+                    Text.rich(TextSpan(
+                      text: "Don't have an account? ",
+                      style: TextStyle(
+                          color: AppColor().lightTextColor, fontSize: 14),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: "Sign Up",
+                            style: TextStyle(
+                                color: AppColor().lightTextColor,
+                                decoration: TextDecoration.underline),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                nextScreen(context, const EmailPage());
+                              }),
+                      ],
+                    )),
+                    const Expanded(child: SizedBox()),
+                    CustomFillButton(
+                      buttonText: 'Proceed',
+                      textColor: AppColor().button1Color,
+                      buttonColor: AppColor().primaryColor,
+                      isLoading: _isLoading,
+                      onTap: () async {
+                        if (kDebugMode) {
+                          print("The email is $email");
+                        }
+                        // final user = FirebaseAuth.instance.currentUser;
+                        // if (kDebugMode) {
+                        //   print("The User details is $user");
+                        // }
+                        // if (FirebaseAuth.instance.currentUser.uid == true) {
+                        await login();
+                        // } else {
+                        //   Get.snackbar(
+                        //       "Email Verification", "Go and verify your mail",
+                        //       duration: const Duration(seconds: 5));
+                        // }
+                      },
+                    ),
+                    const Gap(40),
+                  ],
                 ),
               ),
-              const Gap(10),
-              customTitleText(
-                'Welcome! 👋',
-                size: 32,
-                spacing: -0.1,
-                fontWeight: FontWeight.w800,
-                colors: AppColor().filledTextField,
-              ),
-              const Gap(10),
-              customDescriptionText(
-                'Login to your account to proceed',
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                colors: AppColor().lightTextColor,
-              ),
-              const Gap(20),
-              CustomTextField(
-                textEditingController: _emailController,
-                label: 'Email Address',
-                hint: 'Enter email address',
-                keyType: TextInputType.emailAddress,
-                validatorText: '** Field cannot be empty',
-                color: AppColor().lightTextColor,
-                onChanged: (val) {
-                  setState(() {
-                    email = val;
-                  });
-                },
-              ),
-              const Gap(20),
-              CustomPassWord(
-                textEditingController: _passworController,
-                obscureText: true,
-                label: 'Password',
-                hint: 'Enter password',
-                keyType: TextInputType.text,
-                validatorText: '** Field cannot be empty',
-                color: AppColor().lightTextColor,
-                onChanged: (val) {
-                  setState(() {
-                    password = val;
-                  });
-                },
-              ),
-              const Gap(20),
-              Text.rich(TextSpan(
-                text: "Don't have an account? ",
-                style:
-                    TextStyle(color: AppColor().lightTextColor, fontSize: 14),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: "Sign Up",
-                      style: TextStyle(
-                          color: AppColor().lightTextColor,
-                          decoration: TextDecoration.underline),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          nextScreen(context, const EmailPage());
-                        }),
-                ],
-              )),
-              const Expanded(child: SizedBox()),
-              CustomFillButton(
-                buttonText: 'Proceed',
-                textColor: AppColor().button1Color,
-                buttonColor: AppColor().primaryColor,
-                onTap: () async {
-                  if (kDebugMode) {
-                    print("The email is $email");
-                  }
-                  // final user = FirebaseAuth.instance.currentUser;
-                  // if (kDebugMode) {
-                  //   print("The User details is $user");
-                  // }
-                  // if (FirebaseAuth.instance.currentUser.uid == true) {
-                  await login();
-                  // } else {
-                  //   Get.snackbar(
-                  //       "Email Verification", "Go and verify your mail",
-                  //       duration: const Duration(seconds: 5));
-                  // }
-                },
-              ),
-              const Gap(40),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -167,10 +174,13 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoading = true;
       });
-      _authContoller.loginWithUserNameandPassword(
+      await _authContoller.loginWithUserNameandPassword(
         _emailController.text.trim(),
         _passworController.text.trim(),
       );
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 

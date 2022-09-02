@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:agora_care/app/group_screen/chat_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -201,8 +203,10 @@ class _CellsScreenState extends State<CellsScreen> {
                             itemBuilder: (BuildContext context, int index) {
                               int reverseIndex =
                                   snapshot.data['groups'].length - index - 1;
+                              final random = Random();
                               return otherCells(
-                                colors: colorList[index],
+                                colors:
+                                    colorList[random.nextInt(colorList.length)],
                                 groupId: getId(
                                     snapshot.data['groups'][reverseIndex]),
                                 groupName: getName(
@@ -345,11 +349,14 @@ class _CellsScreenState extends State<CellsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  customTitleText(
-                    groupName!,
-                    textAlign: TextAlign.left,
-                    colors: AppColor().textColor,
-                    size: 16,
+                  Container(
+                    width: 80,
+                    child: customTitleText(
+                      groupName!,
+                      textAlign: TextAlign.left,
+                      colors: AppColor().textColor,
+                      size: 16,
+                    ),
                   ),
                   const Gap(5),
                   Row(

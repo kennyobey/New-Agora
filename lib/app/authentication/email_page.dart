@@ -147,7 +147,7 @@ class _EmailPageState extends State<EmailPage> {
                     )),
                     const Expanded(child: SizedBox()),
                     CustomFillButton(
-                      buttonText: 'Send code',
+                      buttonText: 'Sign Up',
                       textColor: AppColor().button1Color,
                       buttonColor: AppColor().primaryColor,
                       onTap: () async {
@@ -170,10 +170,10 @@ class _EmailPageState extends State<EmailPage> {
 
   register() async {
     if (formKey.currentState!.validate()) {
-      // setState(() {
-      //   _isLoading = true;
-      // });
-      final userCredential = _authContoller
+      setState(() {
+        _isLoading = true;
+      });
+      await _authContoller
           .registerUserWithEmailandPassword(
         _emailController.text.trim(),
         _passworController.text.trim(),
@@ -189,6 +189,9 @@ class _EmailPageState extends State<EmailPage> {
           final user = FirebaseAuth.instance.currentUser;
           if (user != null) {
             await user.sendEmailVerification();
+            setState(() {
+              _isLoading = false;
+            });
             if (kDebugMode) {
               print(user);
             }

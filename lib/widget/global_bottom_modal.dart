@@ -7,7 +7,11 @@ import 'package:agora_care/core/customWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+
+import '../app/cells/cell_screen.dart';
 
 class GlobalBottomDialogue extends StatefulWidget {
   VoidCallback? back;
@@ -101,7 +105,10 @@ class _GlobalBottomDialogueState extends State<GlobalBottomDialogue> {
                                   buttonColor: AppColor().primaryColor,
                                   width:
                                       MediaQuery.of(context).size.width * 0.33,
-                                  onTap: widget.next!,
+                                  //onTap: widget.next!,
+                                  onTap: () {
+                                    Get.to(() => const CellsScreen());
+                                  },
                                 ),
                               ],
                             ),

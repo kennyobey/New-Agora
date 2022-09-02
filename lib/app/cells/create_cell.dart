@@ -74,6 +74,7 @@ class _CreateCellState extends State<CreateCell> {
             ),
             const Spacer(),
             CustomFillButton(
+              isLoading: _isLoading,
               buttonText: 'Create Cell',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
@@ -92,6 +93,8 @@ class _CreateCellState extends State<CreateCell> {
                 )
                     .whenComplete(() {
                   _isLoading = false;
+                  setState(() {});
+                  Get.back();
                 });
               },
             ),

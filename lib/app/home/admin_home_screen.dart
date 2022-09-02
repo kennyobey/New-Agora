@@ -404,7 +404,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                           top: 10,
                                           bottom: 10),
                                       child: Container(
-                                        padding: const EdgeInsets.all(8),
+                                        padding: const EdgeInsets.all(4),
                                         child: Row(
                                           children: [
                                             const SizedBox(
@@ -517,9 +517,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                               final item = _quoteContoller.allQuotes[index];
                               return recentQuotes(
                                 assetName: imageName[index],
-                                views: item.likes.toString(),
-                                messages: '400',
-                                shares: '40',
+                                views: item.likes!.length.toString(),
+                                messages: item.reply!.length.toString(),
+                                shares: item.share!.length.toString(),
                               );
                             },
                           ));
@@ -641,7 +641,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.5,
+        //width: MediaQuery.of(context).size.width * 0.5,
         height: MediaQuery.of(context).size.height * 0.25,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -667,7 +667,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  views!,
+                  "$views",
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,
@@ -678,7 +678,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  messages!,
+                  "$messages",
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,
@@ -689,7 +689,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  shares!,
+                  "$shares",
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,

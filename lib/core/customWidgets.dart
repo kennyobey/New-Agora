@@ -525,6 +525,7 @@ class CustomFillButton extends StatelessWidget {
     this.textColor,
     this.buttonColor,
     this.borderRadius,
+    this.isLoading = false,
     required this.buttonText,
   }) : super(key: key);
   final double? width;
@@ -533,6 +534,7 @@ class CustomFillButton extends StatelessWidget {
   final String? buttonText;
   final VoidCallback? onTap;
   final BorderRadiusGeometry? borderRadius;
+  final bool isLoading;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -545,11 +547,15 @@ class CustomFillButton extends StatelessWidget {
           borderRadius: borderRadius ?? BorderRadius.circular(10),
         ),
         child: Center(
-          child: customTitleText(
-            buttonText!,
-            size: 16,
-            colors: textColor,
-          ),
+          child: (isLoading)
+              ? CircularProgressIndicator(
+                  color: Colors.white,
+                )
+              : customTitleText(
+                  buttonText!,
+                  size: 16,
+                  colors: textColor,
+                ),
         ),
       ),
     );
