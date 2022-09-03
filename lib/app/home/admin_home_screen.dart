@@ -286,9 +286,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  _quoteContoller.allQuotes.last.views == null
+                  _quoteContoller.allQuotes.last.views!.length == null
                       ? '0'
-                      : _quoteContoller.allQuotes.last.views!.toString(),
+                      : _quoteContoller.allQuotes.last.views!.length.toString(),
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,
