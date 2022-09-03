@@ -7,7 +7,6 @@ import 'package:agora_care/app/quote/quote_details.dart';
 import 'package:agora_care/app/quote/selected_quote_detail.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
-import 'package:agora_care/core/widget.dart';
 import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
@@ -501,29 +500,29 @@ class _HomeScreenState extends State<HomeScreen> {
         if (kDebugMode) {
           print('Joining Group');
         }
-        await DatabaseService(uid: _authContoller.liveUser.value!.uid)
-            .toggleGroupJoin(groupId, userName, groupName);
-        if (isJoined) {
-          setState(
-            () {
-              isJoined = !isJoined;
-            },
-          );
-          showSnackbar(context, Colors.green, "Successfully joined he group");
+        // await DatabaseService(uid: _authContoller.liveUser.value!.uid)
+        //     .toggleGroupJoin(groupId, userName, groupName);
+        // if (isJoined) {
+        //   setState(
+        //     () {
+        //       isJoined = !isJoined;
+        //     },
+        //   );
+        //   showSnackbar(context, Colors.green, "Successfully joined he group");
 
-          Get.to(
-            () => ChatPage(
-              groupId: groupId,
-              groupName: groupName,
-              userName: userName,
-            ),
-          );
-        } else {
-          setState(() {
-            isJoined = !isJoined;
-            showSnackbar(context, Colors.red, "Left the group $groupName");
-          });
-        }
+        Get.to(
+          () => ChatPage(
+            groupId: groupId,
+            groupName: groupName,
+            userName: userName,
+          ),
+        );
+        // } else {
+        //   setState(() {
+        //     isJoined = !isJoined;
+        //     showSnackbar(context, Colors.red, "Left the group $groupName");
+        //   });
+        // }
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),
