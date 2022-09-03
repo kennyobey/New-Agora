@@ -119,7 +119,7 @@ class _CellsScreenState extends State<CellsScreen> {
               setState(() {
                 setState(() {
                   tabIndex = newIndex;
-                  _selectedIndex = tabIndex!;
+                  _selectedIndex = tabIndex;
                   // _selectPage;
                 });
                 Get.off(UserNavScreen(tabIndex: newIndex,));

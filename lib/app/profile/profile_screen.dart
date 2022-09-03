@@ -202,9 +202,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   size: 30,
                 ),
                 titleText: 'Groups',
-                onTap: () {
-                  Get.to(() => const GroupScreen());
-                },
+                // onTap: () {
+                //   Get.to(() => const GroupScreen());
+                // },
               ),
               const Gap(15),
               CustomContainer(
@@ -213,9 +213,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Quote Page',
-                onTap: () {
-                  Get.to(() => const QuotePage());
-                },
+                // onTap: () {
+                //   Get.to(() => const QuotePage());
+                // },
               ),
               const Gap(15),
               CustomContainer(
@@ -235,9 +235,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Settings',
-                onTap: () {
-                  Get.to(() => const AdminHomeScreen());
-                },
+                // onTap: () {
+                //   Get.to(() => const AdminHomeScreen());
+                // },
               ),
               const Gap(15),
               CustomContainer(
