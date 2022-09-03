@@ -192,6 +192,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 colors: AppColor().filledTextField,
               ),
               const Gap(15),
+
+              CustomContainer(
+                selectedColor: Theme.of(context).primaryColor,
+                selected: true,
+                trailing: const Icon(
+                  Icons.group,
+                  size: 30,
+                ),
+                titleText: 'Groups',
+                // onTap: () {
+                //   Get.to(() => const GroupScreen());
+                // },
+              ),
+              const Gap(15),
+              CustomContainer(
+                trailing: SvgPicture.asset(
+                  'assets/svgs/keyboard_arrow_right.svg',
+                  height: 14,
+                ),
+                titleText: 'Quote Page',
+                // onTap: () {
+                //   Get.to(() => const QuotePage());
+                // },
+              ),
+              const Gap(15),
+
               // CustomContainer(
               //   selectedColor: Theme.of(context).primaryColor,
               //   selected: true,
@@ -216,6 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //   },
               // ),
               // const Gap(15),
+
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
@@ -233,9 +260,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Settings',
-                onTap: () {
-                  Get.to(() => const AdminHomeScreen());
-                },
+                // onTap: () {
+                //   Get.to(() => const AdminHomeScreen());
+                // },
               ),
               const Gap(15),
               CustomContainer(
