@@ -296,7 +296,6 @@ class _EditProfileState extends State<EditProfile> {
                                   _isLoading = false;
                                 });
                               }
-                              ;
                             })
                         : Container(),
                     const Gap(5),

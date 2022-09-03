@@ -1,6 +1,7 @@
+// ignore_for_file: file_names
+
 import 'dart:async';
 
-import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';

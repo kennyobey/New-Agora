@@ -122,7 +122,9 @@ class _CellsScreenState extends State<CellsScreen> {
                   _selectedIndex = tabIndex;
                   // _selectPage;
                 });
-                Get.off(UserNavScreen(tabIndex: newIndex,));
+                Get.off(UserNavScreen(
+                  tabIndex: newIndex,
+                ));
               })
             }
         },
@@ -433,7 +435,7 @@ class _CellsScreenState extends State<CellsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     width: 80,
                     child: customTitleText(
                       groupName!,

@@ -3,7 +3,6 @@
 import 'package:agora_care/app/home/admin_home_screen.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
-import 'package:agora_care/app/quote/quote.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -14,7 +13,6 @@ import 'package:get/get.dart';
 
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
-import '../group_screen/group_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -194,6 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 colors: AppColor().filledTextField,
               ),
               const Gap(15),
+
               CustomContainer(
                 selectedColor: Theme.of(context).primaryColor,
                 selected: true,
@@ -218,6 +217,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // },
               ),
               const Gap(15),
+
+              // CustomContainer(
+              //   selectedColor: Theme.of(context).primaryColor,
+              //   selected: true,
+              //   trailing: const Icon(
+              //     Icons.group,
+              //     size: 30,
+              //   ),
+              //   titleText: 'Groups',
+              //   onTap: () {
+              //     Get.to(() => const GroupScreen());
+              //   },
+              // ),
+              // const Gap(15),
+              // CustomContainer(
+              //   trailing: SvgPicture.asset(
+              //     'assets/svgs/keyboard_arrow_right.svg',
+              //     height: 14,
+              //   ),
+              //   titleText: 'Quote Page',
+              //   onTap: () {
+              //     Get.to(() => const QuotePage());
+              //   },
+              // ),
+              // const Gap(15),
+
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
