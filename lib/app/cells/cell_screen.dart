@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:math';
 
 import 'package:agora_care/app/group_screen/chat_page.dart';
@@ -116,16 +118,20 @@ class _CellsScreenState extends State<CellsScreen> {
             {}
           else
             {
-              setState(() {
-                setState(() {
-                  tabIndex = newIndex;
-                  _selectedIndex = tabIndex;
-                  // _selectPage;
-                });
-                Get.off(UserNavScreen(
-                  tabIndex: newIndex,
-                ));
-              })
+              setState(
+                () {
+                  setState(() {
+                    tabIndex = newIndex;
+                    _selectedIndex = tabIndex;
+                    // _selectPage;
+                  });
+                  Get.off(
+                    () => UserNavScreen(
+                      tabIndex: newIndex,
+                    ),
+                  );
+                },
+              ),
             }
         },
         backgroundColor: AppColor().whiteColor,
@@ -240,11 +246,11 @@ class _CellsScreenState extends State<CellsScreen> {
                           );
                         } else {
                           return customDescriptionText(
-                              'No Available Group to join');
+                              'No Available Cell to join');
                         }
                       } else {
                         return customDescriptionText(
-                            'No Available Group to join');
+                            'No Available Cell to join');
                       }
                     } else {
                       return Center(
@@ -306,11 +312,11 @@ class _CellsScreenState extends State<CellsScreen> {
                           );
                         } else {
                           return customDescriptionText(
-                              'No Available Group to join');
+                              'No Available Cell to join');
                         }
                       } else {
                         return customDescriptionText(
-                            'No Available Group to join');
+                            'No Available Cell to join');
                       }
                     } else {
                       return Center(
@@ -336,7 +342,7 @@ class _CellsScreenState extends State<CellsScreen> {
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
-          print('Joining Group');
+          print('$userName is Joining Group');
         }
         Get.to(
           () => ChatPage(

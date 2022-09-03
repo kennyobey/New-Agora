@@ -12,7 +12,12 @@ enum QuoteStatus { LOADING, ERROR, EMPTY, SUCCESS }
 
 class QuoteControllers extends GetxController {
   final _authController = Get.find<AuthControllers>();
-  final bool isLoading = false;
+
+  final Rx<QuoteStatus> _quoteStatus = Rx(QuoteStatus.EMPTY);
+  QuoteStatus get quoteStatus => _quoteStatus.value;
+
+  Rx<UserModel> liveUser = UserModel().obs;
+  UserModel get users => liveUser.value;
 
   final Rx<List<QuoteModel>> _quoteList = Rx([]);
   List<QuoteModel> get allQuotes => _quoteList.value;
@@ -22,16 +27,9 @@ class QuoteControllers extends GetxController {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection("users");
 
-  Rx<UserModel> liveUser = UserModel().obs;
-  UserModel get users => liveUser.value;
-
   FirebaseAuth auth = FirebaseAuth.instance;
   final _userDoc = FirebaseFirestore.instance.collection("users");
-
   final _newQuote = FirebaseFirestore.instance.collection("quotes");
-
-  final Rx<QuoteStatus> _quoteStatus = Rx(QuoteStatus.EMPTY);
-  QuoteStatus get quoteStatus => _quoteStatus.value;
 
   @override
   void onInit() async {
@@ -66,7 +64,6 @@ class QuoteControllers extends GetxController {
 //Fetch  Stream dailyQuote
   Stream<QuerySnapshot<Object?>> getDailyQuote() {
     final quotes = quotesCollection.orderBy("createdAt").snapshots();
-    // getQuotes();
     return quotes;
   }
 
@@ -86,8 +83,8 @@ class QuoteControllers extends GetxController {
           final quote = QuoteModel.fromJson(element.data()!, element.id);
           list.add(quote);
           if (kDebugMode) {
-            // print('ID is: ${element.id}');
-            // print('quote is:${quote.toJson()} ID is:');
+            print('ID is: ${element.id}');
+            print('quote is:${quote.toJson()}');
           }
           _quoteStatus(QuoteStatus.SUCCESS);
         }
@@ -127,14 +124,9 @@ class QuoteControllers extends GetxController {
       print("quote id is $quoteId");
     }
     FirebaseFirestore.instance.runTransaction((transaction) async {
-      transaction.update(
-        _newQuote.doc(quoteId),
-        {
-          "views":
-              FieldValue.arrayRemove([_authController.liveUser.value!.uid!]),
-          // "views": FieldValue.increment(1),
-        },
-      );
+      transaction.update(_newQuote.doc(quoteId), {
+        "views": FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
+      });
     });
   }
 

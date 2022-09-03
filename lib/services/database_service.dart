@@ -1,4 +1,5 @@
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/cell_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,7 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("groups");
 
   final _authController = Get.find<AuthControllers>();
+  final _cellController = Get.find<CellControllers>();
 
   // saving the userdata
   Future savingUserData(String email) async {
@@ -110,7 +112,9 @@ class DatabaseService {
       String groupId, String userEmail, String groupName) async {
     // doc reference
     DocumentReference userDocumentReference = userCollection.doc(uid);
-    DocumentReference groupDocumentReference = groupCollection.doc(groupId);
+    // DocumentReference groupDocumentReference = groupCollection.doc(groupId);
+
+    DocumentReference groupDocumentReference = cellsCollection.doc(groupId);
 
     DocumentSnapshot documentSnapshot = await userDocumentReference.get();
     List<dynamic> groups = await documentSnapshot['groups'];
@@ -133,6 +137,26 @@ class DatabaseService {
     }
   }
 
+// Future getAllCells() async {
+  //   _cellStatus(CellStatus.LOADING);
+  //   try {
+  //     cellCollection.orderBy("createdAt").snapshots().listen((event) {
+  //       List<CellModel> list = [];
+  //       for (var element in event.docs) {
+  //         final cells = CellModel.fromJson(element.data()!, element.id);
+  //         list.add(cells);
+  //         if (kDebugMode) {
+  //           print('CELL ID is: ${element.id}');
+  //           print('cell is:${cells.toJson()} ID is:');
+  //         }
+  //         _cellStatus(CellStatus.SUCCESS);
+  //       }
+  //       _availableCell(list);
+  //     });
+  //   } catch (ex) {
+  //     //
+  //   }
+  // }
   // send message
   sendMessage(String groupId, Map<String, dynamic> chatMessageData) async {
     groupCollection.doc(groupId).collection("messages").add(chatMessageData);

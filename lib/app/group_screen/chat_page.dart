@@ -75,12 +75,18 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10.0),
-            child: SvgPicture.asset(
-              'assets/svgs/chat_frame.svg',
-              height: MediaQuery.of(context).size.height * 0.2,
-              width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.2,
+            // padding: const EdgeInsets.all(10.0),
+            margin: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColor().primaryColor,
+              borderRadius: BorderRadius.circular(12),
             ),
+            // child: SvgPicture.asset(
+            //   'assets/svgs/chat_frame.svg',
+            //   height: MediaQuery.of(context).size.height * 0.2,
+            //   width: MediaQuery.of(context).size.width,
+            // ),
           ),
           Expanded(
             child:
