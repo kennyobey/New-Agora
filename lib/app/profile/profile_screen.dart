@@ -192,6 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 colors: AppColor().filledTextField,
               ),
               const Gap(15),
+
               CustomContainer(
                 selectedColor: Theme.of(context).primaryColor,
                 selected: true,

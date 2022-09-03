@@ -32,27 +32,31 @@ class CellControllers extends GetxController {
   void onInit() async {
     super.onInit();
     final now = DateTime.now();
-    if (FirebaseAuth.instance.currentUser != null) {
-      final newUser =
-          await getCellsByModel(FirebaseAuth.instance.currentUser!.uid);
-      availableCell(newUser);
+    _authController.liveUser.listen((p0) async {
+      if (p0 != null) {
+        if(p0.admin!){
 
-      if (newUser.recentMessageTime!.difference(now).inDays >= 1 &&
-          newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
-        _cellsDoc.doc(FirebaseAuth.instance.currentUser!.uid).update({
-          "weeks": FieldValue.increment(1),
-          "streak": FieldValue.increment(1),
-          "recentMessageTime": DateTime.now().toIso8601String(),
-          "weeklyLoginTime": DateTime.now().toIso8601String(),
-        });
+        
         final newUser =
             await getCellsByModel(FirebaseAuth.instance.currentUser!.uid);
         availableCell(newUser);
-        if (kDebugMode) {
-          print("user value gotten user ${availableCell.value.toJson()}");
+           print("cell gotten is ${newUser.toJson()}");
+        if (newUser.recentMessageTime!.difference(now).inDays >= 1 &&
+            newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
+          _cellsDoc.doc(FirebaseAuth.instance.currentUser!.uid).update({
+            "weeks": FieldValue.increment(1),
+            "streak": FieldValue.increment(1),
+            "recentMessageTime": DateTime.now().toIso8601String(),
+            "weeklyLoginTime": DateTime.now().toIso8601String(),
+          });
         }
+        }else{
+
+
+        }
+     
       }
-    }
+    });
   }
 
   //all cells
@@ -160,5 +164,18 @@ class CellControllers extends GetxController {
     final cells = CellModel.fromJson(result.data()!);
 
     return cells;
+  }
+  Future<List<CellModel>> getAllCellModel()async{
+
+List<CellModel> list=[];
+final result=await _cellsDoc.get();
+
+Future.forEach(result.docs, (QueryDocumentSnapshot<Map<String, dynamic>> element){
+final cell=CellModel.fromJson(element.data());
+list.add(cell);
+
+});
+return list;
+
   }
 }
