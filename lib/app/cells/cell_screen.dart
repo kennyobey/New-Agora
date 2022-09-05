@@ -215,51 +215,80 @@ class _CellsScreenState extends State<CellsScreen> {
               ],
             ),
             const Gap(20),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.1,
-              child: StreamBuilder(
-                  stream: groups,
-                  builder: (context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data['groups'] != null) {
-                        if (snapshot.data['groups'].length != 0) {
-                          return ListView.builder(
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.horizontal,
-                            // itemCount: colorList.length,
-                            itemCount: snapshot.data['groups'].length,
-                            itemBuilder: (BuildContext context, int index) {
-                              int reverseIndex =
-                                  snapshot.data['groups'].length - index - 1;
+            // SizedBox(
+            //   height: MediaQuery.of(context).size.height * 0.1,
+            //   child: StreamBuilder(
+            //       stream: groups,
+            //       builder: (context, AsyncSnapshot snapshot) {
+            //         if (snapshot.hasData) {
+            //           if (snapshot.data['groups'] != null) {
+            //             if (snapshot.data['groups'].length != 0) {
+            //               return ListView.builder(
+            //                 padding: EdgeInsets.zero,
+            //                 scrollDirection: Axis.horizontal,
+            //                 // itemCount: colorList.length,
+            //                 itemCount: snapshot.data['groups'].length,
+            //                 itemBuilder: (BuildContext context, int index) {
+            //                   int reverseIndex =
+            //                       snapshot.data['groups'].length - index - 1;
 
-                              return recommendedCells(
-                                groupId: getId(
-                                    snapshot.data['groups'][reverseIndex]),
-                                colors: colorList[index],
-                                groupName: getName(
-                                    snapshot.data['groups'][reverseIndex]),
-                                assetName: 'assets/svgs/bank.svg',
-                                userName:
-                                    _authContoller.liveUser.value!.username!,
-                              );
-                            },
-                          );
-                        } else {
-                          return customDescriptionText(
-                              'No Available Cell to join');
+            //                   return recommendedCells(
+            //                     groupId: getId(
+            //                         snapshot.data['groups'][reverseIndex]),
+            //                     colors: colorList[index],
+            //                     groupName: getName(
+            //                         snapshot.data['groups'][reverseIndex]),
+            //                     assetName: 'assets/svgs/bank.svg',
+            //                     userName:
+            //                         _authContoller.liveUser.value!.username!,
+            //                   );
+            //                 },
+            //               );
+            //             } else {
+            //               return customDescriptionText(
+            //                   'No Available Cell to join');
+            //             }
+            //           } else {
+            //             return customDescriptionText(
+            //                 'No Available Cell to join');
+            //           }
+            //         } else {
+            //           return Center(
+            //             child: CircularProgressIndicator(
+            //                 color: Theme.of(context).primaryColor),
+            //           );
+            //         }
+            //       }),
+            // ),
+            Obx(() {
+              if (_cellContoller.cellStatus == CellStatus.LOADING) {
+                return customDescriptionText('No Available  Cell');
+              } else {
+                return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.horizontal,
+                      // itemCount: imageName.length,
+                      itemCount: _cellContoller.allAvailableCell.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = _cellContoller.allAvailableCell[index];
+                        if (kDebugMode) {
+                          print('Cell is now ${item.groupName!.length}');
+                          print("group id for cell is ${item.groupId}");
                         }
-                      } else {
-                        return customDescriptionText(
-                            'No Available Cell to join');
-                      }
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(
-                            color: Theme.of(context).primaryColor),
-                      );
-                    }
-                  }),
-            ),
+                        final random = Random();
+                        return recommendedCells(
+                          groupId: item.groupId,
+                          groupName: item.groupName,
+                          colors: colorList[random.nextInt(colorList.length)],
+                          assetName: 'assets/svgs/bank.svg',
+                          userName: _authContoller.liveUser.value!.username!,
+                        );
+                      },
+                    ));
+              }
+            }),
             const Gap(30),
             Row(
               children: [
@@ -277,54 +306,96 @@ class _CellsScreenState extends State<CellsScreen> {
               ],
             ),
             const Gap(10),
+            // Expanded(
+            //   child: StreamBuilder(
+            //       stream: groups,
+            //       builder: (context, AsyncSnapshot snapshot) {
+            //         if (snapshot.hasData) {
+            //           if (snapshot.data['groups'] != null) {
+            //             if (snapshot.data['groups'].length != 0) {
+            //               return GridView.builder(
+            //                 padding: EdgeInsets.zero,
+            //                 scrollDirection: Axis.vertical,
+            //                 itemCount: snapshot.data['groups'].length,
+            //                 // itemCount: colorList.length,
+            //                 gridDelegate:
+            //                     const SliverGridDelegateWithFixedCrossAxisCount(
+            //                         childAspectRatio: 5 / 3, crossAxisCount: 2),
+            //                 itemBuilder: (BuildContext context, int index) {
+            //                   int reverseIndex =
+            //                       snapshot.data['groups'].length - index - 1;
+            //                   final random = Random();
+            //                   return otherCells(
+            //                     colors:
+            //                         colorList[random.nextInt(colorList.length)],
+            //                     groupId: getId(
+            //                         snapshot.data['groups'][reverseIndex]),
+            //                     groupName: getName(
+            //                         snapshot.data['groups'][reverseIndex]),
+            //                     assetName: 'assets/svgs/bank.svg',
+            //                     assetName2: 'assets/svgs/people.svg',
+            //                     userName:
+            //                         _authContoller.liveUser.value!.username!,
+            //                   );
+            //                 },
+            //               );
+            //             } else {
+            //               return customDescriptionText(
+            //                   'No Available Cell to join');
+            //             }
+            //           } else {
+            //             return customDescriptionText(
+            //                 'No Available Cell to join');
+            //           }
+            //         } else {
+            //           return Center(
+            //             child: CircularProgressIndicator(
+            //                 color: Theme.of(context).primaryColor),
+            //           );
+            //         }
+            //       }),
+            // ),
             Expanded(
-              child: StreamBuilder(
-                  stream: groups,
-                  builder: (context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data['groups'] != null) {
-                        if (snapshot.data['groups'].length != 0) {
-                          return GridView.builder(
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.vertical,
-                            itemCount: snapshot.data['groups'].length,
-                            // itemCount: colorList.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    childAspectRatio: 5 / 3, crossAxisCount: 2),
-                            itemBuilder: (BuildContext context, int index) {
-                              int reverseIndex =
-                                  snapshot.data['groups'].length - index - 1;
-                              final random = Random();
-                              return otherCells(
-                                colors:
-                                    colorList[random.nextInt(colorList.length)],
-                                groupId: getId(
-                                    snapshot.data['groups'][reverseIndex]),
-                                groupName: getName(
-                                    snapshot.data['groups'][reverseIndex]),
-                                assetName: 'assets/svgs/bank.svg',
-                                assetName2: 'assets/svgs/people.svg',
-                                userName:
-                                    _authContoller.liveUser.value!.username!,
-                              );
-                            },
-                          );
-                        } else {
-                          return customDescriptionText(
-                              'No Available Cell to join');
-                        }
-                      } else {
-                        return customDescriptionText(
-                            'No Available Cell to join');
-                      }
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(
-                            color: Theme.of(context).primaryColor),
-                      );
-                    }
-                  }),
+              child: Obx(() {
+                if (_cellContoller.cellStatus == CellStatus.LOADING) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                        color: AppColor().primaryColor),
+                  );
+                } else if (_cellContoller.cellStatus != CellStatus.LOADING) {
+                  return GridView.builder(
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.vertical,
+                      itemCount: _cellContoller.allAvailableCell.length,
+                      // itemCount: colorList.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              childAspectRatio: 5 / 3, crossAxisCount: 2),
+                      itemBuilder: (BuildContext context, int index) {
+                        // int reverseIndex =
+                        //     _cellContoller.allAvailableCell.length - index - 1;
+                        final random = Random();
+                        final item = _cellContoller.allAvailableCell[index];
+                        return otherCells(
+                          colors: colorList[random.nextInt(colorList.length)],
+                          groupId: item.groupId,
+                          groupName: item.groupName,
+                          assetName: 'assets/svgs/bank.svg',
+                          assetName2: 'assets/svgs/people.svg',
+                          userName: _authContoller.liveUser.value!.username!,
+                        );
+                      });
+                } else if (_cellContoller.cellStatus == CellStatus.EMPTY) {
+                  return customDescriptionText('No Available Cell to join');
+                } else {
+                  return customDescriptionText('No Available Cell to join');
+                }
+                // } else {
+                //   return Center(
+                //     child: CircularProgressIndicator(
+                //         color: Theme.of(context).primaryColor),
+                // );
+              }),
             ),
           ],
         ),

@@ -1,12 +1,13 @@
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 import '../../core/constant/message_tile.dart';
-import '../../core/widget.dart';
 import '../../services/database_service.dart';
 import 'group_info.dart';
 
@@ -52,24 +53,32 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor().whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor().whiteColor,
         centerTitle: true,
         elevation: 0,
-        title: Text(widget.groupName),
+        title: customTitleText(
+          widget.groupName,
+          fontWeight: FontWeight.bold,
+          colors: AppColor().primaryColor,
+        ),
         actions: [
           IconButton(
-              onPressed: () {
-                nextScreen(
-                    context,
-                    GroupInfo(
-                      groupId: widget.groupId,
-                      groupName: widget.groupName,
-                      adminName: admin,
-                    ));
-              },
-              icon: const Icon(Icons.info))
+            onPressed: () {
+              Get.to(
+                () => GroupInfo(
+                  groupId: widget.groupId,
+                  groupName: widget.groupName,
+                  adminName: admin,
+                ),
+              );
+            },
+            icon: Icon(
+              CupertinoIcons.info_circle,
+              color: AppColor().primaryColor,
+            ),
+          )
         ],
       ),
       body: Column(
@@ -125,21 +134,26 @@ class _ChatPageState extends State<ChatPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
-                              child: TextFormField(
-                            controller: messageController,
-                            style: TextStyle(
-                              color: AppColor().backgroundColor,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: "Say something...",
-                              hintStyle: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.grey[700],
+                            child: TextFormField(
+                              controller: messageController,
+                              textInputAction: TextInputAction.send,
+                              style: TextStyle(
+                                color: AppColor().backgroundColor,
                               ),
-                              border: InputBorder.none,
+                              decoration: InputDecoration(
+                                hintText: "Say something...",
+                                hintStyle: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey[700],
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              onFieldSubmitted: (value) {
+                                sendMessage();
+                              },
                             ),
-                          )),
+                          ),
                           const SizedBox(
                             width: 12,
                           ),
