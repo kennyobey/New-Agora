@@ -4,8 +4,11 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:agora_care/app/group_screen/group_info.dart';
 import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/core/constant/message_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,7 +24,15 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 
 class QuoteDetails extends StatefulWidget {
-  const QuoteDetails({Key? key}) : super(key: key);
+  final String groupId;
+  final String groupName;
+  final String userName;
+  const QuoteDetails(
+      {Key? key,
+      required this.groupId,
+      required this.groupName,
+      required this.userName})
+      : super(key: key);
 
   @override
   State<QuoteDetails> createState() => _QuoteDetailsState();
@@ -30,6 +41,9 @@ class QuoteDetails extends StatefulWidget {
 class _QuoteDetailsState extends State<QuoteDetails> {
   var scr = GlobalKey();
   final commentController = TextEditingController();
+  Stream<QuerySnapshot>? chats;
+  TextEditingController messageController = TextEditingController();
+  String admin = "";
 
   final _quoteContoller = Get.find<QuoteControllers>();
 
@@ -364,94 +378,279 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                           ],
                         ),
                       ),
-                      ...List.generate(
-                        10,
-                        growable: true,
-                        (index) => const Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: ChatWidget(),
-                        ),
-                      ),
-                      Padding(
-                        padding: mediaQueryData.viewInsets,
-                        child: Form(
-                          child: Container(
-                            height: 80,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: AppColor().whiteColor,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  spreadRadius: 0.1,
-                                  blurRadius: 5,
-                                  offset: Offset(0.0, 0.05),
-                                ),
-                              ],
+                      // ...List.generate(
+                      //   10,
+                      //   growable: true,
+                      //   (index) => const Padding(
+                      //     padding: EdgeInsets.only(bottom: 10),
+                      //     child: ChatWidget(
+                      //       groupId: '',
+                      //       groupName: '',
+                      //       userName: '',
+                      //     ),
+                      //   ),
+                      // ),
+                      // Padding(
+                      //   padding: mediaQueryData.viewInsets,
+                      //   child: Form(
+                      //     child: Container(
+                      //       height: 80,
+                      //       padding: const EdgeInsets.symmetric(horizontal: 10),
+                      //       decoration: BoxDecoration(
+                      //         color: AppColor().whiteColor,
+                      //         boxShadow: const [
+                      //           BoxShadow(
+                      //             color: Colors.black26,
+                      //             spreadRadius: 0.1,
+                      //             blurRadius: 5,
+                      //             offset: Offset(0.0, 0.05),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //       child: Column(
+                      //         children: [
+                      //           Expanded(
+                      //             child:
+                      //                 // chat messages here
+                      //                 chatMessages(),
+                      //           ),
+                      //           Row(
+                      //             children: [
+                      //               // Image.asset(
+                      //               //   'assets/images/chatPic.png',
+                      //               //   height: 50,
+                      //               // ),
+                      //               const Gap(10),
+
+                      //               Expanded(
+                      //                 child: Container(
+                      //                   padding: const EdgeInsets.all(5),
+                      //                   alignment: Alignment.bottomCenter,
+                      //                   height: 70,
+                      //                   decoration: BoxDecoration(
+                      //                     border: Border.all(width: 0.7),
+                      //                     color: Colors.white,
+                      //                   ),
+                      //                   child: Row(
+                      //                     mainAxisAlignment:
+                      //                         MainAxisAlignment.spaceBetween,
+                      //                     children: [
+                      //                       SvgPicture.asset(
+                      //                         'assets/svgs/bankofspain.svg',
+                      //                         height: 50,
+                      //                         width: 50,
+                      //                       ),
+                      //                       const Gap(5),
+                      //                       Expanded(
+                      //                         child: Container(
+                      //                           height: 60,
+                      //                           decoration: BoxDecoration(
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(40),
+                      //                             color: AppColor().chatBox,
+                      //                           ),
+                      //                           padding:
+                      //                               const EdgeInsets.symmetric(
+                      //                                   horizontal: 25,
+                      //                                   vertical: 0),
+                      //                           width: MediaQuery.of(context)
+                      //                               .size
+                      //                               .width,
+                      //                           child: Row(
+                      //                               mainAxisAlignment:
+                      //                                   MainAxisAlignment
+                      //                                       .center,
+                      //                               crossAxisAlignment:
+                      //                                   CrossAxisAlignment
+                      //                                       .center,
+                      //                               children: [
+                      //                                 Expanded(
+                      //                                   child: TextFormField(
+                      //                                     controller:
+                      //                                         messageController,
+                      //                                     textInputAction:
+                      //                                         TextInputAction
+                      //                                             .send,
+                      //                                     style: TextStyle(
+                      //                                       color: AppColor()
+                      //                                           .backgroundColor,
+                      //                                     ),
+                      //                                     decoration:
+                      //                                         InputDecoration(
+                      //                                       hintText:
+                      //                                           "Say something...",
+                      //                                       hintStyle:
+                      //                                           TextStyle(
+                      //                                         fontSize: 14,
+                      //                                         fontWeight:
+                      //                                             FontWeight
+                      //                                                 .w400,
+                      //                                         color: Colors
+                      //                                             .grey[700],
+                      //                                       ),
+                      //                                       border: InputBorder
+                      //                                           .none,
+                      //                                     ),
+                      //                                     onFieldSubmitted:
+                      //                                         (value) {
+                      //                                       sendMessage();
+                      //                                     },
+                      //                                   ),
+                      //                                 ),
+                      //                                 const SizedBox(
+                      //                                   width: 12,
+                      //                                 ),
+                      //                                 GestureDetector(
+                      //                                   onTap: () {
+                      //                                     sendMessage();
+                      //                                   },
+                      //                                   child:
+                      //                                       customDescriptionText(
+                      //                                     'Post',
+                      //                                     fontSize: 12,
+                      //                                     fontWeight:
+                      //                                         FontWeight.w600,
+                      //                                     colors: AppColor()
+                      //                                         .backgroundColor,
+                      //                                   ),
+                      //                                   // Container(
+                      //                                   //   height: 50,
+                      //                                   //   width: 50,
+                      //                                   //   decoration: BoxDecoration(
+                      //                                   //     color: Theme.of(context).primaryColor,
+                      //                                   //     borderRadius: BorderRadius.circular(30),
+                      //                                   //   ),
+                      //                                   //   child: const Center(
+                      //                                   //       child: Icon(
+                      //                                   //     Icons.send,
+                      //                                   //     color: Colors.white,
+                      //                                   //   )),
+                      //                                   // ),
+                      //                                 )
+                      //                               ]),
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                 ),
+                      //                 // child: SizedBox(
+                      //                 //   height: 45,
+                      //                 //   child: TextFormField(
+                      //                 //     autofocus: false,
+                      //                 //     controller: messageController,
+                      //                 //     keyboardType: TextInputType.text,
+                      //                 //     textInputAction: TextInputAction.done,
+                      //                 //     decoration: InputDecoration(
+                      //                 //       isDense: true,
+                      //                 //       fillColor: const Color(0xffFFFFFF),
+                      //                 //       focusedBorder: OutlineInputBorder(
+                      //                 //         borderSide: BorderSide(
+                      //                 //             color: AppColor().lightTextColor,
+                      //                 //             width: 1),
+                      //                 //         borderRadius: const BorderRadius.all(
+                      //                 //           Radius.circular(20),
+                      //                 //         ),
+                      //                 //       ),
+                      //                 //       enabledBorder: OutlineInputBorder(
+                      //                 //         borderSide: BorderSide(
+                      //                 //             color: AppColor().lightTextColor,
+                      //                 //             width: 1),
+                      //                 //         borderRadius: const BorderRadius.all(
+                      //                 //           Radius.circular(20),
+                      //                 //         ),
+                      //                 //       ),
+                      //                 //       border: OutlineInputBorder(
+                      //                 //         borderSide: BorderSide(
+                      //                 //             color: AppColor().lightTextColor,
+                      //                 //             width: 1),
+                      //                 //         borderRadius: const BorderRadius.all(
+                      //                 //           Radius.circular(20),
+                      //                 //         ),
+                      //                 //       ),
+                      //                 //       hintText: 'Add a comment...',
+                      //                 //       suffix: InkWell(
+                      //                 //         onTap: (() {
+                      //                 //           print("Message sent");
+                      //                 //           sendMessage();
+                      //                 //         }),
+                      //                 //         child: customDescriptionText(
+                      //                 //           'Post',
+                      //                 //           fontSize: 12,
+                      //                 //           fontWeight: FontWeight.w600,
+                      //                 //           colors: AppColor().primaryColor,
+                      //                 //         ),
+                      //                 //       ),
+                      //                 //       hintStyle: const TextStyle(
+                      //                 //         fontFamily: 'HK GROTESK',
+                      //                 //         fontSize: 14,
+                      //                 //         fontStyle: FontStyle.normal,
+                      //                 //         fontWeight: FontWeight.normal,
+                      //                 //       ),
+                      //                 //     ),
+                      //                 //     // onFieldSubmitted: onSubmited,
+                      //                 //   ),
+                      //                 // ),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      Expanded(child: chatMessages()),
+                      SizedBox(
+                        height: 45,
+                        child: TextFormField(
+                          autofocus: false,
+                          controller: messageController,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.done,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            fillColor: const Color(0xffFFFFFF),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: AppColor().lightTextColor, width: 1),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(20),
+                              ),
                             ),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/images/chatPic.png',
-                                  height: 50,
-                                ),
-                                const Gap(10),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 45,
-                                    child: TextFormField(
-                                      autofocus: false,
-                                      controller: commentController,
-                                      keyboardType: TextInputType.text,
-                                      textInputAction: TextInputAction.done,
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        fillColor: const Color(0xffFFFFFF),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColor().lightTextColor,
-                                              width: 1),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(20),
-                                          ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColor().lightTextColor,
-                                              width: 1),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(20),
-                                          ),
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColor().lightTextColor,
-                                              width: 1),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(20),
-                                          ),
-                                        ),
-                                        hintText: 'Add a comment...',
-                                        suffix: customDescriptionText(
-                                          'Post',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          colors: AppColor().primaryColor,
-                                        ),
-                                        hintStyle: const TextStyle(
-                                          fontFamily: 'HK GROTESK',
-                                          fontSize: 14,
-                                          fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                      // onFieldSubmitted: onSubmited,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: AppColor().lightTextColor, width: 1),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(20),
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: AppColor().lightTextColor, width: 1),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(20),
+                              ),
+                            ),
+                            hintText: 'Add a comment...',
+                            suffix: InkWell(
+                              onTap: (() {
+                                print("Message sent");
+                                sendMessage();
+                              }),
+                              child: customDescriptionText(
+                                'Post',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                colors: AppColor().primaryColor,
+                              ),
+                            ),
+                            hintStyle: const TextStyle(
+                              fontFamily: 'HK GROTESK',
+                              fontSize: 14,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.normal,
                             ),
                           ),
+                          onFieldSubmitted: (value) => sendMessage(),
                         ),
                       ),
                     ],
@@ -464,98 +663,263 @@ class _QuoteDetailsState extends State<QuoteDetails> {
       ),
     );
   }
-}
 
-class ChatWidget extends StatefulWidget {
-  const ChatWidget({Key? key}) : super(key: key);
-
-  @override
-  State<ChatWidget> createState() => _ChatWidgetState();
-}
-
-class _ChatWidgetState extends State<ChatWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Expanded(
-        //   child: ListView.builder(
-        //       padding: EdgeInsets.zero,
-        //       scrollDirection: Axis.vertical,
-        //       itemCount: 10,
-        //       itemBuilder: (BuildContext context, int index) {
-        //         return
-        ListTile(
-          leading: Image.asset('assets/images/chatPic.png'),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  customTitleText(
-                    'Melish karuntha',
-                    size: 14,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().primaryColor,
-                  ),
-                  const Gap(10),
-                  SvgPicture.asset(
-                    'assets/svgs/comment_verify.svg',
-                  ),
-                  const Spacer(),
-                  SvgPicture.asset(
-                    'assets/svgs/reply.svg',
-                  ),
-                  const Gap(10),
-                  SvgPicture.asset(
-                    'assets/svgs/thumb.svg',
-                  ),
-                ],
-              ),
-              customDescriptionText(
-                'Lorem ipsum ad amet sit lorema akad mu il shaprew',
-                width: MediaQuery.of(context).size.width * 0.6,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                colors: AppColor().primaryColor,
-              ),
-            ],
-          ),
-          subtitle: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              customDescriptionText(
-                '19hrs',
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                colors: AppColor().lightbackgroundColor,
-              ),
-              const Gap(20),
-              customDescriptionText(
-                '143 likes',
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                colors: AppColor().lightbackgroundColor,
-              ),
-              // const Spacer(),
-            ],
-          ),
-          // trailing: Row(
-          //   children: [
-          //     SvgPicture.asset(
-          //       'assets/svgs/reply.svg',
-          //     ),
-          //     SvgPicture.asset(
-          //       'assets/svgs/thumb.svg',
-          //     ),
-          //   ],
-          // ),
-          isThreeLine: true,
-        ),
-        //         ;
-        //       }),
-        // ),
-      ],
+  chatMessages() {
+    return StreamBuilder(
+      stream: chats,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  return MessageTile(
+                      message: snapshot.data.docs[index]['message'],
+                      sender: snapshot.data.docs[index]['sender'],
+                      sentByMe: widget.userName ==
+                          snapshot.data.docs[index]['sender']);
+                },
+              )
+            : Container();
+      },
     );
   }
+
+  sendMessage() {
+    if (messageController.text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": messageController.text,
+        "sender": widget.userName,
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+
+      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+      setState(() {
+        messageController.clear();
+      });
+    }
+  }
 }
+
+// class ChatWidget extends StatefulWidget {
+//   final String groupId;
+//   final String groupName;
+//   final String userName;
+//   const ChatWidget(
+//       {Key? key,
+//       required this.groupId,
+//       required this.groupName,
+//       required this.userName})
+//       : super(key: key);
+
+//   @override
+//   State<ChatWidget> createState() => _ChatWidgetState();
+// }
+
+// class _ChatWidgetState extends State<ChatWidget> {
+//   Stream<QuerySnapshot>? chats;
+//   TextEditingController messageController = TextEditingController();
+//   String admin = "";
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         chatMessages(),
+//         // Expanded(
+//         //   child: ListView.builder(
+//         //       padding: EdgeInsets.zero,
+//         //       scrollDirection: Axis.vertical,
+//         //       itemCount: 10,
+//         //       itemBuilder: (BuildContext context, int index) {
+//         //         return
+//         // ListTile(
+//         //   // leading: Image.asset('assets/images/chatPic.png'),
+//         //   title: Column(
+//         //     crossAxisAlignment: CrossAxisAlignment.start,
+//         //     children: [
+
+//         //       // Row(
+//         //       //   children: [
+//         //       //     customTitleText(
+//         //       //       'Melish karuntha',
+//         //       //       size: 14,
+//         //       //       fontWeight: FontWeight.w700,
+//         //       //       colors: AppColor().primaryColor,
+//         //       //     ),
+//         //       //     const Gap(10),
+//         //       //     SvgPicture.asset(
+//         //       //       'assets/svgs/comment_verify.svg',
+//         //       //     ),
+//         //       //     const Spacer(),
+//         //       //     SvgPicture.asset(
+//         //       //       'assets/svgs/reply.svg',
+//         //       //     ),
+//         //       //     const Gap(10),
+//         //       //     SvgPicture.asset(
+//         //       //       'assets/svgs/thumb.svg',
+//         //       //     ),
+//         //       //   ],
+//         //       // ),
+//         //       // customDescriptionText(
+//         //       //   'Lorem ipsum ad amet sit lorema akad mu il shaprew',
+//         //       //   width: MediaQuery.of(context).size.width * 0.6,
+//         //       //   fontSize: 12,
+//         //       //   fontWeight: FontWeight.w500,
+//         //       //   colors: AppColor().primaryColor,
+//         //       // ),
+//         //     ],
+//         //   ),
+//         //   subtitle: Row(
+//         //     mainAxisAlignment: MainAxisAlignment.start,
+//         //     children: [
+//         //       customDescriptionText(
+//         //         '19hrs',
+//         //         fontSize: 10,
+//         //         fontWeight: FontWeight.w500,
+//         //         colors: AppColor().lightbackgroundColor,
+//         //       ),
+//         //       const Gap(20),
+//         //       customDescriptionText(
+//         //         '143 likes',
+//         //         fontSize: 10,
+//         //         fontWeight: FontWeight.w500,
+//         //         colors: AppColor().lightbackgroundColor,
+//         //       ),
+//         //       // const Spacer(),
+//         //     ],
+//         //   ),
+//         //   // trailing: Row(
+//         //   //   children: [
+//         //   //     SvgPicture.asset(
+//         //   //       'assets/svgs/reply.svg',
+//         //   //     ),
+//         //   //     SvgPicture.asset(
+//         //   //       'assets/svgs/thumb.svg',
+//         //   //     ),
+//         //   //   ],
+//         //   // ),
+//         //   isThreeLine: true,
+//         // ),
+//         //         ;
+//         //       }),
+//         // ),
+//       ],
+//     );
+//   }
+
+//   chatMessages() {
+//     return StreamBuilder(
+//       stream: chats,
+//       builder: (context, AsyncSnapshot snapshot) {
+//         return snapshot.hasData
+//             ? ListView.builder(
+//                 itemCount: snapshot.data.docs.length,
+//                 itemBuilder: (context, index) {
+//                   return MessageTile(
+//                       message: snapshot.data.docs[index]['message'],
+//                       sender: snapshot.data.docs[index]['sender'],
+//                       sentByMe: widget.userName ==
+//                           snapshot.data.docs[index]['sender']);
+//                 },
+//               )
+//             : Container();
+//       },
+//     );
+//   }
+// }
+
+// class ChatWidget extends StatefulWidget {
+//   final String groupId;
+//   final String groupName;
+//   final String userName;
+//   const ChatWidget(
+//       {Key? key,
+//       required this.groupId,
+//       required this.groupName,
+//       required this.userName})
+//       : super(key: key);
+
+//   @override
+//   State<ChatWidget> createState() => _ChatWidgetState();
+// }
+
+// class _ChatWidgetState extends State<ChatWidget> {
+//   Stream<QuerySnapshot>? chats;
+//   TextEditingController messageController = TextEditingController();
+//   String admin = "";
+
+//   // @override
+//   // void initState() {
+//   //   getChatandAdmin();
+//   //   super.initState();
+//   // }
+
+//   // getChatandAdmin() {
+//   //   DatabaseService().getChats(widget.groupId).then((val) {
+//   //     setState(() {
+//   //       chats = val;
+//   //     });
+//   //   });
+//   //   DatabaseService().getGroupAdmin(widget.groupId).then((val) {
+//   //     setState(() {
+//   //       admin = val;
+//   //     });
+//   //   });
+//   // }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(children: [
+//       // Container(
+//       //   height: MediaQuery.of(context).size.height * 0.2,
+//       //   // padding: const EdgeInsets.all(10.0),
+//       //   margin: const EdgeInsets.all(20),
+//       //   decoration: BoxDecoration(
+//       //     color: AppColor().primaryColor,
+//       //     borderRadius: BorderRadius.circular(12),
+//       //   ),
+//       //   // child: SvgPicture.asset(
+//       //   //   'assets/svgs/chat_frame.svg',
+//       //   //   height: MediaQuery.of(context).size.height * 0.2,
+//       //   //   width: MediaQuery.of(context).size.width,
+//       //   // ),
+//       // ),
+//       chatMessages(),
+//     ]);
+//   }
+
+//   chatMessages() {
+//     return StreamBuilder(
+//       stream: chats,
+//       builder: (context, AsyncSnapshot snapshot) {
+//         return snapshot.hasData
+//             ? ListView.builder(
+//                 itemCount: snapshot.data.docs.length,
+//                 itemBuilder: (context, index) {
+//                   return MessageTile(
+//                       message: snapshot.data.docs[index]['message'],
+//                       sender: snapshot.data.docs[index]['sender'],
+//                       sentByMe: widget.userName ==
+//                           snapshot.data.docs[index]['sender']);
+//                 },
+//               )
+//             : Container();
+//       },
+//     );
+//   }
+
+//   sendMessage() {
+//     if (messageController.text.isNotEmpty) {
+//       Map<String, dynamic> chatMessageMap = {
+//         "message": messageController.text,
+//         "sender": widget.userName,
+//         "time": DateTime.now().millisecondsSinceEpoch,
+//       };
+
+//       DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+//       setState(() {
+//         messageController.clear();
+//       });
+//     }
+//   }
+// }

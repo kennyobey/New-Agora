@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:agora_care/app/cells/cell_info.dart';
 import 'package:agora_care/app/home/admin_home_screen.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
@@ -201,9 +202,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   size: 30,
                 ),
                 titleText: 'Groups',
-                // onTap: () {
-                //   Get.to(() => const GroupScreen());
-                // },
+                onTap: () {
+                  Get.to(() => const CellInfo());
+                },
               ),
               const Gap(15),
               CustomContainer(

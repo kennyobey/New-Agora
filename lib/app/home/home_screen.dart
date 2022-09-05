@@ -207,7 +207,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         _quoteContoller
                             .viewPost(_quoteContoller.allQuotes.last.id!);
                         Get.to(
-                          () => const QuoteDetails(),
+                          () => const QuoteDetails(
+                            groupId: '',
+                            groupName: '',
+                            userName: '',
+                          ),
                           transition: Transition.downToUp,
                         );
                       },
