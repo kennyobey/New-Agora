@@ -75,12 +75,18 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10.0),
-            child: SvgPicture.asset(
-              'assets/svgs/chat_frame.svg',
-              height: MediaQuery.of(context).size.height * 0.2,
-              width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.2,
+            // padding: const EdgeInsets.all(10.0),
+            margin: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColor().primaryColor,
+              borderRadius: BorderRadius.circular(12),
             ),
+            // child: SvgPicture.asset(
+            //   'assets/svgs/chat_frame.svg',
+            //   height: MediaQuery.of(context).size.height * 0.2,
+            //   width: MediaQuery.of(context).size.width,
+            // ),
           ),
           Expanded(
             child:
@@ -96,6 +102,7 @@ class _ChatPageState extends State<ChatPage> {
               color: Colors.white,
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SvgPicture.asset(
                   'assets/svgs/bankofspain.svg',
@@ -104,67 +111,63 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 const Gap(5),
                 Expanded(
-                  child: SizedBox(
-                    //alignment: Alignment.bottomCenter,
-                    width: MediaQuery.of(context).size.width,
-                    child: Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        color: AppColor().chatBox,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 25, vertical: 0),
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                child: TextFormField(
-                              controller: messageController,
-                              style: TextStyle(
-                                color: AppColor().backgroundColor,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: "Say something...",
-                                hintStyle: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.grey[700],
-                                ),
-                                border: InputBorder.none,
-                              ),
-                            )),
-                            const SizedBox(
-                              width: 12,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                sendMessage();
-                              },
-                              child: customDescriptionText(
-                                'Post',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                colors: AppColor().backgroundColor,
-                              ),
-                              // Container(
-                              //   height: 50,
-                              //   width: 50,
-                              //   decoration: BoxDecoration(
-                              //     color: Theme.of(context).primaryColor,
-                              //     borderRadius: BorderRadius.circular(30),
-                              //   ),
-                              //   child: const Center(
-                              //       child: Icon(
-                              //     Icons.send,
-                              //     color: Colors.white,
-                              //   )),
-                              // ),
-                            )
-                          ]),
+                  child: Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      color: AppColor().chatBox,
                     ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+                    width: MediaQuery.of(context).size.width,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: TextFormField(
+                            controller: messageController,
+                            style: TextStyle(
+                              color: AppColor().backgroundColor,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: "Say something...",
+                              hintStyle: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey[700],
+                              ),
+                              border: InputBorder.none,
+                            ),
+                          )),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              sendMessage();
+                            },
+                            child: customDescriptionText(
+                              'Post',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              colors: AppColor().backgroundColor,
+                            ),
+                            // Container(
+                            //   height: 50,
+                            //   width: 50,
+                            //   decoration: BoxDecoration(
+                            //     color: Theme.of(context).primaryColor,
+                            //     borderRadius: BorderRadius.circular(30),
+                            //   ),
+                            //   child: const Center(
+                            //       child: Icon(
+                            //     Icons.send,
+                            //     color: Colors.white,
+                            //   )),
+                            // ),
+                          )
+                        ]),
                   ),
                 ),
               ],

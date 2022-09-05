@@ -4,102 +4,90 @@
 
 import 'dart:convert';
 
-CellModel cellModelFromJson(String str) => CellModel.fromJson(json.decode(str));
+CellModel cellModelFromJson(String str) =>
+    CellModel.fromJson(json.decode(str), '');
 
 String cellModelToJson(CellModel data) => json.encode(data.toJson());
 
 class CellModel {
   CellModel({
+    this.id,
+    this.uid,
     this.groupId,
+    this.groupIcon,
+    this.groupName,
     this.email,
     this.fullName,
     this.description,
     this.recentMessageSender,
-    this.groupName,
     this.members,
     this.recentMessage,
     this.profilePic,
-    this.likes = 0,
-    this.replies = 0,
-    this.streak = 0,
-    this.weeks = 0,
-    this.role,
     this.admin,
     this.recentMessageTime,
-    this.weeklyLoginTime,
+    this.createdAt,
     this.updatedAt,
   });
 
+  final String? id;
+  final String? uid;
   final String? groupId;
+  final String? groupIcon;
   final String? groupName;
   final String? description;
   final String? email;
   final String? fullName;
   final String? recentMessageSender;
+  final String? recentMessageTime;
   final List<dynamic>? members;
   final String? recentMessage;
   final String? profilePic;
-  final int? streak;
-  final int? likes;
-  final int? replies;
-  final int? weeks;
-  final bool? admin;
-  final String? role;
-  DateTime? recentMessageTime;
-  DateTime? weeklyLoginTime;
+  final String? admin;
+  DateTime? createdAt;
   DateTime? updatedAt;
 
-  factory CellModel.fromJson(Map<String, dynamic> json) => CellModel(
-        groupId: json["groupId"],
+  factory CellModel.fromJson(dynamic json, String id) => CellModel(
+        id: id,
+        uid: json["uid"],
+        groupId: id,
+        groupIcon: json["groupIcon"],
+        groupName: json["groupName"],
         email: json["email"],
         fullName: json["fullName"],
         description: json["description"],
         recentMessageSender: json["recentMessageSender"],
-        groupName: json["groupName"],
+        recentMessageTime: json["recentMessageTime"],
         members: json["members"] == null
             ? null
             : List<dynamic>.from(json["members"].map((x) => x)),
         recentMessage: json["recentMessage"],
         profilePic: json["profilePic"],
-        streak: json["streak"],
-        likes: json["streak"],
-        replies: json["replies"],
-        weeks: json["weeks"],
         admin: json["admin"],
-        role: json["role"],
-        recentMessageTime: json["recentMessageTime"] == null
+        createdAt: json["createdAt"] == null
             ? null
-            : DateTime.parse(json["recentMessageTime"]),
-        weeklyLoginTime: json["weeklyLoginTime"] == null
-            ? null
-            : DateTime.parse(json["weeklyLoginTime"]),
+            : DateTime.parse(json["createdAt"]),
         updatedAt: json["updatedAt"] == null
             ? null
             : DateTime.parse(json["updatedAt"]),
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
+        "uid": uid,
         "groupId": groupId,
+        "groupIcon": groupIcon,
+        "groupName": groupName,
         "email": email,
         "fullName": fullName,
         "description": description,
         "recentMessageSender": recentMessageSender,
-        "groupName": groupName,
         "members":
             members == null ? null : List<dynamic>.from(members!.map((x) => x)),
         "recentMessage": recentMessage,
         "profilePic": profilePic,
-        "streak": streak,
-        "likes": likes,
-        "replies": replies,
-        "weeks": weeks,
         "admin": admin,
-        "role": role,
-        "recentMessageTime": recentMessageTime == null
-            ? null
-            : recentMessageTime!.toIso8601String(),
-        "weeklyLoginTime":
-            weeklyLoginTime == null ? null : weeklyLoginTime!.toIso8601String(),
+        "recentMessageTime": recentMessageTime,
+        "createdAt": createdAt == null ? null : createdAt!.toIso8601String(),
         "updatedAt": updatedAt == null ? null : updatedAt!.toIso8601String(),
       };
 }

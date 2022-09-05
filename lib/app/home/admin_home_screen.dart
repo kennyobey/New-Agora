@@ -455,12 +455,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                 );
                               } else {
                                 return customDescriptionText(
-                                  'No Available Group to join',
+                                  'No Available Cell to join',
                                 );
                               }
                             } else {
                               return customDescriptionText(
-                                'No Available Group to join',
+                                'No Available Cell to join',
                               );
                             }
                           } else {

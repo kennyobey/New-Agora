@@ -68,7 +68,7 @@ class DatabaseService {
 
   // getting the chats
   getChats(String groupId) async {
-    return groupCollection
+    return cellsCollection
         .doc(groupId)
         .collection("messages")
         .orderBy("time")
@@ -76,19 +76,19 @@ class DatabaseService {
   }
 
   Future getGroupAdmin(String groupId) async {
-    DocumentReference d = groupCollection.doc(groupId);
+    DocumentReference d = cellsCollection.doc(groupId);
     DocumentSnapshot documentSnapshot = await d.get();
     return documentSnapshot['admin'];
   }
 
   // get group members
   getGroupMembers(groupId) async {
-    return groupCollection.doc(groupId).snapshots();
+    return cellsCollection.doc(groupId).snapshots();
   }
 
   // search
   searchByName(String groupName) {
-    return groupCollection.where("groupName", isEqualTo: groupName).get();
+    return cellsCollection.where("groupName", isEqualTo: groupName).get();
   }
 
   // function -> bool
@@ -110,7 +110,7 @@ class DatabaseService {
       String groupId, String userEmail, String groupName) async {
     // doc reference
     DocumentReference userDocumentReference = userCollection.doc(uid);
-    DocumentReference groupDocumentReference = groupCollection.doc(groupId);
+    DocumentReference groupDocumentReference = cellsCollection.doc(groupId);
 
     DocumentSnapshot documentSnapshot = await userDocumentReference.get();
     List<dynamic> groups = await documentSnapshot['groups'];
@@ -135,8 +135,11 @@ class DatabaseService {
 
   // send message
   sendMessage(String groupId, Map<String, dynamic> chatMessageData) async {
-    groupCollection.doc(groupId).collection("messages").add(chatMessageData);
-    groupCollection.doc(groupId).update({
+    if (kDebugMode) {
+      print("the group id is $groupId");
+    }
+    cellsCollection.doc(groupId).collection("messages").add(chatMessageData);
+    cellsCollection.doc(groupId).update({
       "recentMessage": chatMessageData['message'],
       "recentMessageSender": chatMessageData['sender'],
       "recentMessageTime": chatMessageData['time'].toString(),
