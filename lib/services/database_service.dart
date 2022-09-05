@@ -1,5 +1,4 @@
 import 'package:agora_care/services/auth_controller.dart';
-import 'package:agora_care/services/cell_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -17,7 +16,6 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("groups");
 
   final _authController = Get.find<AuthControllers>();
-  final _cellController = Get.find<CellControllers>();
 
   // saving the userdata
   Future savingUserData(String email) async {
@@ -70,7 +68,7 @@ class DatabaseService {
 
   // getting the chats
   getChats(String groupId) async {
-    return groupCollection
+    return cellsCollection
         .doc(groupId)
         .collection("messages")
         .orderBy("time")
@@ -78,19 +76,19 @@ class DatabaseService {
   }
 
   Future getGroupAdmin(String groupId) async {
-    DocumentReference d = groupCollection.doc(groupId);
+    DocumentReference d = cellsCollection.doc(groupId);
     DocumentSnapshot documentSnapshot = await d.get();
     return documentSnapshot['admin'];
   }
 
   // get group members
   getGroupMembers(groupId) async {
-    return groupCollection.doc(groupId).snapshots();
+    return cellsCollection.doc(groupId).snapshots();
   }
 
   // search
   searchByName(String groupName) {
-    return groupCollection.where("groupName", isEqualTo: groupName).get();
+    return cellsCollection.where("groupName", isEqualTo: groupName).get();
   }
 
   // function -> bool
@@ -112,8 +110,6 @@ class DatabaseService {
       String groupId, String userEmail, String groupName) async {
     // doc reference
     DocumentReference userDocumentReference = userCollection.doc(uid);
-    // DocumentReference groupDocumentReference = groupCollection.doc(groupId);
-
     DocumentReference groupDocumentReference = cellsCollection.doc(groupId);
 
     DocumentSnapshot documentSnapshot = await userDocumentReference.get();
@@ -137,30 +133,13 @@ class DatabaseService {
     }
   }
 
-// Future getAllCells() async {
-  //   _cellStatus(CellStatus.LOADING);
-  //   try {
-  //     cellCollection.orderBy("createdAt").snapshots().listen((event) {
-  //       List<CellModel> list = [];
-  //       for (var element in event.docs) {
-  //         final cells = CellModel.fromJson(element.data()!, element.id);
-  //         list.add(cells);
-  //         if (kDebugMode) {
-  //           print('CELL ID is: ${element.id}');
-  //           print('cell is:${cells.toJson()} ID is:');
-  //         }
-  //         _cellStatus(CellStatus.SUCCESS);
-  //       }
-  //       _availableCell(list);
-  //     });
-  //   } catch (ex) {
-  //     //
-  //   }
-  // }
   // send message
   sendMessage(String groupId, Map<String, dynamic> chatMessageData) async {
-    groupCollection.doc(groupId).collection("messages").add(chatMessageData);
-    groupCollection.doc(groupId).update({
+    if (kDebugMode) {
+      print("the group id is $groupId");
+    }
+    cellsCollection.doc(groupId).collection("messages").add(chatMessageData);
+    cellsCollection.doc(groupId).update({
       "recentMessage": chatMessageData['message'],
       "recentMessageSender": chatMessageData['sender'],
       "recentMessageTime": chatMessageData['time'].toString(),

@@ -2,6 +2,7 @@
 
 import 'package:agora_care/app/model/cells_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
+import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -105,6 +106,7 @@ class CellControllers extends GetxController {
 
   // creating a group
   Future createGroup({
+    // required String uid,
     required String email,
     required String admin,
     required String groupId,
@@ -116,6 +118,7 @@ class CellControllers extends GetxController {
       final cellDocs = FirebaseFirestore.instance.collection("cells");
 
       final cell = CellModel(
+        uid: uid!.uid,
         groupId: groupId,
         groupIcon: groupIcon,
         groupName: groupName,
@@ -208,6 +211,26 @@ class CellControllers extends GetxController {
   //   final quotes = groupCollection.orderBy("createdAt").snapshots();
   //   return quotes;
   // }
+  gettingUserData() async {
+    await HelperFunction.getUserEmailFromSF().then((value) {
+      // setState(() {
+      //   email = value!;
+      // });
+    });
+    // await HelperFunction.getUserNameFromSF().then((val) {
+    //   setState(() {
+    //     userName = val!;
+    //   });
+    // });
+    // getting the list of snapshots in our stream
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+        .getUserGroups()
+        .then((snapshot) {
+      // setState(() {
+      //   groups = snapshot;
+      // });
+    });
+  }
 
   Future getAllCells() async {
     _cellStatus(CellStatus.LOADING);
@@ -221,6 +244,7 @@ class CellControllers extends GetxController {
             print('CELL ID is: ${element.id}');
             print('cell is:${cells.toJson()} ID is:');
           }
+          gettingUserData();
           _cellStatus(CellStatus.SUCCESS);
         }
         _availableCell(list);

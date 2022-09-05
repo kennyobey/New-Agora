@@ -420,6 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           final item = cellContoller.allAvailableCell[index];
                           if (kDebugMode) {
                             print('Cell is now ${item.groupName!.length}');
+                            print("group id for cell is ${item.groupId}");
                           }
                           return recommendedCells(
                             groupId: item.groupId,
@@ -494,7 +495,7 @@ class _HomeScreenState extends State<HomeScreen> {
       groupId!,
       groupName!,
     );
-
+    print("group id is $groupId");
     return GestureDetector(
       onTap: () async {
         if (kDebugMode) {

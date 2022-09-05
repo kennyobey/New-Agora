@@ -12,6 +12,7 @@ String cellModelToJson(CellModel data) => json.encode(data.toJson());
 class CellModel {
   CellModel({
     this.id,
+    this.uid,
     this.groupId,
     this.groupIcon,
     this.groupName,
@@ -29,6 +30,7 @@ class CellModel {
   });
 
   final String? id;
+  final String? uid;
   final String? groupId;
   final String? groupIcon;
   final String? groupName;
@@ -46,7 +48,8 @@ class CellModel {
 
   factory CellModel.fromJson(dynamic json, String id) => CellModel(
         id: id,
-        groupId: json["groupId"],
+        uid: json["uid"],
+        groupId: id,
         groupIcon: json["groupIcon"],
         groupName: json["groupName"],
         email: json["email"],
@@ -70,6 +73,7 @@ class CellModel {
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "uid": uid,
         "groupId": groupId,
         "groupIcon": groupIcon,
         "groupName": groupName,
