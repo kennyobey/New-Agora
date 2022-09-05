@@ -270,19 +270,18 @@ class _CellsScreenState extends State<CellsScreen> {
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
                       // itemCount: imageName.length,
-                      itemCount: _cellContoller.allAvailableCell.length > 4
-                          ? 4
-                          : _cellContoller.allAvailableCell.length,
+                      itemCount: _cellContoller.allAvailableCell.length,
                       itemBuilder: (BuildContext context, int index) {
                         final item = _cellContoller.allAvailableCell[index];
                         if (kDebugMode) {
                           print('Cell is now ${item.groupName!.length}');
                           print("group id for cell is ${item.groupId}");
                         }
+                        final random = Random();
                         return recommendedCells(
                           groupId: item.groupId,
                           groupName: item.groupName,
-                          colors: colorList[index],
+                          colors: colorList[random.nextInt(colorList.length)],
                           assetName: 'assets/svgs/bank.svg',
                           userName: _authContoller.liveUser.value!.username!,
                         );

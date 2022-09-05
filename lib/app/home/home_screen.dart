@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously
 
+import 'dart:math';
+
 import 'package:agora_care/app/cells/cell_screen.dart';
 import 'package:agora_care/app/group_screen/chat_page.dart';
 import 'package:agora_care/app/model/quote_model.dart';
@@ -561,6 +563,7 @@ class _HomeScreenState extends State<HomeScreen> {
     QuoteModel? quoteModel,
     String? assetName,
   }) {
+    final random = Random();
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
@@ -587,11 +590,19 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 height: MediaQuery.of(context).size.height * 0.2,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(assetName!),
-                    fit: BoxFit.cover,
-                  ),
+                  color: colorList[random.nextInt(colorList.length)],
+                  // image: DecorationImage(
+                  //   image: AssetImage(assetName!),
+                  //   fit: BoxFit.cover,
+                  // ),
                   borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: customTitleText(
+                    quoteModel!.dailyQuote!,
+                    size: 16,
+                    colors: AppColor().whiteColor,
+                  ),
                 ),
               ),
               const Gap(10),
@@ -604,7 +615,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    quoteModel!.views!.length == null
+                    quoteModel.views!.length == null
                         ? '0'
                         : quoteModel.views!.length.toString(),
                     fontSize: 10,
