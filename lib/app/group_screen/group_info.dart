@@ -1,6 +1,7 @@
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/cell_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,6 +27,7 @@ class GroupInfo extends StatefulWidget {
 
 class _GroupInfoState extends State<GroupInfo> {
   final _authContoller = Get.find<AuthControllers>();
+  final _cellController = Get.find<CellControllers>();
   Stream? members;
   @override
   void initState() {
@@ -34,6 +36,7 @@ class _GroupInfoState extends State<GroupInfo> {
   }
 
   getMembers() async {
+    print('members is ${widget.groupId}');
     DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getGroupMembers(widget.groupId)
         .then((val) {
@@ -116,14 +119,15 @@ class _GroupInfoState extends State<GroupInfo> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: Theme.of(context).primaryColor.withOpacity(0.2)),
+                borderRadius: BorderRadius.circular(30),
+                color: AppColor().primaryColor.withOpacity(0.2),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundColor: Theme.of(context).primaryColor,
+                    backgroundColor: AppColor().primaryColor,
                     child: Text(
                       widget.groupName.substring(0, 1).toUpperCase(),
                       style: const TextStyle(
@@ -161,15 +165,16 @@ class _GroupInfoState extends State<GroupInfo> {
   }
 
   memberList() {
-    return StreamBuilder(
-      stream: members,
+    return FutureBuilder(
+      future: getMembers(),
+      // stream: _cellController.getGroupMembers(widget.groupId),
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data['members'] != null) {
-            if (snapshot.data['members'].length != 0) {
+          if (snapshot.data != null) {
+            if (snapshot.data!.length != 0) {
               return Expanded(
                 child: ListView.builder(
-                  itemCount: snapshot.data['members'].length,
+                  itemCount: snapshot.data!.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     return Container(
@@ -178,19 +183,22 @@ class _GroupInfoState extends State<GroupInfo> {
                       child: ListTile(
                         leading: CircleAvatar(
                           radius: 30,
-                          backgroundColor: Theme.of(context).primaryColor,
-                          child: Text(
-                            getName(snapshot.data['members'][index])
-                                .substring(0, 1)
-                                .toUpperCase(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
+                          backgroundColor: AppColor().primaryColor,
+                          child: customTitleText(
+                            // getName(snapshot.data.docs.data()!['members']
+                            //         [index])
+                            //     .substring(0, 1)
+                            //     .toUpperCase(),
+                            'data',
+
+                            size: 15,
+                            fontWeight: FontWeight.bold,
+                            colors: AppColor().whiteColor,
                           ),
                         ),
-                        title: Text(getName(snapshot.data['members'][index])),
-                        subtitle: Text(getId(snapshot.data['members'][index])),
+                        title: customDescriptionText('anananna'),
+                        // title: Text(getName(snapshot.data['members'][index])),
+                        // subtitle: Text(getId(snapshot.data['members'][index])),
                       ),
                     );
                   },
@@ -209,7 +217,7 @@ class _GroupInfoState extends State<GroupInfo> {
         } else {
           return Center(
               child: CircularProgressIndicator(
-            color: Theme.of(context).primaryColor,
+            color: AppColor().primaryColor,
           ));
         }
       },

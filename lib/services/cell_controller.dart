@@ -72,13 +72,10 @@ class CellControllers extends GetxController {
       print("member id is $memberId");
     }
     FirebaseFirestore.instance.runTransaction((transaction) async {
-      transaction.update(
-        _cellsDoc.doc(memberId),
-        {
-          "members":
-              FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
-        },
-      );
+      transaction.update(_cellsDoc.doc(memberId), {
+        "members":
+            FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
+      });
     });
   }
 
@@ -94,6 +91,14 @@ class CellControllers extends GetxController {
     DocumentReference d = cellCollection.doc(groupId);
     DocumentSnapshot documentSnapshot = await d.get();
     return documentSnapshot['admin'];
+  }
+
+  Stream getGroupMembers(String groupId) {
+    final members = cellCollection.doc(groupId).snapshots();
+    if (kDebugMode) {
+      print('This is members list $members');
+    }
+    return members;
   }
 
   //all cells

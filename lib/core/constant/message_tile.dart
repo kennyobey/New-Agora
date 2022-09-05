@@ -26,92 +26,155 @@ class _MessageTileState extends State<MessageTile> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
-          top: 4,
-          bottom: 4,
-          left: widget.sentByMe ? 0 : 10,
-          right: widget.sentByMe ? 10 : 0),
+        top: 4,
+        bottom: 4,
+        left: widget.sentByMe ? 0 : 10,
+        right: widget.sentByMe ? 10 : 0,
+      ),
       alignment: widget.sentByMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: widget.sentByMe
-            ? const EdgeInsets.only(left: 12)
+            ? const EdgeInsets.only(left: 10)
             : const EdgeInsets.only(right: 10),
-        padding: const EdgeInsets.only(top: 10, bottom: 10, left: 0, right: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
-            borderRadius: widget.sentByMe
-                ? const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
-                  )
-                : const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+          borderRadius: widget.sentByMe
+              ? const BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                )
+              : const BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+          color: widget.sentByMe
+              ? AppColor().primaryColor2.withOpacity(0.3)
+              : AppColor().whiteColor,
+        ),
+        // child: Row(
+        //   children: [
+        //     SvgPicture.asset(
+        //       'assets/svgs/bankofspain.svg',
+        //       height: 50,
+        //       width: 50,
+        //     ),
+        //     const Gap(10),
+        // Column(
+        //   // mainAxisAlignment: MainAxisAlignment.center,
+        //   crossAxisAlignment: CrossAxisAlignment.start,
+        //   children: [
+        //     Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: [
+        //         customDescriptionText(
+        //           widget.sender.toUpperCase(),
+        //           fontSize: 14,
+        //           fontWeight: FontWeight.w700,
+        //           colors: AppColor().primaryColor,
+        //         ),
+        //         // const Gap(60),
+        //         Row(
+        //           children: [
+        //             SvgPicture.asset(
+        //               'assets/svgs/reply.svg',
+        //             ),
+        //             // const Gap(10),
+        //             SvgPicture.asset(
+        //               'assets/svgs/thumb.svg',
+        //             ),
+        //           ],
+        //         ),
+        //       ],
+        //     ),
+        //     customDescriptionText(
+        //       widget.message,
+        //       fontSize: 12,
+        //       fontWeight: FontWeight.w700,
+        //       colors: AppColor().lightTextColor,
+        //     ),
+        //     Row(
+        //       mainAxisAlignment: MainAxisAlignment.start,
+        //       children: [
+        //         customDescriptionText(
+        //           '19hrs',
+        //           fontSize: 10,
+        //           fontWeight: FontWeight.w500,
+        //           colors: AppColor().lightbackgroundColor,
+        //         ),
+        //         const Gap(20),
+        //         customDescriptionText(
+        //           '143 likes',
+        //           fontSize: 10,
+        //           fontWeight: FontWeight.w500,
+        //           colors: AppColor().lightbackgroundColor,
+        //         ),
+        //         // const Spacer(),
+        //       ],
+        //     ),
+        //   ],
+        // ),
+        // ],
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: SvgPicture.asset(
+            'assets/svgs/bankofspain.svg',
+            height: 50,
+            width: 50,
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              customDescriptionText(
+                widget.sender.toUpperCase(),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                colors: AppColor().primaryColor,
+              ),
+              Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/svgs/reply.svg',
                   ),
-            color:
-                // color: widget.sentByMe
-                //     ? Theme.of(context).primaryColor
-                Colors.white),
-        child: Row(
-          children: [
-            SvgPicture.asset(
-              'assets/svgs/bankofspain.svg',
-              height: 50,
-              width: 50,
-            ),
-            const Gap(10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    customDescriptionText(
-                      widget.sender,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      colors: AppColor().lightTextColor,
-                    ),
-                    const Gap(60),
-                    SvgPicture.asset(
-                      'assets/svgs/reply.svg',
-                    ),
-                    const Gap(10),
-                    SvgPicture.asset(
-                      'assets/svgs/thumb.svg',
-                    ),
-                  ],
-                ),
-                customDescriptionText(
-                  widget.message,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  colors: AppColor().lightTextColor,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    customDescriptionText(
-                      '19hrs',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      colors: AppColor().lightbackgroundColor,
-                    ),
-                    const Gap(20),
-                    customDescriptionText(
-                      '143 likes',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      colors: AppColor().lightbackgroundColor,
-                    ),
-                    // const Spacer(),
-                  ],
-                ),
-              ],
-            ),
-          ],
+                  const Gap(10),
+                  SvgPicture.asset(
+                    'assets/svgs/thumb.svg',
+                  ),
+                ],
+              ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              customDescriptionText(
+                widget.message,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                colors: AppColor().lightTextColor,
+              ),
+              const Gap(5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  customDescriptionText(
+                    '19hrs',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    colors: AppColor().lightbackgroundColor,
+                  ),
+                  const Gap(20),
+                  customDescriptionText(
+                    '143 likes',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    colors: AppColor().lightbackgroundColor,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

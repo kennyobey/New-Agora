@@ -495,7 +495,6 @@ class _HomeScreenState extends State<HomeScreen> {
       groupId!,
       groupName!,
     );
-    print("group id is $groupId");
     return GestureDetector(
       onTap: () async {
         if (kDebugMode) {
