@@ -1,8 +1,10 @@
+import 'package:agora_care/app/group_screen/message.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -91,11 +93,25 @@ class _ChatPageState extends State<ChatPage> {
               color: AppColor().primaryColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            // child: SvgPicture.asset(
-            //   'assets/svgs/chat_frame.svg',
-            //   height: MediaQuery.of(context).size.height * 0.2,
-            //   width: MediaQuery.of(context).size.width,
-            // ),
+            child: Center(
+              child: FlutterImageStack(
+                // backgroundColor: Colors.black,
+                itemBorderColor: AppColor().whiteColor,
+                imageList: const [
+                  'https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80',
+                  'https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80',
+                  'https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80',
+                  'https://images.unsplash.com/photo-1612594305265-86300a9a5b5b?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+                  'https://images.unsplash.com/photo-1612626256634-991e6e977fc1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1712&q=80',
+                  'https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80',
+                ],
+                showTotalCount: true,
+                totalCount: 6,
+                itemRadius: 50, // Radius of each images
+                itemCount: 4, // Maximum number of images to be shown in stack
+                itemBorderWidth: 2, // Border width around the images
+              ),
+            ),
           ),
           Expanded(
             child:
@@ -167,19 +183,6 @@ class _ChatPageState extends State<ChatPage> {
                               fontWeight: FontWeight.w600,
                               colors: AppColor().backgroundColor,
                             ),
-                            // Container(
-                            //   height: 50,
-                            //   width: 50,
-                            //   decoration: BoxDecoration(
-                            //     color: Theme.of(context).primaryColor,
-                            //     borderRadius: BorderRadius.circular(30),
-                            //   ),
-                            //   child: const Center(
-                            //       child: Icon(
-                            //     Icons.send,
-                            //     color: Colors.white,
-                            //   )),
-                            // ),
                           )
                         ]),
                   ),
@@ -201,10 +204,14 @@ class _ChatPageState extends State<ChatPage> {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return MessageTile(
-                      message: snapshot.data.docs[index]['message'],
-                      sender: snapshot.data.docs[index]['sender'],
-                      sentByMe: widget.userName ==
-                          snapshot.data.docs[index]['sender']);
+                    message: snapshot.data.docs[index]['message'],
+                    sender: snapshot.data.docs[index]['sender'],
+                    like: snapshot.data.docs[index]['like'],
+                    messageid: snapshot.data.docs[index].id,
+                    sentByMe:
+                        widget.userName == snapshot.data.docs[index]['sender'],
+                    groupId: widget.groupId,
+                  );
                 },
               )
             : Container();
@@ -214,13 +221,18 @@ class _ChatPageState extends State<ChatPage> {
 
   sendMessage() {
     if (messageController.text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": messageController.text,
-        "sender": widget.userName,
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
+      final chatMessageMap = MessageModel(
+        message: messageController.text,
+        sender: widget.userName,
+        time: DateTime.now(),
+        like: [],
+        comment: [],
+      );
 
-      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+      DatabaseService().sendMessage(
+        widget.groupId,
+        chatMessageMap.toJson(),
+      );
       setState(() {
         messageController.clear();
       });

@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison, unused_field
 
+import 'package:agora_care/app/group_screen/message.dart';
 import 'package:agora_care/app/model/cells_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/helper/helper_function.dart';
@@ -25,6 +26,10 @@ class CellControllers extends GetxController {
       FirebaseFirestore.instance.collection("groups");
   final CollectionReference cellCollection =
       FirebaseFirestore.instance.collection("cells");
+  final CollectionReference messagesCollection = FirebaseFirestore.instance
+      .collection("cells")
+      .doc()
+      .collection('messages');
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection("users");
 
@@ -34,8 +39,15 @@ class CellControllers extends GetxController {
   final Rx<List<CellModel>> _availableCell = Rx([]);
   List<CellModel> get allAvailableCell => _availableCell.value;
 
+  final Rx<List<MessageModel>> _messageList = Rx([]);
+  List<MessageModel> get allMessages => _messageList.value;
+
   FirebaseAuth auth = FirebaseAuth.instance;
   final _newCell = FirebaseFirestore.instance.collection("cells");
+  final _newMessage = FirebaseFirestore.instance
+      .collection("cells")
+      .doc()
+      .collection('messages');
   final _cellsDoc = FirebaseFirestore.instance.collection("groups");
 
   @override
@@ -43,6 +55,7 @@ class CellControllers extends GetxController {
     super.onInit();
     getCells();
     getAllCells();
+    getMessages();
     getChats(cellCollection.id);
 
     final now = DateTime.now();
@@ -55,6 +68,16 @@ class CellControllers extends GetxController {
           newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
         _newCell.doc(cellCollection.id).update({
           "members": memberAdd(cellCollection.id),
+          // "like": likePost(
+          //   cellCollection.id,
+          // ),
+          // "comment": comment(
+          //   cellCollection.id,
+          // ),
+        });
+        _newMessage.doc(messagesCollection.id).update({
+          "like": likePost(cellCollection.id, messagesCollection.id),
+          "comment": comment(cellCollection.id, messagesCollection.id),
         });
 
         final newUser = await _authController
@@ -64,6 +87,60 @@ class CellControllers extends GetxController {
           print("user value gotten user ${liveUser.value.toJson()}");
         }
       }
+    }
+  }
+
+  Future likePost(String cellId, String messageId) async {
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction
+          .update(_newCell.doc(cellId).collection('messages').doc(messageId), {
+        "like": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
+      });
+    });
+    // _newCell.doc(cellId).collection('messages').doc(messageId).update({
+    //   "like": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
+    // });
+  }
+
+  Future unLikePost(String cellId, String messageId) async {
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction
+          .update(_newCell.doc(cellId).collection('messages').doc(messageId), {
+        "like": FieldValue.arrayRemove([_authController.liveUser.value!.uid!])
+      });
+    });
+    // _newCell.doc(cellId).collection('messages').doc(messageId).update({
+    //   "like": FieldValue.arrayRemove([_authController.liveUser.value!.uid!])
+    // });
+  }
+
+  Future comment(String cellId, String messageId) async {
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction
+          .update(_newCell.doc(cellId).collection("messages").doc(messageId), {
+        "comment": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
+      });
+    });
+  }
+
+  Future getMessages() async {
+    _cellStatus(CellStatus.LOADING);
+    try {
+      messagesCollection.orderBy("createdAt").snapshots().listen((event) {
+        List<MessageModel> list = [];
+        for (var element in event.docs) {
+          final quote = MessageModel.fromJson(element.data()!, element.id);
+          list.add(quote);
+          if (kDebugMode) {
+            print('ID is: ${element.id}');
+            print('message is:${quote.toJson()}');
+          }
+          _cellStatus(CellStatus.SUCCESS);
+        }
+        _messageList(list);
+      });
+    } catch (ex) {
+      //
     }
   }
 
@@ -173,32 +250,32 @@ class CellControllers extends GetxController {
   }
 
   // toggling the group join/exit
-  Future toggleGroupJoin(
-      String groupId, String userEmail, String groupName) async {
-    // doc reference
-    DocumentReference userDocumentReference = userCollection.doc(uid!.uid);
-    DocumentReference groupDocumentReference = groupCollection.doc(groupId);
+  // Future toggleGroupJoin(
+  //     String groupId, String userEmail, String groupName) async {
+  //   // doc reference
+  //   DocumentReference userDocumentReference = userCollection.doc(uid!.uid);
+  //   DocumentReference groupDocumentReference = groupCollection.doc(groupId);
 
-    DocumentSnapshot documentSnapshot = await userDocumentReference.get();
-    List<dynamic> groups = await documentSnapshot['groups'];
+  //   DocumentSnapshot documentSnapshot = await userDocumentReference.get();
+  //   List<dynamic> groups = await documentSnapshot['groups'];
 
-    // if user has our groups -> then remove then or also in other part re join
-    if (groups.contains("${groupId}_$groupName")) {
-      await userDocumentReference.update({
-        "groups": FieldValue.arrayRemove(["${groupId}_$groupName"])
-      });
-      await groupDocumentReference.update({
-        "members": FieldValue.arrayRemove(["${uid}_$userEmail"])
-      });
-    } else {
-      await userDocumentReference.update({
-        "groups": FieldValue.arrayUnion(["${groupId}_$groupName"])
-      });
-      await groupDocumentReference.update({
-        "members": FieldValue.arrayUnion(["${uid}_$userEmail"])
-      });
-    }
-  }
+  //   // if user has our groups -> then remove then or also in other part re join
+  //   if (groups.contains("${groupId}_$groupName")) {
+  //     await userDocumentReference.update({
+  //       "groups": FieldValue.arrayRemove(["${groupId}_$groupName"])
+  //     });
+  //     await groupDocumentReference.update({
+  //       "members": FieldValue.arrayRemove(["${uid}_$userEmail"])
+  //     });
+  //   } else {
+  //     await userDocumentReference.update({
+  //       "groups": FieldValue.arrayUnion(["${groupId}_$groupName"])
+  //     });
+  //     await groupDocumentReference.update({
+  //       "members": FieldValue.arrayUnion(["${uid}_$userEmail"])
+  //     });
+  //   }
+  // }
 
   joinedOrNot(
     String userName,

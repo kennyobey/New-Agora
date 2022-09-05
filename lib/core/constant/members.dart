@@ -9,19 +9,8 @@ import '../customWidgets.dart';
 import 'colors.dart';
 
 class Members extends StatelessWidget {
-  Members({
-    Key? key,
-    // required this.title,
-    // required this.active,
-    // required this.streak,
-    // required this.weeks,
-    required this.userList,
-  }) : super(key: key);
+  Members({Key? key, required this.userList}) : super(key: key);
 
-  // final String title;
-  // final String active;
-  // final String streak;
-  // final String weeks;
   UserList userList;
 
   @override

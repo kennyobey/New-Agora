@@ -5,9 +5,11 @@ import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/app/home/admin_nav_screen.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
+import 'package:agora_care/core/constant/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../app/home/nav_screen.dart';
@@ -166,9 +168,21 @@ class AuthControllers extends GetxController {
         }
       }
       if (userModel.admin == true) {
-        Get.to(() => AdminUserNavScreen());
+        userModel.admin == null
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: AppColor().primaryColor,
+                ),
+              )
+            : Get.to(() => AdminUserNavScreen());
       } else {
-        Get.to(() => UserNavScreen());
+        userModel.admin == null
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: AppColor().primaryColor,
+                ),
+              )
+            : Get.to(() => UserNavScreen());
       }
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {

@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/app/onboarding/onboarding.dart';
 import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,7 +23,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   // ignore: unused_field
   Timer? _timer;
-  // final controller = Get.find<AuthServices>();
+  final controller = Get.find<AuthControllers>();
   bool isSignedIn = false;
 
   @override
@@ -34,8 +35,18 @@ class _SplashScreenState extends State<SplashScreen> {
       //   Get.off(() => const UserNavScreen());
       // } else {
       //   _save('0');
-      if (FirebaseAuth.instance.currentUser != null) {
+      if (FirebaseAuth.instance.currentUser != null ||
+          controller.liveUser.value!.role == null) {
+        // if () {
+        // Center(
+        //   child: CircularProgressIndicator(
+        //     color: AppColor().primaryColor,
+        //   ),
+        // );
+        // } else {
+        // Get.off(() => AdminUserNavScreen());
         Get.off(() => UserNavScreen());
+        // }
       } else {
         Get.off(() => Onboarding());
       }
