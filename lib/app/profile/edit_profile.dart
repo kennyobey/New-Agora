@@ -1,13 +1,20 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member
+
+import 'dart:io';
+
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -92,12 +99,73 @@ class _EditProfileState extends State<EditProfile> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Image.asset(
-                        'assets/images/chatPic.png',
-                        height: 100,
-                        width: 100,
-                      ),
+                    // Center(
+                    //   child: GestureDetector(
+                    //     onTap: () async {
+                    //       PickedFile? file =
+                    //           await ImagePicker.platform.pickImage(
+                    //         source: ImageSource.gallery,
+                    //         imageQuality: 50,
+                    //       );
+                    //       if (file != null) {
+                    //         await _authContoller.updateAvatar(File(file.path));
+                    //       }
+                    //     },
+                    //     child: Image.asset(
+                    //       'assets/images/chatPic.png',
+                    //       height: 100,
+                    //       width: 100,
+                    //     ),
+                    //   ),
+                    // ),
+                    Stack(
+                      children: [
+                        Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(80),
+                            image: const DecorationImage(
+                              image: CachedNetworkImageProvider(
+                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mbF_vybC_Hlh8kW0mWpDp-RQ1P1f2qiKRO9jPX5UUFB8_nsYTFldK-ZT61FldtpK2k0&usqp=CAU',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 2,
+                          bottom: .2,
+                          child: GestureDetector(
+                            onTap: () async {
+                              PickedFile? file =
+                                  await ImagePicker.platform.pickImage(
+                                source: ImageSource.gallery,
+                                imageQuality: 50,
+                              );
+                              if (file != null) {
+                                await _authContoller
+                                    .updateAvatar(File(file.path));
+                              }
+                            },
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: AppColor().blueColor,
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  CupertinoIcons.camera,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const Gap(20),
                     Row(

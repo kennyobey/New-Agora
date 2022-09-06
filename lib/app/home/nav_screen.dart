@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable
+// ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable, prefer_if_null_operators
 
 import 'package:agora_care/app/cells/cell_screen.dart';
 import 'package:agora_care/app/profile/profile_screen.dart';
@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import 'admin_home_screen.dart';
 import 'home_screen.dart';
 
 class UserNavScreen extends StatefulWidget {
@@ -29,14 +28,14 @@ class _UserNavScreenState extends State<UserNavScreen> {
 
   @override
   void initState() {
-    _authController.liveUser.value!.admin;
-    checkAdmin();
+    // checkAdmin();
 
     _screens = [
       //Home Screen
-      _authController.liveUser.value!.admin != true
-          ? const HomeScreen()
-          : const AdminHomeScreen(),
+      // _authController.liveUser.value!.admin != true
+      //     ? const HomeScreen()
+      //     : const AdminHomeScreen(),
+      const HomeScreen(),
 
       // Cells Screens
       const CellsScreen(),
@@ -48,12 +47,19 @@ class _UserNavScreenState extends State<UserNavScreen> {
   }
 
   checkAdmin() {
-    if (_authController.liveUser.value!.admin != true) {
-      const HomeScreen();
-    } else {
-      const AdminHomeScreen();
-    }
-    setState(() {});
+    // if (_authController.liveUser.value?.admin != true) {
+    //   const HomeScreen();
+    // } else {
+    //   const AdminHomeScreen();
+    // }
+    // setState(() {});
+    _authController.liveUser.value!.admin == null
+        ? Center(
+            child: CircularProgressIndicator(
+              color: AppColor().primaryColor,
+            ),
+          )
+        : _authController.liveUser.value!.admin;
   }
 
   int _selectedIndex = 0;

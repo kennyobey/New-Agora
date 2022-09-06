@@ -1,13 +1,21 @@
-// ignore_for_file: unnecessary_null_comparison, unused_field
+// ignore_for_file: unnecessary_null_comparison, unused_field, prefer_function_declarations_over_variables
 
+import 'dart:io';
+
+import 'package:agora_care/app/authentication/%20verify_email_page.dart';
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/app/home/admin_nav_screen.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
+import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
 import '../app/home/nav_screen.dart';
@@ -15,7 +23,13 @@ import '../helper/helper_function.dart';
 import 'database_service.dart';
 
 class AuthControllers extends GetxController {
+  static AuthControllers to = Get.find();
   final bool isLoading = false;
+
+  RxString phone = ''.obs;
+  RxString countryCode = '+1'.obs;
+  final RxString _verificationId = ''.obs;
+  Rx<File?> image = Rx(null);
 
   final CollectionReference quotesCollection =
       FirebaseFirestore.instance.collection("quotes");
@@ -166,9 +180,21 @@ class AuthControllers extends GetxController {
         }
       }
       if (userModel.admin == true) {
-        Get.to(() => AdminUserNavScreen());
+        userModel.admin == null
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: AppColor().primaryColor,
+                ),
+              )
+            : Get.to(() => AdminUserNavScreen());
       } else {
-        Get.to(() => UserNavScreen());
+        userModel.admin == null
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: AppColor().primaryColor,
+                ),
+              )
+            : Get.to(() => UserNavScreen());
       }
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
@@ -176,6 +202,40 @@ class AuthControllers extends GetxController {
       }
       return e.message;
     }
+  }
+
+  // Send Verification Code
+  Future<void> sendVerificationCodes(String? phoneNum) async {
+    phone(countryCode.value + phoneNum!);
+    final void Function(String verId, int? forceCodeResend) smsOTPSent =
+        (String verId, int? forceCodeResend) {
+      if (kDebugMode) {
+        print("verification id $verId");
+      }
+      _verificationId(verId);
+      EasyLoading.dismiss();
+      Get.to(() => const VerifyEmailPage());
+    };
+
+    await auth.verifyPhoneNumber(
+      phoneNumber: phoneNum,
+      codeAutoRetrievalTimeout: (String verId) {
+        _verificationId(verId);
+      },
+      codeSent: smsOTPSent,
+      timeout: const Duration(
+        seconds: 120,
+      ),
+      verificationCompleted: (AuthCredential phoneAuthCredential) {
+        Get.to(() => const WelComePage());
+      },
+      verificationFailed: (FirebaseAuthException exception) {
+        kErrorSnakBar(exception.message!);
+        if (kDebugMode) {
+          print("message is phone error ${exception.message}");
+        }
+      },
+    );
   }
 
   //Update Profile
@@ -218,6 +278,75 @@ class AuthControllers extends GetxController {
       }
     } on FirebaseAuthException catch (e) {
       return e.message;
+    }
+  }
+
+  //Verify Phone Number
+  Future<void> verifyPhoneNumber(
+      String phoneNumber, BuildContext context, Function setData) async {
+    PhoneVerificationCompleted verificationCompleted =
+        (PhoneAuthCredential phoneAuthCredential) async {
+      showSnackBar(context, "Verification Completed");
+    };
+    PhoneVerificationFailed verificationFailed =
+        (FirebaseAuthException exception) {
+      showSnackBar(context, exception.toString());
+    };
+    PhoneCodeSent codeSent =
+        (String verificationID, [int? forceResnedingtoken]) {
+      showSnackBar(context, "Verification Code sent on the phone number");
+      setData(verificationID);
+    };
+
+    PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+        (String verificationID) {
+      showSnackBar(context, "Time out");
+    };
+    try {
+      await auth.verifyPhoneNumber(
+          timeout: const Duration(seconds: 60),
+          phoneNumber: phoneNumber,
+          verificationCompleted: verificationCompleted,
+          verificationFailed: verificationFailed,
+          codeSent: codeSent,
+          codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
+
+  // Snackbar
+  void showSnackBar(BuildContext context, String text) {
+    final snackBar = SnackBar(content: Text(text));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  // Upload File
+  Future<String?> uploadFile(File file) async {
+    try {
+      String name =
+          "${DateTime.now().microsecondsSinceEpoch}.${file.path.split('.').last}";
+      Reference ref = FirebaseStorage.instance.ref().child(name);
+
+      UploadTask task = ref.putFile(file);
+      await task.whenComplete(() => null);
+      return await ref.getDownloadURL();
+    } catch (error) {
+      // kErrorSnakBar(error);
+    }
+    return null;
+  }
+
+  // Update Avatar
+  Future updateAvatar(File file) async {
+    try {
+      EasyLoading.show(status: 'uploading');
+      String? image = await uploadFile(file);
+      await userDb.doc(liveUser.value!.uid).update({'profilePic': image});
+    } catch (e) {
+      kErrorSnakBar('$e');
+    } finally {
+      EasyLoading.dismiss();
     }
   }
 
