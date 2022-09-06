@@ -30,6 +30,13 @@ class _CreateCellState extends State<CreateCell> {
   String groupName = "";
 
   @override
+  void dispose() {
+    _cellNameController.clear();
+    _cellDescription.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -84,17 +91,6 @@ class _CreateCellState extends State<CreateCell> {
                 setState(() {
                   _isLoading = true;
                 });
-                // DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-                //     .createGroup(
-                //   _authController.liveUser.value!.email!,
-                //   FirebaseAuth.instance.currentUser!.uid,
-                //   _cellNameController.text,
-                // )
-                //     .whenComplete(() {
-                //   setState(() {
-                //     _isLoading = false;
-                //   });
-                // });
                 _cellController.createGroup(
                   admin: _authController.liveUser.value!.role!,
                   email: _authController.liveUser.value!.email!,
@@ -106,6 +102,11 @@ class _CreateCellState extends State<CreateCell> {
                 setState(() {
                   _isLoading = false;
                 });
+                _cellNameController.clear();
+                _cellDescription.clear();
+                if (kDebugMode) {
+                  print('Done Creating Cell');
+                }
                 showModalBottomSheet(
                   isScrollControlled: true,
                   backgroundColor: AppColor().whiteColor,

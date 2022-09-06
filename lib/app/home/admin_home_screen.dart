@@ -8,6 +8,7 @@ import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/cell_controller.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,6 +28,7 @@ class AdminHomeScreen extends StatefulWidget {
 class _AdminHomeScreenState extends State<AdminHomeScreen>
     with TickerProviderStateMixin {
   final _authContoller = Get.find<AuthControllers>();
+  final cellContoller = Get.find<CellControllers>();
 
   final _quoteContoller = Get.find<QuoteControllers>();
 
@@ -343,6 +345,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                         child: TabBar(
                           padding: const EdgeInsets.only(bottom: 10),
                           indicatorSize: TabBarIndicatorSize.label,
+                          indicatorColor: AppColor().primaryColor,
                           controller: _tabController,
                           isScrollable: true,
                           tabs: [
@@ -373,106 +376,160 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 body: TabBarView(
                   controller: _tabController,
                   children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      child: StreamBuilder(
-                        stream: groups,
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data['groups'] != null) {
-                              if (snapshot.data['groups'].length != 0) {
-                                return ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: snapshot.data['groups'].length > 4
-                                      ? 4
-                                      : snapshot.data['groups'].length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    int reverseIndex =
-                                        snapshot.data['groups'].length -
-                                            index -
-                                            1;
+                    // SizedBox(
+                    //   height: MediaQuery.of(context).size.height * 0.5,
+                    //   child: StreamBuilder(
+                    //     stream: groups,
+                    //     builder: (context, AsyncSnapshot snapshot) {
+                    //       if (snapshot.hasData) {
+                    //         if (snapshot.data['groups'] != null) {
+                    //           if (snapshot.data['groups'].length != 0) {
+                    //             return ListView.builder(
+                    //               padding: EdgeInsets.zero,
+                    //               scrollDirection: Axis.vertical,
+                    //               itemCount: snapshot.data['groups'].length > 4
+                    //                   ? 4
+                    //                   : snapshot.data['groups'].length,
+                    //               itemBuilder:
+                    //                   (BuildContext context, int index) {
+                    //                 int reverseIndex =
+                    //                     snapshot.data['groups'].length -
+                    //                         index -
+                    //                         1;
 
-                                    final member =
-                                        _quoteContoller.allQuotes.length;
+                    //                 final member =
+                    //                     _quoteContoller.allQuotes.length;
 
-                                    return Container(
-                                      margin: const EdgeInsets.only(
-                                          left: 0,
-                                          right: 0,
-                                          top: 10,
-                                          bottom: 10),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(4),
-                                        child: Row(
-                                          children: [
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Cells(
-                                                  members: member == null
-                                                      ? 'No members yet'
-                                                      : member.toString(),
-                                                  time:
-                                                      "Last activity: 7th May 2022",
-                                                  // time: snapshot.data[
-                                                  //                 'groups']
-                                                  //             ['members'] ==
-                                                  //         null
-                                                  //     ? "Last activity: No activites yet"
-                                                  //     : snapshot
-                                                  //         .data['groups']
-                                                  //             ['members'][
-                                                  //             'recentMessageTime']
-                                                  //         .toString(),
-                                                  groupId: getId(
-                                                      snapshot.data['groups']
-                                                          [reverseIndex]),
-                                                  groupName: getName(
-                                                      snapshot.data['groups']
-                                                          [reverseIndex]),
-                                                  assetName:
-                                                      'assets/svgs/bank.svg',
-                                                  userName: _authContoller
-                                                      .liveUser
-                                                      .value!
-                                                      .username!,
-                                                ),
-                                              ],
-                                            )
-                                          ],
+                    //                 return Container(
+                    //                   margin: const EdgeInsets.only(
+                    //                       left: 0,
+                    //                       right: 0,
+                    //                       top: 10,
+                    //                       bottom: 10),
+                    //                   child: Container(
+                    //                     padding: const EdgeInsets.all(4),
+                    //                     child: Row(
+                    //                       children: [
+                    //                         const SizedBox(
+                    //                           width: 10,
+                    //                         ),
+                    //                         Column(
+                    //                           crossAxisAlignment:
+                    //                               CrossAxisAlignment.start,
+                    //                           mainAxisAlignment:
+                    //                               MainAxisAlignment.spaceEvenly,
+                    //                           children: [
+                    //                             Cells(
+                    //                               members: member == null
+                    //                                   ? 'No members yet'
+                    //                                   : member.toString(),
+                    //                               time:
+                    //                                   "Last activity: 7th May 2022",
+                    //                               // time: snapshot.data[
+                    //                               //                 'groups']
+                    //                               //             ['members'] ==
+                    //                               //         null
+                    //                               //     ? "Last activity: No activites yet"
+                    //                               //     : snapshot
+                    //                               //         .data['groups']
+                    //                               //             ['members'][
+                    //                               //             'recentMessageTime']
+                    //                               //         .toString(),
+                    //                               groupId: getId(
+                    //                                   snapshot.data['groups']
+                    //                                       [reverseIndex]),
+                    //                               groupName: getName(
+                    //                                   snapshot.data['groups']
+                    //                                       [reverseIndex]),
+                    //                               assetName:
+                    //                                   'assets/svgs/bank.svg',
+                    //                               userName: _authContoller
+                    //                                   .liveUser
+                    //                                   .value!
+                    //                                   .username!,
+                    //                             ),
+                    //                           ],
+                    //                         )
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 );
+                    //               },
+                    //             );
+                    //           } else {
+                    //             return customDescriptionText(
+                    //               'No Available Cell to join',
+                    //             );
+                    //           }
+                    //         } else {
+                    //           return customDescriptionText(
+                    //             'No Available Cell to join',
+                    //           );
+                    //         }
+                    //       } else {
+                    //         return Center(
+                    //           child: CircularProgressIndicator(
+                    //             color: Theme.of(context).primaryColor,
+                    //           ),
+                    //         );
+                    //       }
+                    //     },
+                    //   ),
+                    // ),
+                    Obx(() {
+                      if (cellContoller.cellStatus == CellStatus.LOADING) {
+                        return customDescriptionText('No Available  Cell');
+                      } else {
+                        return SizedBox(
+                          child: ListView.builder(
+                              itemCount: cellContoller.allAvailableCell.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final item =
+                                    cellContoller.allAvailableCell[index];
+                                if (kDebugMode) {
+                                  print(
+                                      'Cell is now ${item.groupName!.length}');
+                                  print("group id for cell is ${item.groupId}");
+                                }
+                                final member = _quoteContoller.allQuotes.length;
+                                return Container(
+                                  margin: const EdgeInsets.only(
+                                      left: 0, right: 0, top: 10, bottom: 10),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: 10,
                                         ),
-                                      ),
-                                    );
-                                  },
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Cells(
+                                              members: member == null
+                                                  ? 'No members yet'
+                                                  : member.toString(),
+                                              time:
+                                                  "Last activity: 7th May 2022",
+                                              groupId: item.groupId,
+                                              groupName: item.groupName,
+                                              assetName: 'assets/svgs/bank.svg',
+                                              userName: _authContoller
+                                                  .liveUser.value!.username!,
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 );
-                              } else {
-                                return customDescriptionText(
-                                  'No Available Cell to join',
-                                );
-                              }
-                            } else {
-                              return customDescriptionText(
-                                'No Available Cell to join',
-                              );
-                            }
-                          } else {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
+                              }),
+                        );
+                      }
+                    }),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.5,
                       child: StreamBuilder<List<UserList>>(

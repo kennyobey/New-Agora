@@ -140,6 +140,7 @@ class _PostQouteState extends State<PostQoute> {
         createdAt: createdTime,
         // colors: color,
       );
+      _quoteTextController.clear();
       setState(() {
         _isLoading = false;
       });

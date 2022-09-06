@@ -189,23 +189,6 @@ class AuthControllers extends GetxController {
           }
         }
       }
-      // if (userModel.admin == true) {
-      //   userModel.admin == null
-      //       ? Center(
-      //           child: CircularProgressIndicator(
-      //             color: AppColor().primaryColor,
-      //           ),
-      //         )
-      //       : Get.to(() => AdminUserNavScreen());
-      // } else {
-      //   userModel.admin == null
-      //       ? Center(
-      //           child: CircularProgressIndicator(
-      //             color: AppColor().primaryColor,
-      //           ),
-      //         )
-      //       : Get.to(() => UserNavScreen());
-      // }
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         print(e);

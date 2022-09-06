@@ -30,15 +30,19 @@ class CellsScreen extends StatefulWidget {
 class _CellsScreenState extends State<CellsScreen> {
   final _cellContoller = Get.find<CellControllers>();
   final _authContoller = Get.find<AuthControllers>();
+  final _scaffoldState = GlobalKey();
+
   String userName = "";
   String email = "";
   String groupName = "";
   Stream? groups;
+
   final bool _isLoading = false;
   late List<Widget> _screens;
+
   int tabIndex = 1;
   int _selectedIndex = 1;
-  final _scaffoldState = GlobalKey();
+
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
     AppColor().blueColor,
@@ -71,7 +75,6 @@ class _CellsScreenState extends State<CellsScreen> {
 
       // Cells Screens
       const CellsScreen(),
-      // showGlobalBottomSheet(context),
 
       // Profile Screen
       const ProfileScreen(),

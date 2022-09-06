@@ -170,8 +170,8 @@ class QuoteControllers extends GetxController {
         "chats": groupDocumentReference!.id,
       });
 
-      DocumentReference userDocumentReference = userCollection.doc(uid!.uid);
-      return await userDocumentReference.update({
+      DocumentReference quoteDocumentReference = quotesCollection.doc(uid!.uid);
+      return await quoteDocumentReference.update({
         "chats":
             FieldValue.arrayUnion(["${groupDocumentReference!.id}_$dailyQuote"])
       });

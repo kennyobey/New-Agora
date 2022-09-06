@@ -203,7 +203,6 @@ class CellControllers extends GetxController {
       final cellDocs = FirebaseFirestore.instance.collection("cells");
 
       final cell = CellModel(
-        uid: uid!.uid,
         groupId: groupId,
         groupIcon: groupIcon,
         groupName: groupName,

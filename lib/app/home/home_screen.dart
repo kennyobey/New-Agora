@@ -366,99 +366,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const Gap(20),
-              // SizedBox(
-              //   height: MediaQuery.of(context).size.height * 0.1,
-              //   child: StreamBuilder(
-              //       stream: cellContoller.getAllCells(),
-              //       builder: (context, AsyncSnapshot snapshot) {
-              //         if (snapshot.hasData) {
-              //           if (snapshot.data! != null) {
-              //             if (snapshot.data!.length != 0) {
-              //               return ListView.builder(
-              //                 padding: EdgeInsets.zero,
-              //                 scrollDirection: Axis.horizontal,
-              //                 // itemCount: colorList.length,
-              //                 itemCount: snapshot.data!.docs.length > 4
-              //                     ? 4
-              //                     : snapshot.data!.docs.length,
-              //                 itemBuilder: (BuildContext context, int index) {
-              //                   int reverseIndex =
-              //                       snapshot.data.length - index - 1;
-
-              //                   return recommendedCells(
-              //                     groupId:
-              //                         getId(snapshot.data!.docs[reverseIndex])
-              //                             .toString(),
-              //                     colors: colorList[index],
-              //                     groupName:
-              //                         getName(snapshot.data!.docs[reverseIndex])
-              //                             .toString(),
-              //                     assetName: 'assets/svgs/bank.svg',
-              //                     userName:
-              //                         _authContoller.liveUser.value!.username!,
-              //                   );
-              //                 },
-              //               );
-              //             } else {
-              //               return Column(
-              //                 crossAxisAlignment: CrossAxisAlignment.center,
-              //                 children: [
-              //                   const Gap(30),
-              //                   Center(
-              //                     child: customDescriptionText(
-              //                         'No Available Cell to join'),
-              //                   ),
-              //                 ],
-              //               );
-              //             }
-              //           } else {
-              //             return Column(
-              //               crossAxisAlignment: CrossAxisAlignment.center,
-              //               children: [
-              //                 const Gap(30),
-              //                 Center(
-              //                   child: customDescriptionText(
-              //                       'No Available Cell to join'),
-              //                 ),
-              //               ],
-              //             );
-              //           }
-              //         } else {
-              //           return Center(
-              //             child: CircularProgressIndicator(
-              //                 color: Theme.of(context).primaryColor),
-              //           );
-              //         }
-              //       }),
-              // ),
               Obx(() {
                 if (cellContoller.cellStatus == CellStatus.LOADING) {
                   return customDescriptionText('No Available  Cell');
                 } else {
                   return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.horizontal,
-                        // itemCount: imageName.length,
-                        itemCount: cellContoller.allAvailableCell.length > 4
-                            ? 4
-                            : cellContoller.allAvailableCell.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = cellContoller.allAvailableCell[index];
-                          if (kDebugMode) {
-                            print('Cell is now ${item.groupName!.length}');
-                            print("group id for cell is ${item.groupId}");
-                          }
-                          return recommendedCells(
-                            groupId: item.groupId,
-                            groupName: item.groupName,
-                            colors: colorList[index],
-                            assetName: 'assets/svgs/bank.svg',
-                            userName: _authContoller.liveUser.value!.username!,
-                          );
-                        },
-                      ));
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.horizontal,
+                      // itemCount: imageName.length,
+                      itemCount: cellContoller.allAvailableCell.length > 4
+                          ? 4
+                          : cellContoller.allAvailableCell.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = cellContoller.allAvailableCell[index];
+                        if (kDebugMode) {
+                          print('Cell is now ${item.groupName!.length}');
+                          print("group id for cell is ${item.groupId}");
+                        }
+                        return recommendedCells(
+                          groupId: item.groupId,
+                          groupName: item.groupName,
+                          colors: colorList[index],
+                          assetName: 'assets/svgs/bank.svg',
+                          userName: _authContoller.liveUser.value!.username!,
+                        );
+                      },
+                    ),
+                  );
                 }
               }),
               const Gap(30),
