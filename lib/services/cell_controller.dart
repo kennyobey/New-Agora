@@ -53,7 +53,10 @@ class CellControllers extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    getCells();
+    _authController.liveUser.listen(((p0)async {
+if(p0!=null){
+
+   getCells();
     getAllCells();
     getMessages();
     getChats(cellCollection.id);
@@ -88,6 +91,10 @@ class CellControllers extends GetxController {
         }
       }
     }
+}
+
+    }));
+   
   }
 
   Future likePost(String cellId, String messageId) async {

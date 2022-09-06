@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    gettingUserData();
+    // gettingUserData();
     _quoteContoller.getQuotes();
   }
 
@@ -101,10 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) {
-      print("testing user is ${_authContoller.liveUser.value!.toJson()}");
-      print("testing user admin is ${_authContoller.liveUser.value!.admin}");
-    }
+    // if (kDebugMode) {
+    //   print("testing user is ${_authContoller.liveUser.value!.toJson()}");
+    //   print("testing user admin is ${_authContoller.liveUser.value!.admin}");
+    // }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
@@ -123,13 +123,17 @@ class _HomeScreenState extends State<HomeScreen> {
               const Gap(20),
               Center(
                 child: Obx(() {
-                  return customTitleText(
-                    'Good afternoon, ${_authContoller.liveUser.value!.fullName}',
-                    size: 20,
-                    spacing: -0.1,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().filledTextField,
-                  );
+                  return (_authContoller.liveUser.value == null)
+                      ? CircularProgressIndicator(
+                          color: AppColor().filledTextField,
+                        )
+                      : customTitleText(
+                          'Good afternoon, ${_authContoller.liveUser.value!.fullName}',
+                          size: 20,
+                          spacing: -0.1,
+                          fontWeight: FontWeight.w700,
+                          colors: AppColor().filledTextField,
+                        );
                 }),
               ),
               const Gap(10),
@@ -141,15 +145,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   Obx(() {
-                    return customDescriptionText(
-                      // '5',
-                      _authContoller.liveUser.value!.streak == null
-                          ? '0'
-                          : _authContoller.liveUser.value!.streak.toString(),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      colors: AppColor().textColor,
-                    );
+                    return _authContoller.liveUser.value == null
+                        ? CircularProgressIndicator(
+                            color: AppColor().filledTextField,
+                          )
+                        : customDescriptionText(
+                            // '5',
+                            _authContoller.liveUser.value!.streak == null
+                                ? '0'
+                                : _authContoller.liveUser.value!.streak
+                                    .toString(),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            colors: AppColor().textColor,
+                          );
                   }),
                   const Gap(5),
                   customDescriptionText(
@@ -172,15 +181,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   Obx(() {
-                    return customDescriptionText(
-                      // '20',
-                      _authContoller.liveUser.value!.weeks == null
-                          ? '0'
-                          : _authContoller.liveUser.value!.weeks.toString(),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      colors: AppColor().textColor,
-                    );
+                    return _authContoller.liveUser.value == null
+                        ? Container()
+                        : customDescriptionText(
+                            // '20',
+                            _authContoller.liveUser.value!.weeks == null
+                                ? '0'
+                                : _authContoller.liveUser.value!.weeks
+                                    .toString(),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            colors: AppColor().textColor,
+                          );
                   }),
                   const Gap(5),
                   customDescriptionText(
@@ -288,7 +300,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    _quoteContoller.allQuotes.last.reply!.length == null
+                    _quoteContoller.allQuotes.isEmpty &&
+                            _quoteContoller.allQuotes.last.reply == null &&
+                            _quoteContoller.allQuotes.last.reply!.isEmpty &&
+                            _quoteContoller.allQuotes.last.reply!.length == null
                         ? '0'
                         : _quoteContoller.allQuotes.last.reply!.length
                             .toString(),
@@ -303,7 +318,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Gap(5),
                   Obx(() {
                     return customDescriptionText(
-                      _quoteContoller.allQuotes.last.share!.length == null
+                      _quoteContoller.allQuotes.isEmpty &&
+                              _quoteContoller.allQuotes.last.share == null &&
+                              _quoteContoller.allQuotes.last.share!.isEmpty &&
+                              _quoteContoller.allQuotes.last.share!.length ==
+                                  null
                           ? '0'
                           : _quoteContoller.allQuotes.last.share!.length
                               .toString(),

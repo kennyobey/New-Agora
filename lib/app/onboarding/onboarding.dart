@@ -24,7 +24,7 @@ class _OnboardingState extends State<Onboarding> {
 
   @override
   void initState() {
-    getUserLogggedInStatus();
+    // getUserLogggedInStatus();
     super.initState();
   }
 

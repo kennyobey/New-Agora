@@ -64,7 +64,7 @@ class _CellsScreenState extends State<CellsScreen> {
   @override
   void initState() {
     super.initState();
-    gettingUserData();
+    // gettingUserData();
     _screens = [
       //Home Screen
       const HomeScreen(),
@@ -87,7 +87,7 @@ class _CellsScreenState extends State<CellsScreen> {
     return res.substring(res.indexOf("_") + 1);
   }
 
-  gettingUserData() async {
+  gettingUserDatas() async {
     await HelperFunction.getUserEmailFromSF().then((value) {
       setState(() {
         email = value!;

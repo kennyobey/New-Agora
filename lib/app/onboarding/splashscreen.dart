@@ -35,8 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
       //   Get.off(() => const UserNavScreen());
       // } else {
       //   _save('0');
-      if (FirebaseAuth.instance.currentUser != null ||
-          controller.liveUser.value!.role == null) {
+      if (FirebaseAuth.instance.currentUser != null) {
         // if () {
         // Center(
         //   child: CircularProgressIndicator(
@@ -44,7 +43,9 @@ class _SplashScreenState extends State<SplashScreen> {
         //   ),
         // );
         // } else {
-        // Get.off(() => AdminUserNavScreen());
+        // Get.off(() => AdminUserNavScreen())
+        // ;
+
         Get.off(() => UserNavScreen());
         // }
       } else {

@@ -8,7 +8,6 @@ import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/app/home/admin_nav_screen.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
-import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -145,10 +144,19 @@ class AuthControllers extends GetxController {
           .user!;
       DateTime now = DateTime.now();
       if (user == null) {
+        Get.snackbar("Error", "Invalid Login details");
         return;
       }
+
       final userModel = await getUserByModel(user.uid);
+      print("user json is ${userModel.toJson()}");
       liveUser(userModel);
+
+      if (userModel.admin!) {
+        Get.to(() => AdminUserNavScreen());
+      } else {
+        Get.to(() => UserNavScreen());
+      }
       if (userModel.lastLoginTime == null ||
           userModel.weeklyLoginTime == null) {
         userModel.updatedAt = now;
@@ -179,23 +187,23 @@ class AuthControllers extends GetxController {
           }
         }
       }
-      if (userModel.admin == true) {
-        userModel.admin == null
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: AppColor().primaryColor,
-                ),
-              )
-            : Get.to(() => AdminUserNavScreen());
-      } else {
-        userModel.admin == null
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: AppColor().primaryColor,
-                ),
-              )
-            : Get.to(() => UserNavScreen());
-      }
+      // if (userModel.admin == true) {
+      //   userModel.admin == null
+      //       ? Center(
+      //           child: CircularProgressIndicator(
+      //             color: AppColor().primaryColor,
+      //           ),
+      //         )
+      //       : Get.to(() => AdminUserNavScreen());
+      // } else {
+      //   userModel.admin == null
+      //       ? Center(
+      //           child: CircularProgressIndicator(
+      //             color: AppColor().primaryColor,
+      //           ),
+      //         )
+      //       : Get.to(() => UserNavScreen());
+      // }
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         print(e);

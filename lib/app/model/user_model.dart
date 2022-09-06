@@ -54,7 +54,7 @@ class UserModel {
         profilePic: json["profilePic"],
         streak: json["streak"],
         weeks: json["weeks"],
-        admin: json["admin"],
+        admin: json["admin"] ?? false,
         role: json["role"],
         lastLoginTime: json["lastLoginTime"] == null
             ? null

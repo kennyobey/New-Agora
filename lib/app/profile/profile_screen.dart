@@ -92,7 +92,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }),
                             const Gap(5),
                             customDescriptionText(
-                              _authContoller.liveUser.value!.email == null
+                              _authContoller.liveUser.value == null &&
+                                      _authContoller.liveUser.value!.email ==
+                                          null
                                   ? 'example@mail.com'
                                   : _authContoller.liveUser.value!.email!,
                               fontSize: 10,
