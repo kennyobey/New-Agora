@@ -362,99 +362,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const Gap(20),
-              // SizedBox(
-              //   height: MediaQuery.of(context).size.height * 0.1,
-              //   child: StreamBuilder(
-              //       stream: cellContoller.getAllCells(),
-              //       builder: (context, AsyncSnapshot snapshot) {
-              //         if (snapshot.hasData) {
-              //           if (snapshot.data! != null) {
-              //             if (snapshot.data!.length != 0) {
-              //               return ListView.builder(
-              //                 padding: EdgeInsets.zero,
-              //                 scrollDirection: Axis.horizontal,
-              //                 // itemCount: colorList.length,
-              //                 itemCount: snapshot.data!.docs.length > 4
-              //                     ? 4
-              //                     : snapshot.data!.docs.length,
-              //                 itemBuilder: (BuildContext context, int index) {
-              //                   int reverseIndex =
-              //                       snapshot.data.length - index - 1;
-
-              //                   return recommendedCells(
-              //                     groupId:
-              //                         getId(snapshot.data!.docs[reverseIndex])
-              //                             .toString(),
-              //                     colors: colorList[index],
-              //                     groupName:
-              //                         getName(snapshot.data!.docs[reverseIndex])
-              //                             .toString(),
-              //                     assetName: 'assets/svgs/bank.svg',
-              //                     userName:
-              //                         _authContoller.liveUser.value!.username!,
-              //                   );
-              //                 },
-              //               );
-              //             } else {
-              //               return Column(
-              //                 crossAxisAlignment: CrossAxisAlignment.center,
-              //                 children: [
-              //                   const Gap(30),
-              //                   Center(
-              //                     child: customDescriptionText(
-              //                         'No Available Cell to join'),
-              //                   ),
-              //                 ],
-              //               );
-              //             }
-              //           } else {
-              //             return Column(
-              //               crossAxisAlignment: CrossAxisAlignment.center,
-              //               children: [
-              //                 const Gap(30),
-              //                 Center(
-              //                   child: customDescriptionText(
-              //                       'No Available Cell to join'),
-              //                 ),
-              //               ],
-              //             );
-              //           }
-              //         } else {
-              //           return Center(
-              //             child: CircularProgressIndicator(
-              //                 color: Theme.of(context).primaryColor),
-              //           );
-              //         }
-              //       }),
-              // ),
               Obx(() {
                 if (cellContoller.cellStatus == CellStatus.LOADING) {
                   return customDescriptionText('No Available  Cell');
                 } else {
                   return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.horizontal,
-                        // itemCount: imageName.length,
-                        itemCount: cellContoller.allAvailableCell.length > 4
-                            ? 4
-                            : cellContoller.allAvailableCell.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = cellContoller.allAvailableCell[index];
-                          if (kDebugMode) {
-                            print('Cell is now ${item.groupName!.length}');
-                            print("group id for cell is ${item.groupId}");
-                          }
-                          return recommendedCells(
-                            groupId: item.groupId,
-                            groupName: item.groupName,
-                            colors: colorList[index],
-                            assetName: 'assets/svgs/bank.svg',
-                            userName: _authContoller.liveUser.value!.username!,
-                          );
-                        },
-                      ));
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.horizontal,
+                      // itemCount: imageName.length,
+                      itemCount: cellContoller.allAvailableCell.length > 4
+                          ? 4
+                          : cellContoller.allAvailableCell.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = cellContoller.allAvailableCell[index];
+                        if (kDebugMode) {
+                          print('Cell is now ${item.groupName!.length}');
+                          print("group id for cell is ${item.groupId}");
+                        }
+                        return recommendedCells(
+                          groupId: item.groupId,
+                          groupName: item.groupName,
+                          colors: colorList[index],
+                          assetName: 'assets/svgs/bank.svg',
+                          userName: _authContoller.liveUser.value!.username!,
+                        );
+                      },
+                    ),
+                  );
                 }
               }),
               const Gap(30),
@@ -493,7 +429,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                         return recentQuotes(
                           assetName: imageName[index],
-                          // assetName: 'assets/images/image1.png',
                           quoteModel: item,
                         );
                       },
@@ -524,15 +459,6 @@ class _HomeScreenState extends State<HomeScreen> {
         if (kDebugMode) {
           print('Joining Group');
         }
-        // await DatabaseService(uid: _authContoller.liveUser.value!.uid)
-        //     .toggleGroupJoin(groupId, userName, groupName);
-        // if (isJoined) {
-        //   setState(
-        //     () {
-        //       isJoined = !isJoined;
-        //     },
-        //   );
-        //   showSnackbar(context, Colors.green, "Successfully joined he group");
 
         Get.to(
           () => ChatPage(
@@ -541,12 +467,6 @@ class _HomeScreenState extends State<HomeScreen> {
             userName: userName,
           ),
         );
-        // } else {
-        //   setState(() {
-        //     isJoined = !isJoined;
-        //     showSnackbar(context, Colors.red, "Left the group $groupName");
-        //   });
-        // }
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),
@@ -590,14 +510,25 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () {
         if (kDebugMode) {
           print('selected quote id is ${_quoteContoller.allQuotes.last.id!}');
+          print('Joining Quote Chat');
         }
-        _quoteContoller.viewPost(quoteModel!.id!);
+
+        cellContoller.joinedOrNot(
+          _authContoller.liveUser.value!.username!,
+          quoteModel!.groupId!,
+          quoteModel.dailyQuote!,
+        );
+
+        // View Quote Count
+        _quoteContoller.viewPost(quoteModel.id!);
+
         Get.to(
           () => SelectedQuoteDetails(
             quoteId: quoteModel.id!,
+            groupId: quoteModel.groupId!,
             quoteText: quoteModel.dailyQuote!,
+            userName: _authContoller.liveUser.value!.username!,
           ),
-          transition: Transition.downToUp,
         );
       },
       child: Padding(
@@ -609,21 +540,24 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.2,
-                decoration: BoxDecoration(
-                  color: colorList[random.nextInt(colorList.length)],
-                  // image: DecorationImage(
-                  //   image: AssetImage(assetName!),
-                  //   fit: BoxFit.cover,
-                  // ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: customTitleText(
-                    quoteModel!.dailyQuote!,
-                    size: 16,
-                    colors: AppColor().whiteColor,
+              Hero(
+                tag: "img",
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  decoration: BoxDecoration(
+                    color: colorList[random.nextInt(colorList.length)],
+                    // image: DecorationImage(
+                    //   image: AssetImage(assetName!),
+                    //   fit: BoxFit.cover,
+                    // ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: customTitleText(
+                      quoteModel!.dailyQuote!,
+                      size: 16,
+                      colors: AppColor().whiteColor,
+                    ),
                   ),
                 ),
               ),

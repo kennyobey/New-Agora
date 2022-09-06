@@ -120,22 +120,28 @@ class _EditProfileState extends State<EditProfile> {
                     // ),
                     Stack(
                       children: [
-                        Container(
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(80),
-                            image:  const DecorationImage(
-                              image: CachedNetworkImageProvider(
-                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mbF_vybC_Hlh8kW0mWpDp-RQ1P1f2qiKRO9jPX5UUFB8_nsYTFldK-ZT61FldtpK2k0&usqp=CAU',
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 100,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(80),
+                                image: const DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mbF_vybC_Hlh8kW0mWpDp-RQ1P1f2qiKRO9jPX5UUFB8_nsYTFldK-ZT61FldtpK2k0&usqp=CAU',
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              fit: BoxFit.cover,
                             ),
-                          ),
+                          ],
                         ),
                         Positioned(
-                          right: 2,
-                          bottom: .2,
+                          right: 125,
+                          bottom: 1,
                           child: GestureDetector(
                             onTap: () async {
                               PickedFile? file =
@@ -144,8 +150,9 @@ class _EditProfileState extends State<EditProfile> {
                                 imageQuality: 50,
                               );
                               if (file != null) {
-                                await _authContoller
-                                    .updateAvatar(File(file.path));
+                                await _authContoller.updateAvatar(
+                                  File(file.path),
+                                );
                               }
                             },
                             child: Container(

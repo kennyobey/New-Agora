@@ -19,12 +19,12 @@ class CellModel {
     this.email,
     this.fullName,
     this.description,
-    this.recentMessageSender,
-    this.members,
     this.recentMessage,
+    this.recentMessageSender,
+    this.recentMessageTime,
+    this.members,
     this.profilePic,
     this.admin,
-    this.recentMessageTime,
     this.createdAt,
     this.updatedAt,
   });
@@ -37,10 +37,10 @@ class CellModel {
   final String? description;
   final String? email;
   final String? fullName;
+  final String? recentMessage;
   final String? recentMessageSender;
   final String? recentMessageTime;
   final List<dynamic>? members;
-  final String? recentMessage;
   final String? profilePic;
   final String? admin;
   DateTime? createdAt;
