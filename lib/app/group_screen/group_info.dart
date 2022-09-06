@@ -3,6 +3,7 @@ import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,11 +33,14 @@ class _GroupInfoState extends State<GroupInfo> {
   @override
   void initState() {
     getMembers();
+    _cellController.getGroupMembers(widget.groupId);
     super.initState();
   }
 
   getMembers() async {
-    print('members is ${widget.groupId}');
+    if (kDebugMode) {
+      print('members is ${widget.groupId}');
+    }
     DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getGroupMembers(widget.groupId)
         .then((val) {
@@ -67,49 +71,50 @@ class _GroupInfoState extends State<GroupInfo> {
         ),
         actions: [
           IconButton(
-              onPressed: () {
-                showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: customDescriptionText("Exit"),
-                        content: customDescriptionText(
-                            "Are you sure you exit the group? "),
-                        actions: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.cancel,
-                              color: Colors.red,
-                            ),
+            onPressed: () {
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: customDescriptionText("Exit"),
+                      content: customDescriptionText(
+                          "Are you sure you exit the group? "),
+                      actions: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.cancel,
+                            color: Colors.red,
                           ),
-                          //Leave Chat
-                          IconButton(
-                            onPressed: () async {
-                              DatabaseService(
-                                      uid: FirebaseAuth
-                                          .instance.currentUser!.uid)
-                                  .toggleGroupJoin(
-                                      widget.groupId,
-                                      getName(widget.adminName),
-                                      widget.groupName)
-                                  .whenComplete(() {
-                                nextScreenReplace(context, const HomeScreen());
-                              });
-                            },
-                            icon: const Icon(
-                              Icons.done,
-                              color: Colors.green,
-                            ),
+                        ),
+                        //Leave Chat
+                        IconButton(
+                          onPressed: () async {
+                            DatabaseService(
+                                    uid: FirebaseAuth.instance.currentUser!.uid)
+                                .toggleGroupJoin(widget.groupId,
+                                    getName(widget.adminName), widget.groupName)
+                                .whenComplete(() {
+                              nextScreenReplace(context, const HomeScreen());
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.done,
+                            color: Colors.green,
                           ),
-                        ],
-                      );
-                    });
-              },
-              icon: const Icon(Icons.exit_to_app))
+                        ),
+                      ],
+                    );
+                  });
+            },
+            icon: Icon(
+              Icons.exit_to_app,
+              color: AppColor().primaryColor,
+            ),
+          )
         ],
       ),
       body: Container(

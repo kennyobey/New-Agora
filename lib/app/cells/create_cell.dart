@@ -1,9 +1,7 @@
 import 'package:agora_care/core/custom_form_field.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
-import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/widget/bottom_modal.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -86,28 +84,28 @@ class _CreateCellState extends State<CreateCell> {
                 setState(() {
                   _isLoading = true;
                 });
-                DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-                    .createGroup(
-                  _authController.liveUser.value!.email!,
-                  FirebaseAuth.instance.currentUser!.uid,
-                  _cellNameController.text,
-                )
-                    .whenComplete(() {
-                  setState(() {
-                    _isLoading = false;
-                  });
-                });
-                // // _cellController.createGroup(
-                // //   admin: _authController.liveUser.value!.role!,
-                // //   email: _authController.liveUser.value!.email!,
-                // //   groupIcon: '',
-                // //   groupId: '',
-                // //   description: _cellDescription.text,
-                // //   groupName: _cellNameController.text,
-                // // );
-                // setState(() {
-                //   _isLoading = false;
+                // DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+                //     .createGroup(
+                //   _authController.liveUser.value!.email!,
+                //   FirebaseAuth.instance.currentUser!.uid,
+                //   _cellNameController.text,
+                // )
+                //     .whenComplete(() {
+                //   setState(() {
+                //     _isLoading = false;
+                //   });
                 // });
+                _cellController.createGroup(
+                  admin: _authController.liveUser.value!.role!,
+                  email: _authController.liveUser.value!.email!,
+                  groupIcon: '',
+                  groupId: '',
+                  description: _cellDescription.text,
+                  groupName: _cellNameController.text,
+                );
+                setState(() {
+                  _isLoading = false;
+                });
                 showModalBottomSheet(
                   isScrollControlled: true,
                   backgroundColor: AppColor().whiteColor,
