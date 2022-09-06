@@ -16,10 +16,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-import '../home/home_screen.dart';
-import '../home/nav_screen.dart';
-import '../profile/profile_screen.dart';
-
 class CellInfo extends StatefulWidget {
   const CellInfo({Key? key}) : super(key: key);
 
@@ -37,7 +33,7 @@ class _CellInfoState extends State<CellInfo> {
   final bool _isLoading = false;
   late List<Widget> _screens;
   int tabIndex = 1;
-  int _selectedIndex = 1;
+  final int _selectedIndex = 1;
   final _scaffoldState = GlobalKey();
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,

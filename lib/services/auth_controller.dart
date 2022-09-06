@@ -149,7 +149,9 @@ class AuthControllers extends GetxController {
       }
 
       final userModel = await getUserByModel(user.uid);
-      print("user json is ${userModel.toJson()}");
+      if (kDebugMode) {
+        print("user json is ${userModel.toJson()}");
+      }
       liveUser(userModel);
 
       if (userModel.admin!) {

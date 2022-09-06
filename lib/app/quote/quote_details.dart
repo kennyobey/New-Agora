@@ -2,9 +2,7 @@
 
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
-import 'package:agora_care/app/group_screen/group_info.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/message_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -14,14 +12,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:share_plus/share_plus.dart';
 
 class QuoteDetails extends StatefulWidget {
   final String groupId;
@@ -318,92 +313,96 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                   ],
                 ),
                 Expanded(
-                    child: Container(
-                  decoration: BoxDecoration(
+                    child: Padding(
+                  padding: mediaQueryData.viewInsets,
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)),
-                  margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child:
-                            // chat messages here
-                            chatMessages(),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        alignment: Alignment.bottomCenter,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 0.7),
-                          color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: chatMessages(),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/svgs/bankofspain.svg',
-                              height: 50,
-                              width: 50,
-                            ),
-                            const Gap(5),
-                            Expanded(
-                              child: Container(
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  color: AppColor().chatBox,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 25, vertical: 0),
-                                width: MediaQuery.of(context).size.width,
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller: messageController,
-                                          textInputAction: TextInputAction.send,
-                                          style: TextStyle(
-                                            color: AppColor().backgroundColor,
-                                          ),
-                                          decoration: InputDecoration(
-                                            hintText: "Say something...",
-                                            hintStyle: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.grey[700],
+                        Container(
+                          padding: const EdgeInsets.all(5),
+                          alignment: Alignment.bottomCenter,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 0.7),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svgs/bankofspain.svg',
+                                height: 50,
+                                width: 50,
+                              ),
+                              const Gap(5),
+                              Expanded(
+                                child: Container(
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(40),
+                                    color: AppColor().chatBox,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 25, vertical: 0),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: TextFormField(
+                                            controller: messageController,
+                                            textInputAction:
+                                                TextInputAction.send,
+                                            style: TextStyle(
+                                              color: AppColor().backgroundColor,
                                             ),
-                                            border: InputBorder.none,
+                                            decoration: InputDecoration(
+                                              hintText: "Say something...",
+                                              hintStyle: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.grey[700],
+                                              ),
+                                              border: InputBorder.none,
+                                            ),
+                                            onFieldSubmitted: (value) {
+                                              sendMessage();
+                                            },
                                           ),
-                                          onFieldSubmitted: (value) {
+                                        ),
+                                        const SizedBox(
+                                          width: 12,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
                                             sendMessage();
                                           },
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 12,
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          sendMessage();
-                                        },
-                                        child: customDescriptionText(
-                                          'Post',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          colors: AppColor().backgroundColor,
-                                        ),
-                                      )
-                                    ]),
+                                          child: customDescriptionText(
+                                            'Post',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            colors: AppColor().backgroundColor,
+                                          ),
+                                        )
+                                      ]),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 )),
               ],
@@ -789,7 +788,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                     sentByMe:
                         widget.userName == snapshot.data.docs[index]['sender'],
                     groupId: '',
-                    like: [],
+                    like: const [],
                     messageid: '',
                   );
                 },
