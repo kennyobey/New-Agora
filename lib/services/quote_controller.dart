@@ -3,6 +3,7 @@
 import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +13,8 @@ enum QuoteStatus { LOADING, ERROR, EMPTY, SUCCESS }
 
 class QuoteControllers extends GetxController {
   final _authController = Get.find<AuthControllers>();
+  DatabaseService? uid;
+  DocumentReference? groupDocumentReference;
 
   final Rx<QuoteStatus> _quoteStatus = Rx(QuoteStatus.EMPTY);
   QuoteStatus get quoteStatus => _quoteStatus.value;
@@ -153,20 +156,25 @@ class QuoteControllers extends GetxController {
         reply: [],
         chats: [],
         views: [],
-        // views: 0,
+        members: [],
         createdAt: DateTime.now(),
       );
       final json = user.toJson();
 
-      // Direct Saving
-      // final json = {
-      //   "dailyQuotes": dailyQuote,
-      // };
-
       // Create reference and write data to Firebase
       await docUser.add(json);
 
-      // _quoteStatus(QuoteStatus.SUCCESS);
+      await groupDocumentReference!.update({
+        "members": FieldValue.arrayUnion(
+            ["${uid!}_${_authController.liveUser.value!.username}"]),
+        "chats": groupDocumentReference!.id,
+      });
+
+      DocumentReference userDocumentReference = userCollection.doc(uid!.uid);
+      return await userDocumentReference.update({
+        "chats":
+            FieldValue.arrayUnion(["${groupDocumentReference!.id}_$dailyQuote"])
+      });
     } catch (ex) {
       //
     }

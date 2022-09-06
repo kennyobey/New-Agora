@@ -53,48 +53,45 @@ class CellControllers extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    _authController.liveUser.listen(((p0)async {
-if(p0!=null){
+    _authController.liveUser.listen(((p0) async {
+      if (p0 != null) {
+        getCells();
+        getAllCells();
+        getMessages();
+        getChats(cellCollection.id);
 
-   getCells();
-    getAllCells();
-    getMessages();
-    getChats(cellCollection.id);
+        final now = DateTime.now();
+        if (FirebaseAuth.instance.currentUser != null) {
+          final newUser = await _authController
+              .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
+          liveUser(newUser);
 
-    final now = DateTime.now();
-    if (FirebaseAuth.instance.currentUser != null) {
-      final newUser = await _authController
-          .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
-      liveUser(newUser);
+          if (newUser.lastLoginTime!.difference(now).inDays >= 1 &&
+              newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
+            _newCell.doc(cellCollection.id).update({
+              "members": memberAdd(cellCollection.id),
+              // "like": likePost(
+              //   cellCollection.id,
+              // ),
+              // "comment": comment(
+              //   cellCollection.id,
+              // ),
+            });
+            _newMessage.doc(messagesCollection.id).update({
+              "like": likePost(cellCollection.id, messagesCollection.id),
+              "comment": comment(cellCollection.id, messagesCollection.id),
+            });
 
-      if (newUser.lastLoginTime!.difference(now).inDays >= 1 &&
-          newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
-        _newCell.doc(cellCollection.id).update({
-          "members": memberAdd(cellCollection.id),
-          // "like": likePost(
-          //   cellCollection.id,
-          // ),
-          // "comment": comment(
-          //   cellCollection.id,
-          // ),
-        });
-        _newMessage.doc(messagesCollection.id).update({
-          "like": likePost(cellCollection.id, messagesCollection.id),
-          "comment": comment(cellCollection.id, messagesCollection.id),
-        });
-
-        final newUser = await _authController
-            .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
-        liveUser(newUser);
-        if (kDebugMode) {
-          print("user value gotten user ${liveUser.value.toJson()}");
+            final newUser = await _authController
+                .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
+            liveUser(newUser);
+            if (kDebugMode) {
+              print("user value gotten user ${liveUser.value.toJson()}");
+            }
+          }
         }
       }
-    }
-}
-
     }));
-   
   }
 
   Future likePost(String cellId, String messageId) async {
@@ -195,7 +192,6 @@ if(p0!=null){
 
   // creating a group
   Future createGroup({
-    // required String uid,
     required String email,
     required String admin,
     required String groupId,
@@ -256,34 +252,6 @@ if(p0!=null){
     }
   }
 
-  // toggling the group join/exit
-  // Future toggleGroupJoin(
-  //     String groupId, String userEmail, String groupName) async {
-  //   // doc reference
-  //   DocumentReference userDocumentReference = userCollection.doc(uid!.uid);
-  //   DocumentReference groupDocumentReference = groupCollection.doc(groupId);
-
-  //   DocumentSnapshot documentSnapshot = await userDocumentReference.get();
-  //   List<dynamic> groups = await documentSnapshot['groups'];
-
-  //   // if user has our groups -> then remove then or also in other part re join
-  //   if (groups.contains("${groupId}_$groupName")) {
-  //     await userDocumentReference.update({
-  //       "groups": FieldValue.arrayRemove(["${groupId}_$groupName"])
-  //     });
-  //     await groupDocumentReference.update({
-  //       "members": FieldValue.arrayRemove(["${uid}_$userEmail"])
-  //     });
-  //   } else {
-  //     await userDocumentReference.update({
-  //       "groups": FieldValue.arrayUnion(["${groupId}_$groupName"])
-  //     });
-  //     await groupDocumentReference.update({
-  //       "members": FieldValue.arrayUnion(["${uid}_$userEmail"])
-  //     });
-  //   }
-  // }
-
   joinedOrNot(
     String userName,
     String groupId,
@@ -301,24 +269,11 @@ if(p0!=null){
   //   return quotes;
   // }
   gettingUserData() async {
-    await HelperFunction.getUserEmailFromSF().then((value) {
-      // setState(() {
-      //   email = value!;
-      // });
-    });
-    // await HelperFunction.getUserNameFromSF().then((val) {
-    //   setState(() {
-    //     userName = val!;
-    //   });
-    // });
+    await HelperFunction.getUserEmailFromSF().then((value) {});
     // getting the list of snapshots in our stream
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getUserGroups()
-        .then((snapshot) {
-      // setState(() {
-      //   groups = snapshot;
-      // });
-    });
+        .then((snapshot) {});
   }
 
   Future getAllCells() async {
