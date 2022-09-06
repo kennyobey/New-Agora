@@ -1,7 +1,5 @@
-import 'package:agora_care/services/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 
 class DatabaseService {
   final String? uid;
@@ -15,7 +13,7 @@ class DatabaseService {
   final CollectionReference quoteCollection =
       FirebaseFirestore.instance.collection("quote");
 
-  final _authController = Get.find<AuthControllers>();
+  // final _authController = Get.find<AuthControllers>();
 
   // saving the userdata
   Future savingUserData(String email) async {

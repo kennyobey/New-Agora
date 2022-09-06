@@ -40,7 +40,7 @@ class CellModel {
   final String? recentMessage;
   final String? recentMessageSender;
   final String? recentMessageTime;
-  final List<dynamic>? members;
+  final List<String>? members;
   final String? profilePic;
   final String? admin;
   DateTime? createdAt;
@@ -58,8 +58,8 @@ class CellModel {
         recentMessageSender: json["recentMessageSender"],
         recentMessageTime: json["recentMessageTime"],
         members: json["members"] == null
-            ? null
-            : List<dynamic>.from(json["members"].map((x) => x)),
+            ? []
+            : List<String>.from(json["members"].map((x) => x)),
         recentMessage: json["recentMessage"],
         profilePic: json["profilePic"],
         admin: json["admin"],

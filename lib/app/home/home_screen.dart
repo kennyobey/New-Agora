@@ -386,6 +386,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (kDebugMode) {
                           print('Cell is now ${item.groupName!.length}');
                           print("group id for cell is ${item.groupId}");
+                          print(
+                              "memeber lenght for cell is ${item.members!.length}");
                         }
                         return recommendedCells(
                           groupId: item.groupId,
@@ -393,6 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           colors: colorList[index],
                           assetName: 'assets/svgs/bank.svg',
                           userName: _authContoller.liveUser.value!.username!,
+                          memberId: item.members,
                         );
                       },
                     ),
@@ -454,23 +457,28 @@ class _HomeScreenState extends State<HomeScreen> {
     String? groupName,
     String? assetName,
     String? userName,
+    List<String>? memberId,
   }) {
     cellContoller.joinedOrNot(
       userName!,
       groupId!,
       groupName!,
     );
+
     return GestureDetector(
       onTap: () async {
         if (kDebugMode) {
           print('Joining Group');
         }
 
+        cellContoller.memberAdd(groupId);
+
         Get.to(
           () => ChatPage(
             groupId: groupId,
             groupName: groupName,
             userName: userName,
+            member: memberId!,
           ),
         );
       },

@@ -34,7 +34,7 @@ class _GroupInfoState extends State<GroupInfo> {
   @override
   void initState() {
     getMembers();
-   members= _cellController.getGroupMembers(widget.groupId);
+    //  members= _cellController.getGroupMembers(widget.groupId);
     super.initState();
   }
 
@@ -174,7 +174,7 @@ class _GroupInfoState extends State<GroupInfo> {
 
   memberList() {
     return StreamBuilder(
-      stream:members,
+      stream: members,
       // stream: _cellController.getGroupMembers(widget.groupId),
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
@@ -233,7 +233,7 @@ class _GroupInfoState extends State<GroupInfo> {
   }
 
   Future membersLenght() async {
-   // print("Mem ---> ${members?.length}");
+    // print("Mem ---> ${members?.length}");
     return memberslen = await members?.length;
   }
 }
