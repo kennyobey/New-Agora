@@ -879,10 +879,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
     version: "1.9.0"
-=======
-    version: "1.8.2"
   sqflite:
     dependency: transitive
     description:
@@ -897,7 +894,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.1+1"
->>>>>>> new_cell
   stack_trace:
     dependency: transitive
     description:
@@ -918,10 +914,7 @@ packages:
       name: string_scanner
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
     version: "1.1.1"
-=======
-    version: "1.1.0"
   synchronized:
     dependency: transitive
     description:
@@ -929,7 +922,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0+3"
->>>>>>> new_cell
   term_glyph:
     dependency: transitive
     description:

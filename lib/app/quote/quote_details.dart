@@ -155,7 +155,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                         snapshot.data!.docs.last
                                             .data()!['dailyQuote']
                                             .toString(),
-      
+
                                         // snapshot.hasData.toString(),
                                         fontSize: 20,
                                         fontWeight: FontWeight.w700,
@@ -345,7 +345,8 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                   var pngBytes = byteData!.buffer.asUint8List();
                                   String tempPath =
                                       (await getTemporaryDirectory()).path;
-                                  var dates = DateTime.now().toLocal().toString();
+                                  var dates =
+                                      DateTime.now().toLocal().toString();
                                   await getPdf(pngBytes, dates, tempPath);
                                   var pathurl = '$tempPath/$dates.pdf';
                                   await Share.shareFiles([pathurl]);
@@ -363,7 +364,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                           _quoteContoller.allQuotes.last.id!)
                                       : _quoteContoller.unLikePost(
                                           _quoteContoller.allQuotes.last.id!);
-      
+
                                   setState(() {
                                     isLiked = !isLiked;
                                   });
@@ -423,7 +424,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                         //               //   height: 50,
                         //               // ),
                         //               const Gap(10),
-      
+
                         //               Expanded(
                         //                 child: Container(
                         //                   padding: const EdgeInsets.all(5),
@@ -676,10 +677,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return MessageTile(
-                      message: snapshot.data.docs[index]['message'],
-                      sender: snapshot.data.docs[index]['sender'],
-                      sentByMe: widget.userName ==
-                          snapshot.data.docs[index]['sender']);
+                    message: snapshot.data.docs[index]['message'],
+                    sender: snapshot.data.docs[index]['sender'],
+                    sentByMe:
+                        widget.userName == snapshot.data.docs[index]['sender'],
+                    groupId: '',
+                    like: [],
+                    messageid: '',
+                  );
                 },
               )
             : Container();
