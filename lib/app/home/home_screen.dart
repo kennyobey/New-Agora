@@ -292,10 +292,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Gap(5),
                   Obx(() {
                     return customDescriptionText(
-                      _quoteContoller.allQuotes.last.views!.length == null
-                          ? '0'
-                          : _quoteContoller.allQuotes.last.views!.length
-                              .toString(),
+                      _quoteContoller.allQuotes.isNotEmpty &&
+                              _quoteContoller.allQuotes.last.views != null
+                          ? _quoteContoller.allQuotes.last.views!.length
+                              .toString()
+                          : "0",
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       colors: AppColor().textColor,
@@ -307,13 +308,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    _quoteContoller.allQuotes.isEmpty &&
-                            _quoteContoller.allQuotes.last.reply == null &&
-                            _quoteContoller.allQuotes.last.reply!.isEmpty &&
-                            _quoteContoller.allQuotes.last.reply!.length == null
-                        ? '0'
-                        : _quoteContoller.allQuotes.last.reply!.length
-                            .toString(),
+                    _quoteContoller.allQuotes.isNotEmpty &&
+                            _quoteContoller.allQuotes.last.reply != null
+                        ? _quoteContoller.allQuotes.last.reply!.length
+                            .toString()
+                        : "0",
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().textColor,
@@ -325,14 +324,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Gap(5),
                   Obx(() {
                     return customDescriptionText(
-                      _quoteContoller.allQuotes.isEmpty &&
-                              _quoteContoller.allQuotes.last.share == null &&
-                              _quoteContoller.allQuotes.last.share!.isEmpty &&
-                              _quoteContoller.allQuotes.last.share!.length ==
-                                  null
-                          ? '0'
-                          : _quoteContoller.allQuotes.last.share!.length
-                              .toString(),
+                      _quoteContoller.allQuotes.isNotEmpty &&
+                              _quoteContoller.allQuotes.last.share != null
+                          ? _quoteContoller.allQuotes.last.share!.length
+                              .toString()
+                          : "0",
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       colors: AppColor().textColor,

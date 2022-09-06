@@ -10,6 +10,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../core/constant/message_tile.dart';
+import '../../services/cell_controller.dart';
 import '../../services/database_service.dart';
 import 'group_info.dart';
 
@@ -30,12 +31,15 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   Stream<QuerySnapshot>? chats;
+  Stream? members;
+  final _cellController = Get.find<CellControllers>();
   TextEditingController messageController = TextEditingController();
   String admin = "";
 
   @override
   void initState() {
     getChatandAdmin();
+    members = _cellController.getGroupMembers(widget.groupId);
     super.initState();
   }
 
@@ -93,24 +97,45 @@ class _ChatPageState extends State<ChatPage> {
               color: AppColor().primaryColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Center(
-              child: FlutterImageStack(
-                // backgroundColor: Colors.black,
-                itemBorderColor: AppColor().whiteColor,
-                imageList: const [
-                  'https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80',
-                  'https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80',
-                  'https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80',
-                  'https://images.unsplash.com/photo-1612594305265-86300a9a5b5b?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
-                  'https://images.unsplash.com/photo-1612626256634-991e6e977fc1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1712&q=80',
-                  'https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80',
-                ],
-                showTotalCount: true,
-                totalCount: 6,
-                itemRadius: 50, // Radius of each images
-                itemCount: 4, // Maximum number of images to be shown in stack
-                itemBorderWidth: 2, // Border width around the images
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: FlutterImageStack(
+                    // backgroundColor: Colors.black,
+                    itemBorderColor: AppColor().whiteColor,
+                    imageList: const [
+                      'https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80',
+                      'https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80',
+                      'https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80',
+                      'https://images.unsplash.com/photo-1612594305265-86300a9a5b5b?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+                      'https://images.unsplash.com/photo-1612626256634-991e6e977fc1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1712&q=80',
+                      'https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80',
+                    ],
+                    showTotalCount: true,
+                    totalCount: 6,
+                    itemRadius: 50, // Radius of each images
+                    itemCount:
+                        4, // Maximum number of images to be shown in stack
+                    itemBorderWidth: 2, // Border width around the images
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                StreamBuilder(
+                    stream: members,
+                    builder: (context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(
+                          "${snapshot.data!.length} members",
+                          style: const TextStyle(color: Colors.white, fontSize: 20),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    })
+              ],
             ),
           ),
           Expanded(

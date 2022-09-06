@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-import ' verify_email_page.dart';
 import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
