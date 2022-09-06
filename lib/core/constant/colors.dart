@@ -15,7 +15,8 @@ class AppColor {
   Color textColor = const Color(0xff4E4B66);
   Color fillColor = const Color(0xFFF3F3F3);
   Color chatBox = const Color(0xFFDEDEDE);
-
+  Color lastActivity = const Color(0xFF7A7A7A);
+  Color tagButton = const Color(0xFFE5ECEC);
   Color boxColor = const Color(0xFFF3F3F3);
   Color pinkColor = const Color(0xffF07979);
   Color blueColor = const Color(0xff005EC5);

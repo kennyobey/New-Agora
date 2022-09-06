@@ -219,14 +219,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         _quoteContoller
                             .viewPost(_quoteContoller.allQuotes.last.id!);
                         Get.to(
-                          () => const QuoteDetails(),
-                          transition: Transition.downToUp,
+                          () => const QuoteDetails(
+                            groupId: '',
+                            groupName: '',
+                            userName: '',
+                          ),
+                          // transition: Transition.downToUp,
                         );
                       },
-                      child: SvgPicture.asset(
-                        'assets/svgs/quote.svg',
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        width: MediaQuery.of(context).size.width,
+                      child: Hero(
+                        tag: "img",
+                        child: SvgPicture.asset(
+                          'assets/svgs/quote.svg',
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          width: MediaQuery.of(context).size.width,
+                        ),
                       ),
                     ),
                   ),

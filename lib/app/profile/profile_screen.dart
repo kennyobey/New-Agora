@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:agora_care/app/cells/cell_info.dart';
 import 'package:agora_care/app/home/admin_home_screen.dart';
+import 'package:agora_care/app/onboarding/hero1.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -194,6 +196,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 colors: AppColor().filledTextField,
               ),
               const Gap(15),
+
+              CustomContainer(
+                selectedColor: Theme.of(context).primaryColor,
+                selected: true,
+                trailing: const Icon(
+                  Icons.group,
+                  size: 30,
+                ),
+                titleText: 'Groups',
+                onTap: () {
+                  // Get.to(() => const CellInfo());
+                },
+              ),
+              const Gap(15),
+              CustomContainer(
+                trailing: SvgPicture.asset(
+                  'assets/svgs/keyboard_arrow_right.svg',
+                  height: 14,
+                ),
+                titleText: 'Quote Page',
+                // onTap: () {
+                //   Get.to(() => const QuotePage());
+                // },
+              ),
+              const Gap(15),
+
               // CustomContainer(
               //   selectedColor: Theme.of(context).primaryColor,
               //   selected: true,
@@ -218,6 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //   },
               // ),
               // const Gap(15),
+
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
@@ -236,7 +265,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Settings',
                 onTap: () {
-                  Get.to(() => const AdminHomeScreen());
+                  // Get.to(() => AnimationApp());
                 },
               ),
               const Gap(15),
