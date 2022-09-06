@@ -210,19 +210,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: GestureDetector(
                       onTap: () {
-                        // _quoteContoller.viewPost(
                         //     _quoteContoller.allQuotes.last.views.toString());
                         if (kDebugMode) {
                           print(
                               'quote id is ${_quoteContoller.allQuotes.last.id!}');
                         }
+
+                        _quoteContoller.joinedOrNot(
+                          _authContoller.liveUser.value!.username!,
+                          _quoteContoller.allQuotes.last.groupId!,
+                          _quoteContoller.allQuotes.last.dailyQuote!,
+                        );
                         _quoteContoller
                             .viewPost(_quoteContoller.allQuotes.last.id!);
                         Get.to(
-                          () => const QuoteDetails(
-                            groupId: '',
-                            groupName: '',
-                            userName: '',
+                          () => QuoteDetails(
+                            groupId: _quoteContoller.allQuotes.last.groupId!,
+                            groupName:
+                                _quoteContoller.allQuotes.last.dailyQuote!,
+                            userName: _authContoller.liveUser.value!.username!,
                           ),
                           // transition: Transition.downToUp,
                         );
@@ -513,7 +519,7 @@ class _HomeScreenState extends State<HomeScreen> {
           print('Joining Quote Chat');
         }
 
-        cellContoller.joinedOrNot(
+        _quoteContoller.joinedOrNot(
           _authContoller.liveUser.value!.username!,
           quoteModel!.groupId!,
           quoteModel.dailyQuote!,

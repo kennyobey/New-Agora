@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/core/constant/message_tile.dart';
+import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
@@ -43,6 +43,8 @@ class SelectedQuoteDetails extends StatefulWidget {
 class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
   Stream<QuerySnapshot>? chat;
   var scr = GlobalKey();
+
+  String admin = "";
   final commentController = TextEditingController();
 
   final _quoteContoller = Get.find<QuoteControllers>();
@@ -70,6 +72,26 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
       File pdfFile = File(pathurl);
       pdfFile.writeAsBytesSync(await pdf.save());
     }
+  }
+
+  @override
+  void initState() {
+    getChatandAdmin();
+    // chat = _quoteContoller.getGroupMembers(widget.groupId);
+    super.initState();
+  }
+
+  getChatandAdmin() {
+    DatabaseService().getComment(widget.groupId).then((val) {
+      setState(() {
+        chat = val;
+      });
+    });
+    DatabaseService().getQuoteAdmin(widget.groupId).then((val) {
+      setState(() {
+        admin = val;
+      });
+    });
   }
 
   @override
@@ -635,7 +657,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
             ? ListView.builder(
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
-                  return MessageTile(
+                  return QuoteCommentTile(
                     message: snapshot.data.docs[index]['message'],
                     sender: snapshot.data.docs[index]['sender'],
                     sentByMe:
@@ -659,7 +681,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
         "time": DateTime.now().millisecondsSinceEpoch,
       };
 
-      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+      DatabaseService().sendComment(widget.groupId, chatMessageMap);
       setState(() {
         commentController.clear();
       });
