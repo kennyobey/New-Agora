@@ -14,15 +14,26 @@ class QuoteModel {
     this.id,
     this.likes,
     this.share,
+    this.email,
     this.chats,
     this.views,
     this.reply,
+    this.admin,
+    this.groupId,
+    this.groupName,
     this.members,
     this.dailyQuote,
     this.createdAt,
+    this.recentMessage,
+    this.recentMessageSender,
+    this.recentMessageTime,
   });
 
   final String? id;
+  final String? admin;
+  final String? email;
+  final String? groupId;
+  final String? groupName;
   final String? dailyQuote;
   final List<dynamic>? likes;
   final List<dynamic>? share;
@@ -30,11 +41,21 @@ class QuoteModel {
   final List<dynamic>? views;
   final List<dynamic>? members;
   final List<dynamic>? reply;
+  final String? recentMessage;
+  final String? recentMessageSender;
+  final String? recentMessageTime;
   DateTime? createdAt;
 
   factory QuoteModel.fromJson(dynamic json, String id) => QuoteModel(
         id: id,
+        groupId: id,
+        admin: json["admin"],
+        email: json["email"],
+        groupName: json["groupName"],
         dailyQuote: json["dailyQuote"],
+        recentMessage: json["recentMessage"],
+        recentMessageTime: json["recentMessageTime"],
+        recentMessageSender: json["recentMessageSender"],
         members: json["members"] == null
             ? null
             : List<dynamic>.from(json["members"].map((x) => x)),
@@ -62,6 +83,13 @@ class QuoteModel {
   Map<String, dynamic> toJson() => {
         "id": id,
         "dailyQuote": dailyQuote,
+        "groupId": groupId,
+        "email": email,
+        "admin": admin,
+        "groupName": groupName,
+        "recentMessage": recentMessage,
+        "recentMessageTime": recentMessageTime,
+        "recentMessageSender": recentMessageSender,
         "members":
             members == null ? null : List<dynamic>.from(members!.map((x) => x)),
 

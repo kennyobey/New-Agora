@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_final_fields, must_be_immutable
 
 import 'package:agora_care/core/custom_form_field.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/quote_controller.dart';
 import 'package:agora_care/widget/bottom_modal.dart';
 import 'package:flutter/foundation.dart';
@@ -22,6 +23,7 @@ class PostQoute extends StatefulWidget {
 class _PostQouteState extends State<PostQoute> {
   final formKey = GlobalKey<FormState>();
   final _quoteTextController = TextEditingController();
+  final _authController = Get.find<AuthControllers>();
   final _quoteController = Get.find<QuoteControllers>();
 
   DateTime createdTime = DateTime.now();
@@ -136,9 +138,11 @@ class _PostQouteState extends State<PostQoute> {
         _isLoading = true;
       });
       await _quoteController.creatQuote(
+        admin: _authController.liveUser.value!.role!,
+        email: _authController.liveUser.value!.email!,
         dailyQuote: _quoteTextController.text,
         createdAt: createdTime,
-        // colors: color,
+        groupId: '',
       );
       _quoteTextController.clear();
       setState(() {

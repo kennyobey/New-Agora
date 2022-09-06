@@ -433,7 +433,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                         return recentQuotes(
                           assetName: imageName[index],
-                          // assetName: 'assets/images/image1.png',
                           quoteModel: item,
                         );
                       },
@@ -464,15 +463,6 @@ class _HomeScreenState extends State<HomeScreen> {
         if (kDebugMode) {
           print('Joining Group');
         }
-        // await DatabaseService(uid: _authContoller.liveUser.value!.uid)
-        //     .toggleGroupJoin(groupId, userName, groupName);
-        // if (isJoined) {
-        //   setState(
-        //     () {
-        //       isJoined = !isJoined;
-        //     },
-        //   );
-        //   showSnackbar(context, Colors.green, "Successfully joined he group");
 
         Get.to(
           () => ChatPage(
@@ -481,12 +471,6 @@ class _HomeScreenState extends State<HomeScreen> {
             userName: userName,
           ),
         );
-        // } else {
-        //   setState(() {
-        //     isJoined = !isJoined;
-        //     showSnackbar(context, Colors.red, "Left the group $groupName");
-        //   });
-        // }
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),
@@ -530,14 +514,25 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () {
         if (kDebugMode) {
           print('selected quote id is ${_quoteContoller.allQuotes.last.id!}');
+          print('Joining Quote Chat');
         }
-        _quoteContoller.viewPost(quoteModel!.id!);
+
+        cellContoller.joinedOrNot(
+          _authContoller.liveUser.value!.username!,
+          quoteModel!.groupId!,
+          quoteModel.dailyQuote!,
+        );
+
+        // View Quote Count
+        _quoteContoller.viewPost(quoteModel.id!);
+
         Get.to(
           () => SelectedQuoteDetails(
             quoteId: quoteModel.id!,
+            groupId: quoteModel.groupId!,
             quoteText: quoteModel.dailyQuote!,
+            userName: _authContoller.liveUser.value!.username!,
           ),
-          transition: Transition.downToUp,
         );
       },
       child: Padding(
@@ -549,21 +544,24 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.2,
-                decoration: BoxDecoration(
-                  color: colorList[random.nextInt(colorList.length)],
-                  // image: DecorationImage(
-                  //   image: AssetImage(assetName!),
-                  //   fit: BoxFit.cover,
-                  // ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: customTitleText(
-                    quoteModel!.dailyQuote!,
-                    size: 16,
-                    colors: AppColor().whiteColor,
+              Hero(
+                tag: "img",
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  decoration: BoxDecoration(
+                    color: colorList[random.nextInt(colorList.length)],
+                    // image: DecorationImage(
+                    //   image: AssetImage(assetName!),
+                    //   fit: BoxFit.cover,
+                    // ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: customTitleText(
+                      quoteModel!.dailyQuote!,
+                      size: 16,
+                      colors: AppColor().whiteColor,
+                    ),
                   ),
                 ),
               ),

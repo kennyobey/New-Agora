@@ -26,12 +26,12 @@ class QuoteDetails extends StatefulWidget {
   final String groupId;
   final String groupName;
   final String userName;
-  const QuoteDetails(
-      {Key? key,
-      required this.groupId,
-      required this.groupName,
-      required this.userName})
-      : super(key: key);
+  const QuoteDetails({
+    Key? key,
+    required this.groupId,
+    required this.groupName,
+    required this.userName,
+  }) : super(key: key);
 
   @override
   State<QuoteDetails> createState() => _QuoteDetailsState();
@@ -39,9 +39,8 @@ class QuoteDetails extends StatefulWidget {
 
 class _QuoteDetailsState extends State<QuoteDetails> {
   var scr = GlobalKey();
-  final commentController = TextEditingController();
+  final messageController = TextEditingController();
   Stream<QuerySnapshot>? chats;
-  TextEditingController messageController = TextEditingController();
   String admin = "";
 
   final _quoteContoller = Get.find<QuoteControllers>();
@@ -100,9 +99,6 @@ class _QuoteDetailsState extends State<QuoteDetails> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           color: AppColor().primaryColor,
-          // image: const DecorationImage(
-          //     image: AssetImage('assets/images/need_help.png'),
-          //     fit: BoxFit.cover),
         ),
         child: Stack(
           children: [

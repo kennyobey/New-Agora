@@ -5,8 +5,11 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/core/constant/message_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +24,16 @@ import 'package:share_plus/share_plus.dart';
 
 // ignore: must_be_immutable
 class SelectedQuoteDetails extends StatefulWidget {
-  String quoteId;
-  String quoteText;
-  SelectedQuoteDetails({
+  final String quoteId;
+  final String quoteText;
+  final String groupId;
+  final String userName;
+  const SelectedQuoteDetails({
     Key? key,
     required this.quoteId,
     required this.quoteText,
+    required this.groupId,
+    required this.userName,
   }) : super(key: key);
 
   @override
@@ -34,6 +41,7 @@ class SelectedQuoteDetails extends StatefulWidget {
 }
 
 class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
+  Stream<QuerySnapshot>? chats;
   var scr = GlobalKey();
   final commentController = TextEditingController();
 
@@ -112,8 +120,11 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                 const Gap(20),
                 Stack(
                   children: [
-                    SvgPicture.asset(
-                      'assets/svgs/quoteCard.svg',
+                    Hero(
+                      tag: "img",
+                      child: SvgPicture.asset(
+                        'assets/svgs/quoteCard.svg',
+                      ),
                     ),
                     Positioned(
                       top: 35,
@@ -136,49 +147,42 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                           //   textAlign: TextAlign.center,
                           //   colors: AppColor().filledTextField,
                           // ),
-                          // StreamBuilder<QuerySnapshot<Object?>>(
-                          //     stream: _quoteContoller.getDailyQuote(),
-                          //     builder: (context, AsyncSnapshot snapshot) {
-                          //       if (snapshot.hasData) {
-                          //         if (snapshot.data != null) {
-                          //           return customDescriptionText(
-                          //             snapshot.data!.docs.last
-                          //                 .data()!['dailyQuote']
-                          //                 .toString(),
+                          StreamBuilder<QuerySnapshot<Object?>>(
+                              stream: _quoteContoller.getDailyQuote(),
+                              builder: (context, AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data != null) {
+                                    return customDescriptionText(
+                                      snapshot.data!.docs.last
+                                          .data()!['dailyQuote']
+                                          .toString(),
 
-                          //             // snapshot.hasData.toString(),
-                          //             fontSize: 20,
-                          //             fontWeight: FontWeight.w700,
-                          //             textAlign: TextAlign.center,
-                          //             colors: AppColor().filledTextField,
-                          //           );
-                          //         } else if (snapshot.data == null) {
-                          //           return SvgPicture.asset(
-                          //             'assets/svgs/fluent_tap-single-48-filled.svg',
-                          //           );
-                          //         } else {
-                          //           return customDescriptionText(
-                          //             'No Quote Today',
-                          //             fontSize: 16,
-                          //             fontWeight: FontWeight.w700,
-                          //             textAlign: TextAlign.center,
-                          //             colors: AppColor().whiteColor,
-                          //           );
-                          //         }
-                          //       } else {
-                          //         return Center(
-                          //           child: CircularProgressIndicator(
-                          //               color: AppColor().primaryColor),
-                          //         );
-                          //       }
-                          //     }),
-                          customDescriptionText(
-                            widget.quoteText,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            textAlign: TextAlign.center,
-                            colors: AppColor().filledTextField,
-                          ),
+                                      // snapshot.hasData.toString(),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      textAlign: TextAlign.center,
+                                      colors: AppColor().filledTextField,
+                                    );
+                                  } else if (snapshot.data == null) {
+                                    return SvgPicture.asset(
+                                      'assets/svgs/fluent_tap-single-48-filled.svg',
+                                    );
+                                  } else {
+                                    return customDescriptionText(
+                                      'No Quote Today',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      textAlign: TextAlign.center,
+                                      colors: AppColor().whiteColor,
+                                    );
+                                  }
+                                } else {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                        color: AppColor().primaryColor),
+                                  );
+                                }
+                              }),
                           const Gap(30),
                           Divider(
                             thickness: 1,
@@ -294,281 +298,381 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                     ),
                   ],
                 ),
-              ],
-            ),
-            DraggableScrollableSheet(
-              maxChildSize: 0.85,
-              initialChildSize: 0.35,
-              minChildSize: 0.2,
-              builder:
-                  (BuildContext context, ScrollController scrollController) {
-                return Container(
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColor().whiteColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+                Expanded(
+                    child: Padding(
+                  padding: mediaQueryData.viewInsets,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  ),
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    controller: scrollController,
-                    scrollDirection: Axis.vertical,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            customTitleText(
-                              'Discussions',
-                              size: 18,
-                              fontWeight: FontWeight.w700,
-                              colors: AppColor().primaryColor,
-                            ),
-                            const Spacer(),
-                            InkWell(
-                              onTap: () async {
-                                await _quoteContoller.sharePost(
-                                    _quoteContoller.allQuotes.last.id!);
-                                RenderRepaintBoundary boundary =
-                                    scr.currentContext!.findRenderObject()
-                                        as RenderRepaintBoundary;
-                                var image = await boundary.toImage();
-                                var byteData = await image.toByteData(
-                                    format: ImageByteFormat.png);
-                                var pngBytes = byteData!.buffer.asUint8List();
-                                String tempPath =
-                                    (await getTemporaryDirectory()).path;
-                                var dates = DateTime.now().toLocal().toString();
-                                await getPdf(pngBytes, dates, tempPath);
-                                var pathurl = '$tempPath/$dates.pdf';
-                                await Share.shareFiles([pathurl]);
-                              },
-                              child: SvgPicture.asset(
-                                'assets/svgs/share.svg',
-                                height: 24,
+                    margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              customTitleText(
+                                'Discussions',
+                                size: 18,
+                                fontWeight: FontWeight.w700,
+                                colors: AppColor().primaryColor,
                               ),
-                            ),
-                            const Gap(10),
-                            InkWell(
-                              onTap: () {
-                                isLiked
-                                    ? _quoteContoller.likePost(
-                                        _quoteContoller.allQuotes.last.id!)
-                                    : _quoteContoller.unLikePost(
-                                        _quoteContoller.allQuotes.last.id!);
+                              const Spacer(),
+                              InkWell(
+                                onTap: () async {
+                                  await _quoteContoller.sharePost(
+                                      _quoteContoller.allQuotes.last.id!);
+                                  RenderRepaintBoundary boundary =
+                                      scr.currentContext!.findRenderObject()
+                                          as RenderRepaintBoundary;
+                                  var image = await boundary.toImage();
+                                  var byteData = await image.toByteData(
+                                      format: ImageByteFormat.png);
+                                  var pngBytes = byteData!.buffer.asUint8List();
+                                  String tempPath =
+                                      (await getTemporaryDirectory()).path;
+                                  var dates =
+                                      DateTime.now().toLocal().toString();
+                                  await getPdf(pngBytes, dates, tempPath);
+                                  var pathurl = '$tempPath/$dates.pdf';
+                                  await Share.shareFiles([pathurl]);
+                                },
+                                child: SvgPicture.asset(
+                                  'assets/svgs/share.svg',
+                                  height: 24,
+                                ),
+                              ),
+                              const Gap(10),
+                              InkWell(
+                                onTap: () async {
+                                  isLiked
+                                      ? _quoteContoller.likePost(
+                                          _quoteContoller.allQuotes.last.id!)
+                                      : _quoteContoller.unLikePost(
+                                          _quoteContoller.allQuotes.last.id!);
 
-                                setState(() {
-                                  isLiked = !isLiked;
-                                });
-                              },
-                              child: isLiked
-                                  ? SvgPicture.asset(
-                                      'assets/svgs/heart.svg',
-                                    )
-                                  : Icon(
-                                      CupertinoIcons.heart_fill,
-                                      color: AppColor().errorColor,
-                                    ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      ...List.generate(
-                        10,
-                        growable: true,
-                        (index) => const Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: ChatWidget(),
-                        ),
-                      ),
-                      Padding(
-                        padding: mediaQueryData.viewInsets,
-                        child: Form(
-                          child: Container(
-                            height: 80,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: AppColor().whiteColor,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  spreadRadius: 0.1,
-                                  blurRadius: 5,
-                                  offset: Offset(0.0, 0.05),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/images/chatPic.png',
-                                  height: 50,
-                                ),
-                                const Gap(10),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 45,
-                                    child: TextFormField(
-                                      autofocus: false,
-                                      controller: commentController,
-                                      keyboardType: TextInputType.text,
-                                      textInputAction: TextInputAction.done,
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        fillColor: const Color(0xffFFFFFF),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColor().lightTextColor,
-                                              width: 1),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(20),
-                                          ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColor().lightTextColor,
-                                              width: 1),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(20),
-                                          ),
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColor().lightTextColor,
-                                              width: 1),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(20),
-                                          ),
-                                        ),
-                                        hintText: 'Add a comment...',
-                                        suffix: customDescriptionText(
-                                          'Post',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          colors: AppColor().primaryColor,
-                                        ),
-                                        hintStyle: const TextStyle(
-                                          fontFamily: 'HK GROTESK',
-                                          fontSize: 14,
-                                          fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.normal,
-                                        ),
+                                  setState(() {
+                                    isLiked = !isLiked;
+                                  });
+                                },
+                                child: isLiked
+                                    ? SvgPicture.asset(
+                                        'assets/svgs/heart.svg',
+                                      )
+                                    : Icon(
+                                        CupertinoIcons.heart_fill,
+                                        color: AppColor().errorColor,
                                       ),
-                                      // onFieldSubmitted: onSubmited,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: chatMessages(),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(5),
+                          alignment: Alignment.bottomCenter,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 0.7),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svgs/bankofspain.svg',
+                                height: 50,
+                                width: 50,
+                              ),
+                              const Gap(5),
+                              Expanded(
+                                child: Container(
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(40),
+                                    color: AppColor().chatBox,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 25, vertical: 0),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: TextFormField(
+                                            controller: commentController,
+                                            textInputAction:
+                                                TextInputAction.send,
+                                            style: TextStyle(
+                                              color: AppColor().backgroundColor,
+                                            ),
+                                            decoration: InputDecoration(
+                                              hintText: "Say something...",
+                                              hintStyle: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.grey[700],
+                                              ),
+                                              border: InputBorder.none,
+                                            ),
+                                            onFieldSubmitted: (value) {
+                                              sendMessage();
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 12,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            sendMessage();
+                                          },
+                                          child: customDescriptionText(
+                                            'Post',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            colors: AppColor().backgroundColor,
+                                          ),
+                                        )
+                                      ]),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              },
+                )),
+              ],
             ),
+            // DraggableScrollableSheet(
+            //   maxChildSize: 0.85,
+            //   initialChildSize: 0.35,
+            //   minChildSize: 0.2,
+            //   builder:
+            //       (BuildContext context, ScrollController scrollController) {
+            //     return Container(
+            //       height: double.infinity,
+            //       decoration: BoxDecoration(
+            //         color: AppColor().whiteColor,
+            //         borderRadius: const BorderRadius.only(
+            //           topLeft: Radius.circular(20),
+            //           topRight: Radius.circular(20),
+            //         ),
+            //       ),
+            //       child: ListView(
+            //         padding: EdgeInsets.zero,
+            //         controller: scrollController,
+            //         scrollDirection: Axis.vertical,
+            //         children: [
+            //           Padding(
+            //             padding: const EdgeInsets.symmetric(
+            //                 vertical: 20, horizontal: 20),
+            //             child: Row(
+            //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //               children: [
+            //                 customTitleText(
+            //                   'Discussions',
+            //                   size: 18,
+            //                   fontWeight: FontWeight.w700,
+            //                   colors: AppColor().primaryColor,
+            //                 ),
+            //                 const Spacer(),
+            //                 InkWell(
+            //                   onTap: () async {
+            //                     await _quoteContoller.sharePost(
+            //                         _quoteContoller.allQuotes.last.id!);
+            //                     RenderRepaintBoundary boundary =
+            //                         scr.currentContext!.findRenderObject()
+            //                             as RenderRepaintBoundary;
+            //                     var image = await boundary.toImage();
+            //                     var byteData = await image.toByteData(
+            //                         format: ImageByteFormat.png);
+            //                     var pngBytes = byteData!.buffer.asUint8List();
+            //                     String tempPath =
+            //                         (await getTemporaryDirectory()).path;
+            //                     var dates = DateTime.now().toLocal().toString();
+            //                     await getPdf(pngBytes, dates, tempPath);
+            //                     var pathurl = '$tempPath/$dates.pdf';
+            //                     await Share.shareFiles([pathurl]);
+            //                   },
+            //                   child: SvgPicture.asset(
+            //                     'assets/svgs/share.svg',
+            //                     height: 24,
+            //                   ),
+            //                 ),
+            //                 const Gap(10),
+            //                 InkWell(
+            //                   onTap: () {
+            //                     isLiked
+            //                         ? _quoteContoller.likePost(
+            //                             _quoteContoller.allQuotes.last.id!)
+            //                         : _quoteContoller.unLikePost(
+            //                             _quoteContoller.allQuotes.last.id!);
+
+            //                     setState(() {
+            //                       isLiked = !isLiked;
+            //                     });
+            //                   },
+            //                   child: isLiked
+            //                       ? SvgPicture.asset(
+            //                           'assets/svgs/heart.svg',
+            //                         )
+            //                       : Icon(
+            //                           CupertinoIcons.heart_fill,
+            //                           color: AppColor().errorColor,
+            //                         ),
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //           ...List.generate(
+            //             10,
+            //             growable: true,
+            //             (index) => const Padding(
+            //               padding: EdgeInsets.only(bottom: 10),
+            //               child: ChatWidget(),
+            //             ),
+            //           ),
+            //           Padding(
+            //             padding: mediaQueryData.viewInsets,
+            //             child: Form(
+            //               child: Container(
+            //                 height: 80,
+            //                 padding: const EdgeInsets.symmetric(horizontal: 10),
+            //                 decoration: BoxDecoration(
+            //                   color: AppColor().whiteColor,
+            //                   boxShadow: const [
+            //                     BoxShadow(
+            //                       color: Colors.black26,
+            //                       spreadRadius: 0.1,
+            //                       blurRadius: 5,
+            //                       offset: Offset(0.0, 0.05),
+            //                     ),
+            //                   ],
+            //                 ),
+            //                 child: Row(
+            //                   children: [
+            //                     Image.asset(
+            //                       'assets/images/chatPic.png',
+            //                       height: 50,
+            //                     ),
+            //                     const Gap(10),
+            //                     Expanded(
+            //                       child: SizedBox(
+            //                         height: 45,
+            //                         child: TextFormField(
+            //                           autofocus: false,
+            //                           controller: commentController,
+            //                           keyboardType: TextInputType.text,
+            //                           textInputAction: TextInputAction.done,
+            //                           decoration: InputDecoration(
+            //                             isDense: true,
+            //                             fillColor: const Color(0xffFFFFFF),
+            //                             focusedBorder: OutlineInputBorder(
+            //                               borderSide: BorderSide(
+            //                                   color: AppColor().lightTextColor,
+            //                                   width: 1),
+            //                               borderRadius: const BorderRadius.all(
+            //                                 Radius.circular(20),
+            //                               ),
+            //                             ),
+            //                             enabledBorder: OutlineInputBorder(
+            //                               borderSide: BorderSide(
+            //                                   color: AppColor().lightTextColor,
+            //                                   width: 1),
+            //                               borderRadius: const BorderRadius.all(
+            //                                 Radius.circular(20),
+            //                               ),
+            //                             ),
+            //                             border: OutlineInputBorder(
+            //                               borderSide: BorderSide(
+            //                                   color: AppColor().lightTextColor,
+            //                                   width: 1),
+            //                               borderRadius: const BorderRadius.all(
+            //                                 Radius.circular(20),
+            //                               ),
+            //                             ),
+            //                             hintText: 'Add a comment...',
+            //                             suffix: customDescriptionText(
+            //                               'Post',
+            //                               fontSize: 12,
+            //                               fontWeight: FontWeight.w600,
+            //                               colors: AppColor().primaryColor,
+            //                             ),
+            //                             hintStyle: const TextStyle(
+            //                               fontFamily: 'HK GROTESK',
+            //                               fontSize: 14,
+            //                               fontStyle: FontStyle.normal,
+            //                               fontWeight: FontWeight.normal,
+            //                             ),
+            //                           ),
+            //                           // onFieldSubmitted: onSubmited,
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),
     );
   }
-}
 
-class ChatWidget extends StatefulWidget {
-  const ChatWidget({Key? key}) : super(key: key);
-
-  @override
-  State<ChatWidget> createState() => _ChatWidgetState();
-}
-
-class _ChatWidgetState extends State<ChatWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Expanded(
-        //   child: ListView.builder(
-        //       padding: EdgeInsets.zero,
-        //       scrollDirection: Axis.vertical,
-        //       itemCount: 10,
-        //       itemBuilder: (BuildContext context, int index) {
-        //         return
-        ListTile(
-          leading: Image.asset('assets/images/chatPic.png'),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  customTitleText(
-                    'Melish karuntha',
-                    size: 14,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().primaryColor,
-                  ),
-                  const Gap(10),
-                  SvgPicture.asset(
-                    'assets/svgs/comment_verify.svg',
-                  ),
-                  const Spacer(),
-                  SvgPicture.asset(
-                    'assets/svgs/reply.svg',
-                  ),
-                  const Gap(10),
-                  SvgPicture.asset(
-                    'assets/svgs/thumb.svg',
-                  ),
-                ],
-              ),
-              customDescriptionText(
-                'Lorem ipsum ad amet sit lorema akad mu il shaprew',
-                width: MediaQuery.of(context).size.width * 0.6,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                colors: AppColor().primaryColor,
-              ),
-            ],
-          ),
-          subtitle: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              customDescriptionText(
-                '19hrs',
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                colors: AppColor().lightbackgroundColor,
-              ),
-              const Gap(20),
-              customDescriptionText(
-                '143 likes',
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                colors: AppColor().lightbackgroundColor,
-              ),
-              // const Spacer(),
-            ],
-          ),
-          // trailing: Row(
-          //   children: [
-          //     SvgPicture.asset(
-          //       'assets/svgs/reply.svg',
-          //     ),
-          //     SvgPicture.asset(
-          //       'assets/svgs/thumb.svg',
-          //     ),
-          //   ],
-          // ),
-          isThreeLine: true,
-        ),
-        //         ;
-        //       }),
-        // ),
-      ],
+  chatMessages() {
+    return StreamBuilder(
+      stream: chats,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  return MessageTile(
+                    message: snapshot.data.docs[index]['message'],
+                    sender: snapshot.data.docs[index]['sender'],
+                    sentByMe:
+                        widget.userName == snapshot.data.docs[index]['sender'],
+                    groupId: '',
+                    like: const [],
+                    messageid: '',
+                  );
+                },
+              )
+            : Container();
+      },
     );
+  }
+
+  sendMessage() {
+    if (commentController.text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": commentController.text,
+        "sender": widget.userName,
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+
+      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+      setState(() {
+        commentController.clear();
+      });
+    }
   }
 }

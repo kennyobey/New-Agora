@@ -140,7 +140,9 @@ class QuoteControllers extends GetxController {
   // Create Quotes
   Future creatQuote({
     required String dailyQuote,
-    // required Color colors,
+    required String groupId,
+    required String admin,
+    required String email,
     required DateTime createdAt,
   }) async {
     // _quoteStatus(QuoteStatus.LOADING);
@@ -150,13 +152,17 @@ class QuoteControllers extends GetxController {
       // Saving to model
       final user = QuoteModel(
         dailyQuote: dailyQuote,
-        // color: colors,
+        groupId: groupId,
         likes: [],
         share: [],
         reply: [],
         chats: [],
         views: [],
         members: [],
+        admin: admin,
+        email: email,
+        recentMessage: '',
+        recentMessageSender: '',
         createdAt: DateTime.now(),
       );
       final json = user.toJson();
@@ -166,7 +172,7 @@ class QuoteControllers extends GetxController {
 
       await groupDocumentReference!.update({
         "members": FieldValue.arrayUnion(
-            ["${uid!}_${_authController.liveUser.value!.username}"]),
+            ["${uid!}_${_authController.liveUser.value!.email}"]),
         "chats": groupDocumentReference!.id,
       });
 
