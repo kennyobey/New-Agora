@@ -34,31 +34,35 @@ class QuoteControllers extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    getQuotes();
-    getDailyQuote();
+    _authController.liveUser.listen((p0) async {
+      if (p0 != null) {
+        getQuotes();
+        getDailyQuote();
 
-    final now = DateTime.now();
-    if (FirebaseAuth.instance.currentUser != null) {
-      final newUser = await _authController
-          .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
-      liveUser(newUser);
+        final now = DateTime.now();
+        if (FirebaseAuth.instance.currentUser != null) {
+          final newUser = await _authController
+              .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
+          liveUser(newUser);
 
-      if (newUser.lastLoginTime!.difference(now).inDays >= 1 &&
-          newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
-        _newQuote.doc(quotesCollection.id).update({
-          "share": sharePost(quotesCollection.id),
-          "likes": likePost(quotesCollection.id),
-          "views": viewPost(quotesCollection.id),
-        });
+          if (newUser.lastLoginTime!.difference(now).inDays >= 1 &&
+              newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
+            _newQuote.doc(quotesCollection.id).update({
+              "share": sharePost(quotesCollection.id),
+              "likes": likePost(quotesCollection.id),
+              "views": viewPost(quotesCollection.id),
+            });
 
-        final newUser = await _authController
-            .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
-        liveUser(newUser);
-        if (kDebugMode) {
-          print("user value gotten user ${liveUser.value.toJson()}");
+            final newUser = await _authController
+                .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
+            liveUser(newUser);
+            if (kDebugMode) {
+              print("user value gotten user ${liveUser.value.toJson()}");
+            }
+          }
         }
       }
-    }
+    });
   }
 
 //Fetch  Stream dailyQuote

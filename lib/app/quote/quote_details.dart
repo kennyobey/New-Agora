@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:agora_care/app/group_screen/group_info.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/message_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -318,92 +317,158 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                   ],
                 ),
                 Expanded(
-                    child: Container(
-                  decoration: BoxDecoration(
+                    child: Padding(
+                  padding: mediaQueryData.viewInsets,
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)),
-                  margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child:
-                            // chat messages here
-                            chatMessages(),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        alignment: Alignment.bottomCenter,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 0.7),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/svgs/bankofspain.svg',
-                              height: 50,
-                              width: 50,
-                            ),
-                            const Gap(5),
-                            Expanded(
-                              child: Container(
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  color: AppColor().chatBox,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              customTitleText(
+                                'Discussions',
+                                size: 18,
+                                fontWeight: FontWeight.w700,
+                                colors: AppColor().primaryColor,
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                onTap: () async {
+                                  await _quoteContoller.sharePost(
+                                      _quoteContoller.allQuotes.last.id!);
+                                  RenderRepaintBoundary boundary =
+                                      scr.currentContext!.findRenderObject()
+                                          as RenderRepaintBoundary;
+                                  var image = await boundary.toImage();
+                                  var byteData = await image.toByteData(
+                                      format: ImageByteFormat.png);
+                                  var pngBytes = byteData!.buffer.asUint8List();
+                                  String tempPath =
+                                      (await getTemporaryDirectory()).path;
+                                  var dates =
+                                      DateTime.now().toLocal().toString();
+                                  await getPdf(pngBytes, dates, tempPath);
+                                  var pathurl = '$tempPath/$dates.pdf';
+                                  await Share.shareFiles([pathurl]);
+                                },
+                                child: SvgPicture.asset(
+                                  'assets/svgs/share.svg',
+                                  height: 24,
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 25, vertical: 0),
-                                width: MediaQuery.of(context).size.width,
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller: messageController,
-                                          textInputAction: TextInputAction.send,
-                                          style: TextStyle(
-                                            color: AppColor().backgroundColor,
-                                          ),
-                                          decoration: InputDecoration(
-                                            hintText: "Say something...",
-                                            hintStyle: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.grey[700],
+                              ),
+                              const Gap(10),
+                              InkWell(
+                                onTap: () async {
+                                  isLiked
+                                      ? _quoteContoller.likePost(
+                                          _quoteContoller.allQuotes.last.id!)
+                                      : _quoteContoller.unLikePost(
+                                          _quoteContoller.allQuotes.last.id!);
+
+                                  setState(() {
+                                    isLiked = !isLiked;
+                                  });
+                                },
+                                child: isLiked
+                                    ? SvgPicture.asset(
+                                        'assets/svgs/heart.svg',
+                                      )
+                                    : Icon(
+                                        CupertinoIcons.heart_fill,
+                                        color: AppColor().errorColor,
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: chatMessages(),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(5),
+                          alignment: Alignment.bottomCenter,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 0.7),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svgs/bankofspain.svg',
+                                height: 50,
+                                width: 50,
+                              ),
+                              const Gap(5),
+                              Expanded(
+                                child: Container(
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(40),
+                                    color: AppColor().chatBox,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 25, vertical: 0),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: TextFormField(
+                                            controller: messageController,
+                                            textInputAction:
+                                                TextInputAction.send,
+                                            style: TextStyle(
+                                              color: AppColor().backgroundColor,
                                             ),
-                                            border: InputBorder.none,
+                                            decoration: InputDecoration(
+                                              hintText: "Say something...",
+                                              hintStyle: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.grey[700],
+                                              ),
+                                              border: InputBorder.none,
+                                            ),
+                                            onFieldSubmitted: (value) {
+                                              sendMessage();
+                                            },
                                           ),
-                                          onFieldSubmitted: (value) {
+                                        ),
+                                        const SizedBox(
+                                          width: 12,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
                                             sendMessage();
                                           },
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 12,
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          sendMessage();
-                                        },
-                                        child: customDescriptionText(
-                                          'Post',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          colors: AppColor().backgroundColor,
-                                        ),
-                                      )
-                                    ]),
+                                          child: customDescriptionText(
+                                            'Post',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            colors: AppColor().backgroundColor,
+                                          ),
+                                        )
+                                      ]),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 )),
               ],
@@ -789,7 +854,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                     sentByMe:
                         widget.userName == snapshot.data.docs[index]['sender'],
                     groupId: '',
-                    like: [],
+                    like: const [],
                     messageid: '',
                   );
                 },

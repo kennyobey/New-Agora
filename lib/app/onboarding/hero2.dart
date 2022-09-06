@@ -1,30 +1,11 @@
-import 'package:flutter/material.dart';
-// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api
 
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui';
-
-import 'package:agora_care/app/group_screen/group_info.dart';
-import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/core/constant/message_tile.dart';
-import 'package:agora_care/core/customWidgets.dart';
-import 'package:agora_care/services/database_service.dart';
-import 'package:agora_care/services/quote_controller.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:gap/gap.dart';
-import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:share_plus/share_plus.dart';
 
 class DetialsScreen extends StatefulWidget {
+  const DetialsScreen({Key? key}) : super(key: key);
+
   @override
   _DetialsScreenState createState() => _DetialsScreenState();
 }
