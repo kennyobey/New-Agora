@@ -194,30 +194,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const Gap(15),
 
-              CustomContainer(
-                selectedColor: Theme.of(context).primaryColor,
-                selected: true,
-                trailing: const Icon(
-                  Icons.group,
-                  size: 30,
-                ),
-                titleText: 'Groups',
-                onTap: () {
-                  // Get.to(() => const CellInfo());
-                },
-              ),
-              const Gap(15),
-              CustomContainer(
-                trailing: SvgPicture.asset(
-                  'assets/svgs/keyboard_arrow_right.svg',
-                  height: 14,
-                ),
-                titleText: 'Quote Page',
-                // onTap: () {
-                //   Get.to(() => const QuotePage());
-                // },
-              ),
-              const Gap(15),
+              // CustomContainer(
+              //   selectedColor: Theme.of(context).primaryColor,
+              //   selected: true,
+              //   trailing: const Icon(
+              //     Icons.group,
+              //     size: 30,
+              //   ),
+              //   titleText: 'Groups',
+              //   onTap: () {
+              //     // Get.to(() => const CellInfo());
+              //   },
+              // ),
+              // const Gap(15),
+              // CustomContainer(
+              //   trailing: SvgPicture.asset(
+              //     'assets/svgs/keyboard_arrow_right.svg',
+              //     height: 14,
+              //   ),
+              //   titleText: 'Quote Page',
+              //   // onTap: () {
+              //   //   Get.to(() => const QuotePage());
+              //   // },
+              // ),
+              // const Gap(15),
 
               // CustomContainer(
               //   selectedColor: Theme.of(context).primaryColor,
