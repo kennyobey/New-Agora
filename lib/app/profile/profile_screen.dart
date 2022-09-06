@@ -2,6 +2,7 @@
 
 import 'package:agora_care/app/cells/cell_info.dart';
 import 'package:agora_care/app/home/admin_home_screen.dart';
+import 'package:agora_care/app/onboarding/hero1.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -203,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Groups',
                 onTap: () {
-                  Get.to(() => const CellInfo());
+                  // Get.to(() => const CellInfo());
                 },
               ),
               const Gap(15),
@@ -261,9 +262,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Settings',
-                // onTap: () {
-                //   Get.to(() => const AdminHomeScreen());
-                // },
+                onTap: () {
+                  // Get.to(() => AnimationApp());
+                },
               ),
               const Gap(15),
               CustomContainer(

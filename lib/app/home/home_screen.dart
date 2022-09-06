@@ -212,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             groupName: '',
                             userName: '',
                           ),
-                          transition: Transition.downToUp,
+                          // transition: Transition.downToUp,
                         );
                       },
                       child: Hero(
