@@ -30,16 +30,18 @@ class _GroupInfoState extends State<GroupInfo> {
   final _authContoller = Get.find<AuthControllers>();
   final _cellController = Get.find<CellControllers>();
   Stream? members;
+  int? memberslen;
   @override
   void initState() {
     getMembers();
-    _cellController.getGroupMembers(widget.groupId);
+   members= _cellController.getGroupMembers(widget.groupId);
     super.initState();
   }
 
   getMembers() async {
     if (kDebugMode) {
       print('members is ${widget.groupId}');
+      //print('members is number is ${widget.groupId.length}');
     }
     DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getGroupMembers(widget.groupId)
@@ -60,6 +62,8 @@ class _GroupInfoState extends State<GroupInfo> {
 
   @override
   Widget build(BuildContext context) {
+    print('members numbers is ${memberslen}');
+    membersLenght();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -162,7 +166,6 @@ class _GroupInfoState extends State<GroupInfo> {
                 ],
               ),
             ),
-            memberList(),
           ],
         ),
       ),
@@ -170,8 +173,8 @@ class _GroupInfoState extends State<GroupInfo> {
   }
 
   memberList() {
-    return FutureBuilder(
-      future: getMembers(),
+    return StreamBuilder(
+      stream:members,
       // stream: _cellController.getGroupMembers(widget.groupId),
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
@@ -227,5 +230,10 @@ class _GroupInfoState extends State<GroupInfo> {
         }
       },
     );
+  }
+
+  Future membersLenght() async {
+   // print("Mem ---> ${members?.length}");
+    return memberslen = await members?.length;
   }
 }
