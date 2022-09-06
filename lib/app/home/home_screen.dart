@@ -550,10 +550,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: MediaQuery.of(context).size.height * 0.2,
                   decoration: BoxDecoration(
                     color: colorList[random.nextInt(colorList.length)],
-                    // image: DecorationImage(
-                    //   image: AssetImage(assetName!),
-                    //   fit: BoxFit.cover,
-                    // ),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(

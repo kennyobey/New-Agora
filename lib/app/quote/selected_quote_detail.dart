@@ -41,7 +41,7 @@ class SelectedQuoteDetails extends StatefulWidget {
 }
 
 class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
-  Stream<QuerySnapshot>? chats;
+  Stream<QuerySnapshot>? chat;
   var scr = GlobalKey();
   final commentController = TextEditingController();
 
@@ -82,9 +82,6 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           color: AppColor().primaryColor,
-          // image: const DecorationImage(
-          //     image: AssetImage('assets/images/need_help.png'),
-          //     fit: BoxFit.cover),
         ),
         child: Stack(
           children: [
@@ -140,13 +137,6 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                       right: 10,
                       child: Column(
                         children: [
-                          // customDescriptionText(
-                          //   '“Be yourself everyone else is already taken.”',
-                          //   fontSize: 20,
-                          //   fontWeight: FontWeight.w700,
-                          //   textAlign: TextAlign.center,
-                          //   colors: AppColor().filledTextField,
-                          // ),
                           StreamBuilder<QuerySnapshot<Object?>>(
                               stream: _quoteContoller.getDailyQuote(),
                               builder: (context, AsyncSnapshot snapshot) {
@@ -372,7 +362,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                           ),
                         ),
                         Expanded(
-                          child: chatMessages(),
+                          child: chatMComments(),
                         ),
                         Container(
                           padding: const EdgeInsets.all(5),
@@ -425,7 +415,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                                               border: InputBorder.none,
                                             ),
                                             onFieldSubmitted: (value) {
-                                              sendMessage();
+                                              sendComment();
                                             },
                                           ),
                                         ),
@@ -434,7 +424,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            sendMessage();
+                                            sendComment();
                                           },
                                           child: customDescriptionText(
                                             'Post',
@@ -637,9 +627,9 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
     );
   }
 
-  chatMessages() {
+  chatMComments() {
     return StreamBuilder(
-      stream: chats,
+      stream: chat,
       builder: (context, AsyncSnapshot snapshot) {
         return snapshot.hasData
             ? ListView.builder(
@@ -661,7 +651,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
     );
   }
 
-  sendMessage() {
+  sendComment() {
     if (commentController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
         "message": commentController.text,
