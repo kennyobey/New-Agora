@@ -1,8 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:agora_care/app/cells/cell_info.dart';
-import 'package:agora_care/app/home/admin_home_screen.dart';
-import 'package:agora_care/app/onboarding/hero1.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -94,7 +91,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }),
                             const Gap(5),
                             customDescriptionText(
-                              _authContoller.liveUser.value!.email == null
+                              _authContoller.liveUser.value == null &&
+                                      _authContoller.liveUser.value!.email ==
+                                          null
                                   ? 'example@mail.com'
                                   : _authContoller.liveUser.value!.email!,
                               fontSize: 10,
