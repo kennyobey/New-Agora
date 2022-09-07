@@ -558,6 +558,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 height: MediaQuery.of(context).size.height * 0.2,
                 decoration: BoxDecoration(
                   color: colorList[random.nextInt(colorList.length)],
@@ -567,6 +568,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: customTitleText(
                     quoteModel!.dailyQuote!,
                     size: 16,
+                    textOverflow: TextOverflow.clip,
                     colors: AppColor().whiteColor,
                   ),
                 ),

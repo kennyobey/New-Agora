@@ -21,7 +21,8 @@ import '../home/nav_screen.dart';
 import '../profile/profile_screen.dart';
 
 class CellsScreen extends StatefulWidget {
-  const CellsScreen({Key? key}) : super(key: key);
+  final List<String>? member;
+  const CellsScreen({Key? key, this.member}) : super(key: key);
 
   @override
   State<CellsScreen> createState() => _CellsScreenState();
@@ -534,7 +535,9 @@ class _CellsScreenState extends State<CellsScreen> {
                       ),
                       const Gap(5),
                       customTitleText(
-                        '14,000',
+                        widget.member != null
+                            ? "${widget.member!.length}"
+                            : "0",
                         textAlign: TextAlign.left,
                         size: 12,
                         colors: AppColor().textColor,

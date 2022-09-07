@@ -377,6 +377,7 @@ class AuthControllers extends GetxController {
       final user = UserModel.fromJson(result.data()!);
       if (kDebugMode) {
         print("member detail is ${user.toJson()}");
+        print("member fullname is ${user.fullName}");
       }
       list.add(user);
     });
