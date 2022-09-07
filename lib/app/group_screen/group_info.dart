@@ -14,15 +14,16 @@ class GroupInfo extends StatefulWidget {
   final String groupId;
   final String groupName;
   final String adminName;
-   final String userName;
-   final List<String>? memberName;
-  
- 
+  final String userName;
+  final List<String>? memberName;
+
   const GroupInfo(
       {Key? key,
       required this.adminName,
       required this.groupName,
-      required this.groupId, this.memberName, required this.userName})
+      required this.groupId,
+      this.memberName,
+      required this.userName})
       : super(key: key);
 
   @override
@@ -68,7 +69,9 @@ class _GroupInfoState extends State<GroupInfo> {
     if (kDebugMode) {
       print('members numbers is $memberslen');
     }
-print("memeber name is ${widget.userName}");
+    if (kDebugMode) {
+      print("memeber name is ${widget.userName}");
+    }
     membersLenght();
     return Scaffold(
       appBar: AppBar(

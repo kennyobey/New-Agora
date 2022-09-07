@@ -283,6 +283,7 @@ class _ChatPageState extends State<ChatPage> {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return MessageTile(
+                    time: snapshot.data.docs[index]['createdAt'],
                     message: snapshot.data.docs[index]['message'],
                     sender: snapshot.data.docs[index]['sender'],
                     like: snapshot.data.docs[index]['like'],

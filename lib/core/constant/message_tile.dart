@@ -14,6 +14,7 @@ import '../customWidgets.dart';
 
 class MessageTile extends StatefulWidget {
   final String message;
+  final String time;
   final String messageid;
   final String sender;
   final String groupId;
@@ -26,6 +27,7 @@ class MessageTile extends StatefulWidget {
     required this.message,
     required this.sender,
     required this.groupId,
+    required this.time,
     required this.like,
     required this.sentByMe,
   }) : super(key: key);

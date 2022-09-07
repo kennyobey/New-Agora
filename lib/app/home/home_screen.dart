@@ -236,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Positioned(
-                    top: 15,
+                    top: 30,
                     left: 70,
                     right: 70,
                     child: Column(
