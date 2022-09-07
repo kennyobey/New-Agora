@@ -14,11 +14,15 @@ class GroupInfo extends StatefulWidget {
   final String groupId;
   final String groupName;
   final String adminName;
+   final String userName;
+   final List<String>? memberName;
+  
+ 
   const GroupInfo(
       {Key? key,
       required this.adminName,
       required this.groupName,
-      required this.groupId})
+      required this.groupId, this.memberName, required this.userName})
       : super(key: key);
 
   @override
@@ -64,6 +68,7 @@ class _GroupInfoState extends State<GroupInfo> {
     if (kDebugMode) {
       print('members numbers is $memberslen');
     }
+print("memeber name is ${widget.userName}");
     membersLenght();
     return Scaffold(
       appBar: AppBar(
@@ -246,6 +251,17 @@ class _GroupInfoState extends State<GroupInfo> {
                 ],
               ),
             ),
+            // ListView.builder(
+            //     itemCount: 5,
+            //     itemBuilder: (BuildContext context, int index) {
+            //       return ListTile(
+            //           leading: const Icon(Icons.list),
+            //           trailing: const Text(
+            //             "GFG",
+            //             style: TextStyle(color: Colors.green, fontSize: 15),
+            //           ),
+            //           title: Text("List item $index"));
+            //     }),
           ],
         ),
       ),

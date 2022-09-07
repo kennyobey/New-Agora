@@ -236,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Positioned(
-                    top: 60,
+                    top: 15,
                     left: 70,
                     right: 70,
                     child: Column(
@@ -246,15 +246,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
                                 if (snapshot.data != null) {
-                                  return customDescriptionText(
-                                    snapshot.data!.docs.last
-                                        .data()!['dailyQuote']
-                                        .toString(),
-                                    // snapshot.hasData.toString(),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    textAlign: TextAlign.center,
-                                    colors: AppColor().whiteColor,
+                                  return Center(
+                                    child: customDescriptionText(
+                                      snapshot.data!.docs.last
+                                          .data()!['dailyQuote']
+                                          .toString(),
+                                      // snapshot.hasData.toString(),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      textAlign: TextAlign.center,
+                                      colors: AppColor().whiteColor,
+                                    ),
                                   );
                                 } else if (snapshot.data == null) {
                                   return SvgPicture.asset(
@@ -552,6 +554,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 height: MediaQuery.of(context).size.height * 0.2,
                 decoration: BoxDecoration(
                   color: colorList[random.nextInt(colorList.length)],
@@ -561,6 +564,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: customTitleText(
                     quoteModel!.dailyQuote!,
                     size: 16,
+                    textOverflow: TextOverflow.clip,
                     colors: AppColor().whiteColor,
                   ),
                 ),

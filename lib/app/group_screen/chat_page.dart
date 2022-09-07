@@ -24,6 +24,7 @@ class ChatPage extends StatefulWidget {
   final String userName;
   final String assetName;
   final List<String>? member;
+  final List<String>? memberName;
   const ChatPage({
     Key? key,
     this.admin,
@@ -32,6 +33,7 @@ class ChatPage extends StatefulWidget {
     required this.userName,
     required this.assetName,
     this.member,
+    this.memberName,
   }) : super(key: key);
 
   @override
@@ -80,6 +82,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     if (kDebugMode) {
       print("memeber length is ${widget.member}");
+      print("memeber name is ${widget.userName}");
     }
     return Scaffold(
       backgroundColor: AppColor().whiteColor,
@@ -100,6 +103,7 @@ class _ChatPageState extends State<ChatPage> {
                   groupId: widget.groupId,
                   groupName: widget.groupName,
                   adminName: widget.admin!,
+                  userName: widget.userName,
                 ),
               );
             },
