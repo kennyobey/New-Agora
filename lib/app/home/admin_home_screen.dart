@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'dart:math';
+
 import 'package:agora_care/app/cells/create_cell.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/quote/post_qoute.dart';
@@ -573,6 +575,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                             itemBuilder: (BuildContext context, int index) {
                               final item = _quoteContoller.allQuotes[index];
                               return recentQuotes(
+                                quote: item.dailyQuote,
                                 assetName: imageName[index],
                                 views: item.likes!.length.toString(),
                                 messages: item.reply!.length.toString(),
@@ -690,11 +693,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
   }
 
   Padding recentQuotes({
+    String? quote,
     String? views,
     String? shares,
     String? messages,
     String? assetName,
   }) {
+    final random = Random();
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: SizedBox(
@@ -705,13 +710,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.15,
+              height: MediaQuery.of(context).size.height * 0.2,
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(assetName!),
-                  fit: BoxFit.cover,
-                ),
+                color: colorList[random.nextInt(colorList.length)],
                 borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: customTitleText(
+                  quote!,
+                  size: 16,
+                  colors: AppColor().whiteColor,
+                ),
               ),
             ),
             const Gap(10),

@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/core/constant/message_tile.dart';
+import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
@@ -41,8 +41,10 @@ class SelectedQuoteDetails extends StatefulWidget {
 }
 
 class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
-  Stream<QuerySnapshot>? chats;
+  Stream<QuerySnapshot>? chat;
   var scr = GlobalKey();
+
+  String admin = "";
   final commentController = TextEditingController();
 
   final _quoteContoller = Get.find<QuoteControllers>();
@@ -73,6 +75,26 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
   }
 
   @override
+  void initState() {
+    getChatandAdmin();
+    // chat = _quoteContoller.getGroupMembers(widget.groupId);
+    super.initState();
+  }
+
+  getChatandAdmin() {
+    DatabaseService().getComment(widget.groupId).then((val) {
+      setState(() {
+        chat = val;
+      });
+    });
+    DatabaseService().getQuoteAdmin(widget.groupId).then((val) {
+      setState(() {
+        admin = val;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     return Scaffold(
@@ -82,9 +104,6 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           color: AppColor().primaryColor,
-          // image: const DecorationImage(
-          //     image: AssetImage('assets/images/need_help.png'),
-          //     fit: BoxFit.cover),
         ),
         child: Stack(
           children: [
@@ -120,11 +139,8 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                 const Gap(20),
                 Stack(
                   children: [
-                    Hero(
-                      tag: "img",
-                      child: SvgPicture.asset(
-                        'assets/svgs/quoteCard.svg',
-                      ),
+                    SvgPicture.asset(
+                      'assets/svgs/quoteCard.svg',
                     ),
                     Positioned(
                       top: 35,
@@ -140,13 +156,6 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                       right: 10,
                       child: Column(
                         children: [
-                          // customDescriptionText(
-                          //   '“Be yourself everyone else is already taken.”',
-                          //   fontSize: 20,
-                          //   fontWeight: FontWeight.w700,
-                          //   textAlign: TextAlign.center,
-                          //   colors: AppColor().filledTextField,
-                          // ),
                           StreamBuilder<QuerySnapshot<Object?>>(
                               stream: _quoteContoller.getDailyQuote(),
                               builder: (context, AsyncSnapshot snapshot) {
@@ -372,7 +381,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                           ),
                         ),
                         Expanded(
-                          child: chatMessages(),
+                          child: chatMComments(),
                         ),
                         Container(
                           padding: const EdgeInsets.all(5),
@@ -425,7 +434,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                                               border: InputBorder.none,
                                             ),
                                             onFieldSubmitted: (value) {
-                                              sendMessage();
+                                              sendComment();
                                             },
                                           ),
                                         ),
@@ -434,7 +443,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            sendMessage();
+                                            sendComment();
                                           },
                                           child: customDescriptionText(
                                             'Post',
@@ -637,15 +646,15 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
     );
   }
 
-  chatMessages() {
+  chatMComments() {
     return StreamBuilder(
-      stream: chats,
+      stream: chat,
       builder: (context, AsyncSnapshot snapshot) {
         return snapshot.hasData
             ? ListView.builder(
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
-                  return MessageTile(
+                  return QuoteCommentTile(
                     message: snapshot.data.docs[index]['message'],
                     sender: snapshot.data.docs[index]['sender'],
                     sentByMe:
@@ -661,7 +670,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
     );
   }
 
-  sendMessage() {
+  sendComment() {
     if (commentController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
         "message": commentController.text,
@@ -669,7 +678,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
         "time": DateTime.now().millisecondsSinceEpoch,
       };
 
-      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+      DatabaseService().sendComment(widget.groupId, chatMessageMap);
       setState(() {
         commentController.clear();
       });

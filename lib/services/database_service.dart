@@ -1,7 +1,5 @@
-import 'package:agora_care/services/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 
 class DatabaseService {
   final String? uid;
@@ -12,10 +10,10 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("users");
   final CollectionReference cellsCollection =
       FirebaseFirestore.instance.collection("cells");
-  final CollectionReference groupCollection =
-      FirebaseFirestore.instance.collection("groups");
+  final CollectionReference quoteCollection =
+      FirebaseFirestore.instance.collection("quotes");
 
-  final _authController = Get.find<AuthControllers>();
+  // final _authController = Get.find<AuthControllers>();
 
   // saving the userdata
   Future savingUserData(String email) async {
@@ -40,31 +38,31 @@ class DatabaseService {
   }
 
   // creating a group
-  Future createGroup(String email, String id, String groupName) async {
-    DocumentReference groupDocumentReference = await groupCollection.add({
-      "groupName": groupName,
-      "groupIcon": "",
-      // "admin": "${id}_$email",
-      "admin": _authController.liveUser.value!.role,
-      "members": [],
-      "groupId": "",
-      "recentMessage": "",
-      "recentMessageSender": "",
-    });
-    // update the members
-    await groupDocumentReference.update({
-      "members": FieldValue.arrayUnion(["${uid}_$email"]),
-      "groupId": groupDocumentReference.id,
-    });
-    if (kDebugMode) {
-      print(" The group name$groupName");
-    }
-    DocumentReference userDocumentReference = userCollection.doc(uid);
-    return await userDocumentReference.update({
-      "groups":
-          FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
-    });
-  }
+  // Future createGroup(String email, String id, String groupName) async {
+  //   DocumentReference groupDocumentReference = await cellsCollection.add({
+  //     "groupName": groupName,
+  //     "groupIcon": "",
+  //     // "admin": "${id}_$email",
+  //     "admin": _authController.liveUser.value!.role,
+  //     "members": [],
+  //     "groupId": "",
+  //     "recentMessage": "",
+  //     "recentMessageSender": "",
+  //   });
+  //   // update the members
+  //   await groupDocumentReference.update({
+  //     "members": FieldValue.arrayUnion(["${uid}_$email"]),
+  //     "groupId": groupDocumentReference.id,
+  //   });
+  //   if (kDebugMode) {
+  //     print(" The group name$groupName");
+  //   }
+  //   DocumentReference userDocumentReference = userCollection.doc(uid);
+  //   return await userDocumentReference.update({
+  //     "groups":
+  //         FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
+  //   });
+  // }
 
   // getting the chats
   getChats(String groupId) async {
@@ -75,8 +73,23 @@ class DatabaseService {
         .snapshots();
   }
 
+  // getting the chats
+  getComment(String groupId) async {
+    return quoteCollection
+        .doc(groupId)
+        .collection("messages")
+        .orderBy("time")
+        .snapshots();
+  }
+
   Future getGroupAdmin(String groupId) async {
     DocumentReference d = cellsCollection.doc(groupId);
+    DocumentSnapshot documentSnapshot = await d.get();
+    return documentSnapshot['admin'];
+  }
+
+  Future getQuoteAdmin(String groupId) async {
+    DocumentReference d = quoteCollection.doc(groupId);
     DocumentSnapshot documentSnapshot = await d.get();
     return documentSnapshot['admin'];
   }
@@ -140,6 +153,18 @@ class DatabaseService {
     }
     cellsCollection.doc(groupId).collection("messages").add(chatMessageData);
     cellsCollection.doc(groupId).update({
+      "recentMessage": chatMessageData['message'],
+      "recentMessageSender": chatMessageData['sender'],
+      "recentMessageTime": chatMessageData['time'].toString(),
+    });
+  }
+
+  sendComment(String groupId, Map<String, dynamic> chatMessageData) async {
+    if (kDebugMode) {
+      print("the group id is $groupId");
+    }
+    quoteCollection.doc(groupId).collection("messages").add(chatMessageData);
+    quoteCollection.doc(groupId).update({
       "recentMessage": chatMessageData['message'],
       "recentMessageSender": chatMessageData['sender'],
       "recentMessageTime": chatMessageData['time'].toString(),

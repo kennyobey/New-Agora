@@ -22,8 +22,6 @@ class CellControllers extends GetxController {
   final Rx<CellStatus> _cellStatus = Rx(CellStatus.EMPTY);
   CellStatus get cellStatus => _cellStatus.value;
 
-  final CollectionReference groupCollection =
-      FirebaseFirestore.instance.collection("groups");
   final CollectionReference cellCollection =
       FirebaseFirestore.instance.collection("cells");
   final CollectionReference messagesCollection = FirebaseFirestore.instance
@@ -48,7 +46,7 @@ class CellControllers extends GetxController {
       .collection("cells")
       .doc()
       .collection('messages');
-  final _cellsDoc = FirebaseFirestore.instance.collection("groups");
+  final _cellsDoc = FirebaseFirestore.instance.collection("cells");
 
   @override
   void onInit() async {
@@ -70,12 +68,6 @@ class CellControllers extends GetxController {
               newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
             _newCell.doc(cellCollection.id).update({
               "members": memberAdd(cellCollection.id),
-              // "like": likePost(
-              //   cellCollection.id,
-              // ),
-              // "comment": comment(
-              //   cellCollection.id,
-              // ),
             });
             _newMessage.doc(messagesCollection.id).update({
               "like": likePost(cellCollection.id, messagesCollection.id),
@@ -92,6 +84,18 @@ class CellControllers extends GetxController {
         }
       }
     }));
+  }
+
+  Future memberAdd(String groupId) async {
+    if (kDebugMode) {
+      print("member id is $groupId");
+    }
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_cellsDoc.doc(groupId), {
+        "members":
+            FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
+      });
+    });
   }
 
   Future likePost(String cellId, String messageId) async {
@@ -148,18 +152,6 @@ class CellControllers extends GetxController {
     }
   }
 
-  Future memberAdd(String memberId) async {
-    if (kDebugMode) {
-      print("member id is $memberId");
-    }
-    FirebaseFirestore.instance.runTransaction((transaction) async {
-      transaction.update(_cellsDoc.doc(memberId), {
-        "members":
-            FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
-      });
-    });
-  }
-
   getChats(String groupId) async {
     return cellCollection
         .doc(groupId)
@@ -174,13 +166,13 @@ class CellControllers extends GetxController {
     return documentSnapshot['admin'];
   }
 
-  Stream getGroupMembers(String groupId) {
-    final members = cellCollection.doc(groupId).snapshots();
-    if (kDebugMode) {
-      print('This is members list $members');
-    }
-    return members;
-  }
+  // Stream getGroupMembers(String groupId) {
+  //   final members = cellCollection.doc(groupId).snapshots();
+  //   if (kDebugMode) {
+  //     print('This is members list $members');
+  //   }
+  //   return members;
+  // }
 
   //all cells
   Stream<List<CellModel>> getCells() => FirebaseFirestore.instance

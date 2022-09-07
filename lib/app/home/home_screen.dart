@@ -210,19 +210,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: GestureDetector(
                       onTap: () {
-                        // _quoteContoller.viewPost(
                         //     _quoteContoller.allQuotes.last.views.toString());
                         if (kDebugMode) {
                           print(
                               'quote id is ${_quoteContoller.allQuotes.last.id!}');
                         }
+
+                        _quoteContoller.joinedOrNot(
+                          _authContoller.liveUser.value!.username!,
+                          _quoteContoller.allQuotes.last.groupId!,
+                          _quoteContoller.allQuotes.last.dailyQuote!,
+                        );
                         _quoteContoller
                             .viewPost(_quoteContoller.allQuotes.last.id!);
                         Get.to(
-                          () => const QuoteDetails(
-                            groupId: '',
-                            groupName: '',
-                            userName: '',
+                          () => QuoteDetails(
+                            groupId: _quoteContoller.allQuotes.last.groupId!,
+                            groupName:
+                                _quoteContoller.allQuotes.last.dailyQuote!,
+                            userName: _authContoller.liveUser.value!.username!,
                           ),
                           // transition: Transition.downToUp,
                         );
@@ -380,13 +386,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (kDebugMode) {
                           print('Cell is now ${item.groupName!.length}');
                           print("group id for cell is ${item.groupId}");
+                          print(
+                              "memeber lenght for cell is ${item.members!.length}");
                         }
                         return recommendedCells(
                           groupId: item.groupId,
                           groupName: item.groupName,
+                          admin: item.admin,
                           colors: colorList[index],
                           assetName: 'assets/svgs/bank.svg',
                           userName: _authContoller.liveUser.value!.username!,
+                          memberId: item.members,
                         );
                       },
                     ),
@@ -445,26 +455,33 @@ class _HomeScreenState extends State<HomeScreen> {
   GestureDetector recommendedCells({
     Color? colors,
     String? groupId,
+    String? admin,
     String? groupName,
     String? assetName,
     String? userName,
+    List<String>? memberId,
   }) {
     cellContoller.joinedOrNot(
       userName!,
       groupId!,
       groupName!,
     );
+
     return GestureDetector(
       onTap: () async {
         if (kDebugMode) {
           print('Joining Group');
         }
 
+        cellContoller.memberAdd(groupId);
+
         Get.to(
           () => ChatPage(
             groupId: groupId,
             groupName: groupName,
             userName: userName,
+            member: memberId!,
+            admin: admin!,
           ),
         );
       },
@@ -513,7 +530,7 @@ class _HomeScreenState extends State<HomeScreen> {
           print('Joining Quote Chat');
         }
 
-        cellContoller.joinedOrNot(
+        _quoteContoller.joinedOrNot(
           _authContoller.liveUser.value!.username!,
           quoteModel!.groupId!,
           quoteModel.dailyQuote!,
@@ -540,24 +557,17 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Hero(
-                tag: "img",
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  decoration: BoxDecoration(
-                    color: colorList[random.nextInt(colorList.length)],
-                    // image: DecorationImage(
-                    //   image: AssetImage(assetName!),
-                    //   fit: BoxFit.cover,
-                    // ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: customTitleText(
-                      quoteModel!.dailyQuote!,
-                      size: 16,
-                      colors: AppColor().whiteColor,
-                    ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.2,
+                decoration: BoxDecoration(
+                  color: colorList[random.nextInt(colorList.length)],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: customTitleText(
+                    quoteModel!.dailyQuote!,
+                    size: 16,
+                    colors: AppColor().whiteColor,
                   ),
                 ),
               ),

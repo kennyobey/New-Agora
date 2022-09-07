@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/core/constant/message_tile.dart';
+import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
@@ -40,7 +40,7 @@ class QuoteDetails extends StatefulWidget {
 class _QuoteDetailsState extends State<QuoteDetails> {
   var scr = GlobalKey();
   final messageController = TextEditingController();
-  Stream<QuerySnapshot>? chats;
+  Stream<QuerySnapshot>? chat;
   String admin = "";
 
   final _quoteContoller = Get.find<QuoteControllers>();
@@ -73,16 +73,17 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   @override
   void initState() {
     getChatandAdmin();
+    // chat = _quoteContoller.getGroupMembers(widget.groupId);
     super.initState();
   }
 
   getChatandAdmin() {
-    DatabaseService().getChats(widget.groupId).then((val) {
+    DatabaseService().getComment(widget.groupId).then((val) {
       setState(() {
-        chats = val;
+        chat = val;
       });
     });
-    DatabaseService().getGroupAdmin(widget.groupId).then((val) {
+    DatabaseService().getQuoteAdmin(widget.groupId).then((val) {
       setState(() {
         admin = val;
       });
@@ -363,15 +364,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               const Gap(10),
                               InkWell(
                                 onTap: () async {
+                                  setState(() {
+                                    isLiked = !isLiked;
+                                  });
                                   isLiked
                                       ? _quoteContoller.likePost(
                                           _quoteContoller.allQuotes.last.id!)
                                       : _quoteContoller.unLikePost(
                                           _quoteContoller.allQuotes.last.id!);
-
-                                  setState(() {
-                                    isLiked = !isLiked;
-                                  });
                                 },
                                 child: isLiked
                                     ? SvgPicture.asset(
@@ -386,7 +386,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                           ),
                         ),
                         Expanded(
-                          child: chatMessages(),
+                          child: chatMComments(),
                         ),
                         Container(
                           padding: const EdgeInsets.all(5),
@@ -439,7 +439,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                               border: InputBorder.none,
                                             ),
                                             onFieldSubmitted: (value) {
-                                              sendMessage();
+                                              sendComment();
                                             },
                                           ),
                                         ),
@@ -448,7 +448,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            sendMessage();
+                                            sendComment();
                                           },
                                           child: customDescriptionText(
                                             'Post',
@@ -836,15 +836,15 @@ class _QuoteDetailsState extends State<QuoteDetails> {
     );
   }
 
-  chatMessages() {
+  chatMComments() {
     return StreamBuilder(
-      stream: chats,
+      stream: chat,
       builder: (context, AsyncSnapshot snapshot) {
         return snapshot.hasData
             ? ListView.builder(
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
-                  return MessageTile(
+                  return QuoteCommentTile(
                     message: snapshot.data.docs[index]['message'],
                     sender: snapshot.data.docs[index]['sender'],
                     sentByMe:
@@ -860,7 +860,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
     );
   }
 
-  sendMessage() {
+  sendComment() {
     if (messageController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
         "message": messageController.text,
@@ -868,7 +868,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
         "time": DateTime.now().millisecondsSinceEpoch,
       };
 
-      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+      DatabaseService().sendComment(widget.groupId, chatMessageMap);
       setState(() {
         messageController.clear();
       });

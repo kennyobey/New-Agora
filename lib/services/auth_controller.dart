@@ -364,6 +364,20 @@ class AuthControllers extends GetxController {
     return user;
   }
 
+  Future<List<UserModel>> getUserByModelList(List<String> ids) async {
+    List<UserModel> list = [];
+    await Future.forEach<String>(ids, (element) async {
+      final result = await _userDoc.doc(element).get();
+      final user = UserModel.fromJson(result.data()!);
+      if (kDebugMode) {
+        print("member detail is ${user.toJson()}");
+      }
+      list.add(user);
+    });
+
+    return list;
+  }
+
   // Get Users List
   Stream<List<UserList>> readtUserList() => FirebaseFirestore.instance
       .collection('users')

@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/services/cell_controller.dart';
+import 'package:agora_care/services/quote_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 
 import '../customWidgets.dart';
 
-class MessageTile extends StatefulWidget {
+class QuoteCommentTile extends StatefulWidget {
   final String message;
   final String messageid;
   final String sender;
@@ -19,7 +19,7 @@ class MessageTile extends StatefulWidget {
   final List<dynamic> like;
   final bool sentByMe;
 
-  const MessageTile({
+  const QuoteCommentTile({
     Key? key,
     required this.messageid,
     required this.message,
@@ -30,20 +30,13 @@ class MessageTile extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<MessageTile> createState() => _MessageTileState();
+  State<QuoteCommentTile> createState() => _QuoteCommentTileState();
 }
 
-class _MessageTileState extends State<MessageTile> {
-  final _cellController = Get.find<CellControllers>();
+class _QuoteCommentTileState extends State<QuoteCommentTile> {
+  final _quoteController = Get.find<QuoteControllers>();
   bool isLiked = false;
-  Stream<QuerySnapshot>? chats;
-  FocusNode focusNode = FocusNode();
-
-  @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
-  }
+  Stream<QuerySnapshot>? chat;
 
   @override
   Widget build(BuildContext context) {
@@ -98,10 +91,9 @@ class _MessageTileState extends State<MessageTile> {
                     onTap: () async {
                       if (kDebugMode) {
                         print('Message ID is ${widget.messageid}');
-                        print('Request Comment');
                       }
-                      focusNode.requestFocus();
-                      _cellController.comment(widget.groupId, widget.messageid);
+                      _quoteController.comment(
+                          widget.groupId, widget.messageid);
                     },
                     child: SvgPicture.asset(
                       'assets/svgs/reply.svg',
@@ -117,10 +109,11 @@ class _MessageTileState extends State<MessageTile> {
                         isLiked = !isLiked;
                       });
                       isLiked
-                          ? _cellController.likePost(
+                          ? _quoteController.likeQuotePost(
                               widget.groupId, widget.messageid)
-                          : _cellController.unLikePost(
+                          : _quoteController.unLikeQuotePost(
                               widget.groupId, widget.messageid);
+                      setState(() {});
                       if (kDebugMode) {
                         print('Like State Changed');
                       }
@@ -157,11 +150,30 @@ class _MessageTileState extends State<MessageTile> {
                     colors: AppColor().lightbackgroundColor,
                   ),
                   const Gap(20),
-                  customDescriptionText(
-                    '${widget.like.length == null ? '0' : widget.like.length.toString()} likes',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    colors: AppColor().lightbackgroundColor,
+                  // customDescriptionText(
+                  //   '143 likes',
+                  //   fontSize: 10,
+                  //   fontWeight: FontWeight.w500,
+                  //   colors: AppColor().lightbackgroundColor,
+                  // ),
+
+                  StreamBuilder(
+                    stream: chat,
+                    builder: (context, AsyncSnapshot snapshot) {
+                      return snapshot.hasData
+                          ? customDescriptionText(
+                              '${widget.like.length == null ? '0' : widget.like.length.toString()} likes',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              colors: AppColor().lightbackgroundColor,
+                            )
+                          : customDescriptionText(
+                              '${widget.like.length == null ? '0' : widget.like.length.toString()} likes',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              colors: AppColor().lightbackgroundColor,
+                            );
+                    },
                   )
                 ],
               ),

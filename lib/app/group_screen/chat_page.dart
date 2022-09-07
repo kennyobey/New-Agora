@@ -1,29 +1,36 @@
 import 'package:agora_care/app/group_screen/message.dart';
+import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../core/constant/message_tile.dart';
-import '../../services/cell_controller.dart';
 import '../../services/database_service.dart';
 import 'group_info.dart';
 
 class ChatPage extends StatefulWidget {
+  final String? admin;
   final String groupId;
   final String groupName;
   final String userName;
-  const ChatPage(
-      {Key? key,
-      required this.groupId,
-      required this.groupName,
-      required this.userName})
-      : super(key: key);
+  final List<String>? member;
+  const ChatPage({
+    Key? key,
+    this.admin,
+    required this.groupId,
+    required this.groupName,
+    required this.userName,
+    this.member,
+  }) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -32,15 +39,26 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   Stream<QuerySnapshot>? chats;
   Stream? members;
-  final _cellController = Get.find<CellControllers>();
+  // final _cellController = Get.find<CellControllers>();
+  final _authController = Get.find<AuthControllers>();
+
   TextEditingController messageController = TextEditingController();
   String admin = "";
+
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
     getChatandAdmin();
-    members = _cellController.getGroupMembers(widget.groupId);
+
+    // members = _cellController.getGroupMembers(widget.groupId);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
   }
 
   getChatandAdmin() {
@@ -58,6 +76,9 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("memeber length is ${widget.member}");
+    }
     return Scaffold(
       backgroundColor: AppColor().whiteColor,
       appBar: AppBar(
@@ -76,7 +97,7 @@ class _ChatPageState extends State<ChatPage> {
                 () => GroupInfo(
                   groupId: widget.groupId,
                   groupName: widget.groupName,
-                  adminName: admin,
+                  adminName: widget.admin!,
                 ),
               );
             },
@@ -101,41 +122,62 @@ class _ChatPageState extends State<ChatPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Center(
-                  child: FlutterImageStack(
-                    // backgroundColor: Colors.black,
-                    itemBorderColor: AppColor().whiteColor,
-                    imageList: const [
-                      'https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80',
-                      'https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80',
-                      'https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80',
-                      'https://images.unsplash.com/photo-1612594305265-86300a9a5b5b?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
-                      'https://images.unsplash.com/photo-1612626256634-991e6e977fc1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1712&q=80',
-                      'https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80',
-                    ],
-                    showTotalCount: true,
-                    totalCount: 6,
-                    itemRadius: 50, // Radius of each images
-                    itemCount:
-                        4, // Maximum number of images to be shown in stack
-                    itemBorderWidth: 2, // Border width around the images
-                  ),
+                  child: FutureBuilder<List<UserModel>>(
+                      future: _authController
+                          .getUserByModelList(widget.member ?? []),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                          return FlutterImageStack(
+                            // backgroundColor: Colors.black,
+                            itemBorderColor: AppColor().whiteColor,
+                            imageList: snapshot.data!
+                                .map((e) =>
+                                    e.profilePic ??
+                                    "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80")
+                                .toList(),
+                            showTotalCount: true,
+                            totalCount: widget.member == null
+                                ? 0
+                                : widget.member!.length,
+                            itemRadius: 50, // Radius of each images
+                            itemCount: widget.member == null
+                                ? 0
+                                : widget.member!.length > 4
+                                    ? 4
+                                    : widget.member!
+                                        .length, // Maximum number of images to be shown in stack
+                            itemBorderWidth:
+                                2, // Border width around the images
+                          );
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator(
+                            color: AppColor().primaryColor,
+                          );
+                        } else {
+                          return customDescriptionText("No member available ");
+                        }
+                      }),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                StreamBuilder(
-                    stream: members,
-                    builder: (context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(
-                          "${snapshot.data['members']!.length} members",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 20),
-                        );
-                      } else {
-                        return Container();
-                      }
-                    })
+                customDescriptionText(
+                    widget.member != null ? "${widget.member!.length}" : "0",
+                    colors: AppColor().whiteColor)
+                // StreamBuilder(
+                //     stream: members,
+                //     builder: (context, AsyncSnapshot snapshot) {
+                //       if (snapshot.hasData) {
+                //         return Text(
+                //           "${snapshot.data!.length} members",
+                //           style: const TextStyle(
+                //               color: Colors.white, fontSize: 20),
+                //         );
+                //       } else {
+                //         return Container();
+                //       }
+                //     })
               ],
             ),
           ),
@@ -177,6 +219,7 @@ class _ChatPageState extends State<ChatPage> {
                         children: [
                           Expanded(
                             child: TextFormField(
+                              focusNode: focusNode,
                               controller: messageController,
                               textInputAction: TextInputAction.send,
                               style: TextStyle(
@@ -262,6 +305,8 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         messageController.clear();
       });
+
+      SystemChannels.textInput.invokeMethod('TextInput.hide');
     }
   }
 }

@@ -29,10 +29,18 @@ class QuoteControllers extends GetxController {
       FirebaseFirestore.instance.collection("quotes");
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection("users");
+  final CollectionReference messagesCollection = FirebaseFirestore.instance
+      .collection("quotes")
+      .doc()
+      .collection('messages');
 
   FirebaseAuth auth = FirebaseAuth.instance;
   final _userDoc = FirebaseFirestore.instance.collection("users");
   final _newQuote = FirebaseFirestore.instance.collection("quotes");
+  final _newMessage = FirebaseFirestore.instance
+      .collection("quotes")
+      .doc()
+      .collection('messages');
 
   @override
   void onInit() async {
@@ -55,6 +63,10 @@ class QuoteControllers extends GetxController {
               "likes": likePost(quotesCollection.id),
               "views": viewPost(quotesCollection.id),
             });
+            _newMessage.doc(messagesCollection.id).update({
+              "like": likeQuotePost(quotesCollection.id, messagesCollection.id),
+              "comment": comment(quotesCollection.id, messagesCollection.id),
+            });
 
             final newUser = await _authController
                 .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
@@ -74,11 +86,50 @@ class QuoteControllers extends GetxController {
     return quotes;
   }
 
+  joinedOrNot(
+    String userName,
+    String groupId,
+    String groupname,
+  ) async {
+    await DatabaseService(uid: _authController.liveUser.value!.uid)
+        .isUserJoined(groupname, groupId, userName)
+        .then((value) {
+      update();
+    });
+  }
+
   // Stream<List<QuoteModel>> getDailyQuote() => FirebaseFirestore.instance
   //     .collection('quotes')
   //     .snapshots()
   //     .map((snapshot) =>
   //         snapshot.docs.map((doc) => QuoteModel.fromJson(doc.data())).toList());
+
+  Future likeQuotePost(String quoteId, String messageId) async {
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(
+          _newQuote.doc(quoteId).collection('messages').doc(messageId), {
+        "like": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
+      });
+    });
+  }
+
+  Future unLikeQuotePost(String quoteId, String messageId) async {
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(
+          _newQuote.doc(quoteId).collection('messages').doc(messageId), {
+        "like": FieldValue.arrayRemove([_authController.liveUser.value!.uid!])
+      });
+    });
+  }
+
+  Future comment(String quoteId, String messageId) async {
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(
+          _newQuote.doc(quoteId).collection("messages").doc(messageId), {
+        "comment": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
+      });
+    });
+  }
 
   //Fetch Once dailyQuote
   Future getQuotes() async {

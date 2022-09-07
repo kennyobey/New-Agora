@@ -1,15 +1,14 @@
+import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
-import 'package:agora_care/services/cell_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-import '../../core/widget.dart';
 import '../../services/database_service.dart';
-import '../home/home_screen.dart';
 
 class GroupInfo extends StatefulWidget {
   final String groupId;
@@ -28,16 +27,13 @@ class GroupInfo extends StatefulWidget {
 
 class _GroupInfoState extends State<GroupInfo> {
   final _authContoller = Get.find<AuthControllers>();
-  final _cellController = Get.find<CellControllers>();
-  final _groupmembers = Get.find<DatabaseService>();
+  // final _cellController = Get.find<CellControllers>();
   Stream? members;
   int? memberslen;
-
-  var groupId;
   @override
   void initState() {
     getMembers();
-    members = _cellController.getGroupMembers(widget.groupId);
+    //  members= _cellController.getGroupMembers(widget.groupId);
     super.initState();
   }
 
@@ -65,7 +61,9 @@ class _GroupInfoState extends State<GroupInfo> {
 
   @override
   Widget build(BuildContext context) {
-    print('members numbers is ${memberslen}');
+    if (kDebugMode) {
+      print('members numbers is $memberslen');
+    }
     membersLenght();
     return Scaffold(
       appBar: AppBar(
@@ -73,56 +71,56 @@ class _GroupInfoState extends State<GroupInfo> {
         elevation: 0,
         backgroundColor: AppColor().whiteColor,
         title: customTitleText(
-          "Group Info",
+          "Cell Info",
           colors: AppColor().primaryColor,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: customDescriptionText("Exit"),
-                      content: customDescriptionText(
-                          "Are you sure you exit the group? "),
-                      actions: [
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(
-                            Icons.cancel,
-                            color: Colors.red,
-                          ),
-                        ),
-                        //Leave Chat
-                        IconButton(
-                          onPressed: () async {
-                            DatabaseService(
-                                    uid: FirebaseAuth.instance.currentUser!.uid)
-                                .toggleGroupJoin(widget.groupId,
-                                    getName(widget.adminName), widget.groupName)
-                                .whenComplete(() {
-                              nextScreenReplace(context, const HomeScreen());
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ],
-                    );
-                  });
-            },
-            icon: Icon(
-              Icons.exit_to_app,
-              color: AppColor().primaryColor,
-            ),
-          )
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       showDialog(
+        //           barrierDismissible: false,
+        //           context: context,
+        //           builder: (context) {
+        //             return AlertDialog(
+        //               title: customDescriptionText("Exit"),
+        //               content: customDescriptionText(
+        //                   "Are you sure you exit the group? "),
+        //               actions: [
+        //                 IconButton(
+        //                   onPressed: () {
+        //                     Navigator.pop(context);
+        //                   },
+        //                   icon: const Icon(
+        //                     Icons.cancel,
+        //                     color: Colors.red,
+        //                   ),
+        //                 ),
+        //                 //Leave Chat
+        //                 IconButton(
+        //                   onPressed: () async {
+        //                     DatabaseService(
+        //                             uid: FirebaseAuth.instance.currentUser!.uid)
+        //                         .toggleGroupJoin(widget.groupId,
+        //                             getName(widget.adminName), widget.groupName)
+        //                         .whenComplete(() {
+        //                       nextScreenReplace(context, const HomeScreen());
+        //                     });
+        //                   },
+        //                   icon: const Icon(
+        //                     Icons.done,
+        //                     color: Colors.green,
+        //                   ),
+        //                 ),
+        //               ],
+        //             );
+        //           });
+        //     },
+        //     icon: Icon(
+        //       Icons.exit_to_app,
+        //       color: AppColor().primaryColor,
+        //     ),
+        //   )
+        // ],
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -131,14 +129,15 @@ class _GroupInfoState extends State<GroupInfo> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(20),
                 color: AppColor().primaryColor.withOpacity(0.2),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CircleAvatar(
-                    radius: 30,
+                    radius: 25,
                     backgroundColor: AppColor().primaryColor,
                     child: Text(
                       widget.groupName.substring(0, 1).toUpperCase(),
@@ -147,29 +146,103 @@ class _GroupInfoState extends State<GroupInfo> {
                     ),
                   ),
                   const SizedBox(
-                    width: 20,
+                    width: 10,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Group: ${widget.groupName}",
-                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      Row(
+                        children: [
+                          customTitleText(
+                            "Cell:",
+                            size: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          const Gap(5),
+                          customTitleText(
+                            widget.groupName,
+                            size: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ],
                       ),
                       const SizedBox(
                         height: 5,
                       ),
-                      customDescriptionText(
-                        _authContoller.liveUser.value!.admin == true
-                            ? "Admin: ${getName(widget.adminName)}"
-                            : "Admin: ${_authContoller.liveUser.value!.fullName!}",
-                      ),
-                      Text(
-                        "Members: ${_groupmembers.getGroupMembers(groupId).toString()}",
-                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      Row(
+                        children: [
+                          customDescriptionText(
+                            "Admin:",
+                            fontWeight: FontWeight.bold,
+                            colors: AppColor().blackColor,
+                          ),
+                          const Gap(5),
+                          customDescriptionText(
+                            _authContoller.liveUser.value!.admin == true
+                                ? getName(widget.adminName)
+                                : widget.adminName,
+                          ),
+                        ],
                       ),
                     ],
-                  )
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  customDescriptionText(
+                    'Leave Cell',
+                    fontWeight: FontWeight.bold,
+                    colors: AppColor().errorColor,
+                    decoration: TextDecoration.underline,
+                    onTap: () {
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: customDescriptionText(
+                                "Exit",
+                                fontWeight: FontWeight.bold,
+                                colors: AppColor().blackColor,
+                              ),
+                              content: customDescriptionText(
+                                  "Are you sure you exit the group? "),
+                              actions: [
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                //Leave Chat
+                                IconButton(
+                                  onPressed: () async {
+                                    DatabaseService(
+                                            uid: FirebaseAuth
+                                                .instance.currentUser!.uid)
+                                        .toggleGroupJoin(
+                                            widget.groupId,
+                                            getName(widget.adminName),
+                                            widget.groupName)
+                                        .whenComplete(() {
+                                      Get.to(() => UserNavScreen());
+                                      Get.snackbar("Alert",
+                                          'Successfully left the ${widget.groupName}');
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.done,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                  ),
                 ],
               ),
             ),
@@ -182,7 +255,7 @@ class _GroupInfoState extends State<GroupInfo> {
   memberList() {
     return StreamBuilder(
       stream: members,
-      //stream: _cellController.getGroupMembers(widget.groupId),
+      // stream: _cellController.getGroupMembers(widget.groupId),
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data != null) {
@@ -200,11 +273,11 @@ class _GroupInfoState extends State<GroupInfo> {
                           radius: 30,
                           backgroundColor: AppColor().primaryColor,
                           child: customTitleText(
-                            getName(snapshot.data.docs.data()!['members']
-                                    [index])
-                                .substring(0, 1)
-                                .toUpperCase(),
-                            //'data',
+                            // getName(snapshot.data.docs.data()!['members']
+                            //         [index])
+                            //     .substring(0, 1)
+                            //     .toUpperCase(),
+                            'data',
 
                             size: 15,
                             fontWeight: FontWeight.bold,
