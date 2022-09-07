@@ -128,8 +128,9 @@ class _ChatPageState extends State<ChatPage> {
                     builder: (context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
                         return Text(
-                          "${snapshot.data!.length} members",
-                          style: const TextStyle(color: Colors.white, fontSize: 20),
+                          "${snapshot.data['members']!.length} members",
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 20),
                         );
                       } else {
                         return Container();

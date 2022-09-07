@@ -23,6 +23,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String email = "";
   final _authContoller = Get.find<AuthControllers>();
+  String profilePicLink = "";
 
   gettingUserData() async {
     await HelperFunction.getUserEmailFromSF().then((value) {
@@ -104,7 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const Gap(5),
                         Image.asset(
-                          'assets/images/chatPic.png',
+                          profilePicLink,
                           height: 50,
                           width: 50,
                         ),

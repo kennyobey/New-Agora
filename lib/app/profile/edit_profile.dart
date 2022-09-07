@@ -8,6 +8,7 @@ import 'package:agora_care/core/custom_form_field.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class _EditProfileState extends State<EditProfile> {
   bool isEditClicked = false;
 
   User? user;
+  String profilePicLink = "";
 
   var nickName = 'Tom';
   var profilePicUrl =
@@ -62,6 +64,32 @@ class _EditProfileState extends State<EditProfile> {
   //   });
   //   super.initState();
   // }
+
+  void pickUploadProfilePic() async {
+    final file = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxHeight: 512,
+      maxWidth: 512,
+      imageQuality: 90,
+    );
+    if (file != null) {
+      await _authContoller.updateAvatar(
+        File(file.path),
+      );
+    }
+
+    Reference ref = FirebaseStorage.instance.ref().child("profilepic.jpg");
+
+    await ref.putFile(File(file!.path));
+
+    ref.getDownloadURL().then((value) async {
+      print(" Image link is ${value}");
+      print(" Image profilelink is ${profilePicUrl}");
+      setState(() {
+        profilePicLink = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +121,7 @@ class _EditProfileState extends State<EditProfile> {
               ),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: Column(
@@ -124,19 +152,46 @@ class _EditProfileState extends State<EditProfile> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(80),
-                                image: const DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mbF_vybC_Hlh8kW0mWpDp-RQ1P1f2qiKRO9jPX5UUFB8_nsYTFldK-ZT61FldtpK2k0&usqp=CAU',
-                                  ),
-                                  fit: BoxFit.cover,
+                            GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.only(top: 20, bottom: 10),
+                                height: 120,
+                                width: 120,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.blueAccent,
+                                ),
+                                child: Center(
+                                  child: profilePicLink == " "
+                                      ? Image.asset(
+                                          'assets/images/chatPic.png',
+                                          height: 100,
+                                          width: 100,
+                                        )
+                                      : ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: Image.network(profilePicLink),
+                                        ),
                                 ),
                               ),
                             ),
+                            // Container(
+                            //   height: 100,
+                            //   width: 100,
+                            //   decoration: BoxDecoration(
+                            //     borderRadius: BorderRadius.circular(80),
+                            //     image: const DecorationImage(
+                            //       image: CachedNetworkImageProvider(
+                            //         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mbF_vybC_Hlh8kW0mWpDp-RQ1P1f2qiKRO9jPX5UUFB8_nsYTFldK-ZT61FldtpK2k0&usqp=CAU',
+                            //       ),
+                            //       fit: BoxFit.cover,
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                         Positioned(
@@ -144,16 +199,12 @@ class _EditProfileState extends State<EditProfile> {
                           bottom: 1,
                           child: GestureDetector(
                             onTap: () async {
-                              PickedFile? file =
-                                  await ImagePicker.platform.pickImage(
-                                source: ImageSource.gallery,
-                                imageQuality: 50,
-                              );
-                              if (file != null) {
-                                await _authContoller.updateAvatar(
-                                  File(file.path),
-                                );
-                              }
+                              pickUploadProfilePic();
+                              // PickedFile? file =
+                              //     await ImagePicker.platform.pickImage(
+                              //   source: ImageSource.gallery,
+                              //   imageQuality: 50,
+                              // );
                             },
                             child: Container(
                               height: 40,

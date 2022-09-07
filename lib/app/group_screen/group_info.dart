@@ -29,12 +29,15 @@ class GroupInfo extends StatefulWidget {
 class _GroupInfoState extends State<GroupInfo> {
   final _authContoller = Get.find<AuthControllers>();
   final _cellController = Get.find<CellControllers>();
+  final _groupmembers = Get.find<DatabaseService>();
   Stream? members;
   int? memberslen;
+
+  var groupId;
   @override
   void initState() {
     getMembers();
-   members= _cellController.getGroupMembers(widget.groupId);
+    members = _cellController.getGroupMembers(widget.groupId);
     super.initState();
   }
 
@@ -161,6 +164,10 @@ class _GroupInfoState extends State<GroupInfo> {
                             ? "Admin: ${getName(widget.adminName)}"
                             : "Admin: ${_authContoller.liveUser.value!.fullName!}",
                       ),
+                      Text(
+                        "Members: ${_groupmembers.getGroupMembers(groupId).toString()}",
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
                     ],
                   )
                 ],
@@ -174,8 +181,8 @@ class _GroupInfoState extends State<GroupInfo> {
 
   memberList() {
     return StreamBuilder(
-      stream:members,
-      // stream: _cellController.getGroupMembers(widget.groupId),
+      stream: members,
+      //stream: _cellController.getGroupMembers(widget.groupId),
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data != null) {
@@ -193,11 +200,11 @@ class _GroupInfoState extends State<GroupInfo> {
                           radius: 30,
                           backgroundColor: AppColor().primaryColor,
                           child: customTitleText(
-                            // getName(snapshot.data.docs.data()!['members']
-                            //         [index])
-                            //     .substring(0, 1)
-                            //     .toUpperCase(),
-                            'data',
+                            getName(snapshot.data.docs.data()!['members']
+                                    [index])
+                                .substring(0, 1)
+                                .toUpperCase(),
+                            //'data',
 
                             size: 15,
                             fontWeight: FontWeight.bold,
@@ -233,7 +240,7 @@ class _GroupInfoState extends State<GroupInfo> {
   }
 
   Future membersLenght() async {
-   // print("Mem ---> ${members?.length}");
+    // print("Mem ---> ${members?.length}");
     return memberslen = await members?.length;
   }
 }
