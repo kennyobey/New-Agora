@@ -423,6 +423,7 @@ class _CellsScreenState extends State<CellsScreen> {
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
+            assetName: assetName!,
           ),
         );
       },
@@ -477,6 +478,7 @@ class _CellsScreenState extends State<CellsScreen> {
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
+            assetName: assetName!,
           ),
         );
       },

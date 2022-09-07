@@ -26,11 +26,13 @@ class QuoteDetails extends StatefulWidget {
   final String groupId;
   final String groupName;
   final String userName;
+  final String assetName;
   const QuoteDetails({
     Key? key,
     required this.groupId,
     required this.groupName,
     required this.userName,
+    required this.assetName,
   }) : super(key: key);
 
   @override

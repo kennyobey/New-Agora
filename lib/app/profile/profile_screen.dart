@@ -1,11 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:agora_care/app/authentication/phone_num_page.dart';
+import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -24,7 +26,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String email = "";
   final _authContoller = Get.find<AuthControllers>();
-  String profilePicLink = "";
+  String profilePicLink =
+      "https://github.com/Damscozy/agora_care/blob/2ce3a6a6952f9aa104921a3f4b50af251c621511/assets/images/chatPic.png";
 
   gettingUserData() async {
     await HelperFunction.getUserEmailFromSF().then((value) {
@@ -32,6 +35,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         email = value!;
       });
     });
+  }
+
+  @override
+  void initState() {
+    _authContoller.getUserByModel(_authContoller.liveUser.value!.uid!);
+    super.initState();
   }
 
   @override
@@ -46,7 +55,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Container(
           color: AppColor().boxColor,
           width: MediaQuery.of(context).size.width,
-          //height: MediaQuery.of(context).size.height,
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,11 +113,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                         const Gap(5),
-                        Image.asset(
-                          profilePicLink,
-                          height: 50,
-                          width: 50,
-                        ),
+                        // Obx(() {
+                        //   if (_authContoller.liveUser.value!.profilePic ==
+                        //           null ||
+                        //       _authContoller.liveUser.value!.profilePic == "") {
+                        //     return Image.asset(
+                        //       "assets/images/chatPic.png",
+                        //       height: 50,
+                        //       width: 50,
+                        //     );
+                        //   } else {
+                        //     return Image.network(
+                        //       _authContoller.liveUser.value!.profilePic!,
+                        //       // profilePicLink,
+                        //       height: 50,
+                        //       width: 50,
+                        //     );
+                        //   }
+                        // }),
+                        FutureBuilder<UserModel>(
+                            future: _authContoller.getUserByModel(
+                                _authContoller.liveUser.value!.uid!),
+                            builder: (BuildContext context, snapshot) {
+                              if (snapshot.connectionState ==
+                                      ConnectionState.done &&
+                                  snapshot.hasData) {
+                                return Container(
+                                  height: 60,
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(80),
+                                    image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                        snapshot.data!.profilePic!,
+                                        // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mbF_vybC_Hlh8kW0mWpDp-RQ1P1f2qiKRO9jPX5UUFB8_nsYTFldK-ZT61FldtpK2k0&usqp=CAU',
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              } else if (snapshot.connectionState ==
+                                      ConnectionState.waiting ||
+                                  !snapshot.hasData) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColor().primaryColor,
+                                  ),
+                                );
+                              } else {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColor().whiteColor,
+                                    border: Border.all(
+                                      width: 2,
+                                      color: AppColor().primaryColor,
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor: AppColor().whiteColor,
+                                      child: Image.network(
+                                        "assets/images/placeholder.png",
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                            }),
                       ],
                     ),
                     const Gap(15),

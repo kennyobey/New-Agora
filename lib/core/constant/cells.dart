@@ -37,6 +37,7 @@ class Cells extends StatelessWidget {
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
+            assetName: assetName!,
           ),
         );
       },
