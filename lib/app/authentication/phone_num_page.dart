@@ -8,8 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+
 import '../../services/auth_controller.dart';
 
 class PhonePage extends StatefulWidget {
@@ -120,11 +120,15 @@ class _PhonePageState extends State<PhonePage> {
 
                       child: InternationalPhoneNumberInput(
                         onInputChanged: (PhoneNumber number) {
-                          print("country code ${number.phoneNumber}");
+                          if (kDebugMode) {
+                            print("country code ${number.phoneNumber}");
+                          }
                           this.number = number;
                         },
                         onInputValidated: (bool value) {
-                          print(value);
+                          if (kDebugMode) {
+                            print(value);
+                          }
                         },
                         selectorConfig: const SelectorConfig(
                           selectorType: PhoneInputSelectorType.DROPDOWN,
@@ -158,7 +162,7 @@ class _PhonePageState extends State<PhonePage> {
                             borderRadius: BorderRadius.circular(
                               15,
                             ),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               //color: UIData.kbrightColor,
                               width: 10,
                             ),

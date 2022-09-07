@@ -213,7 +213,11 @@ class AuthControllers extends GetxController {
       }
       _verificationId(verId);
       EasyLoading.dismiss();
-      Get.to(() => const VerifyEmailPage());
+      Get.to(
+        () => VerifyEmailPage(
+          passedPhone: phoneNum!,
+        ),
+      );
     };
 
     await auth.verifyPhoneNumber(
@@ -277,6 +281,24 @@ class AuthControllers extends GetxController {
       }
     } on FirebaseAuthException catch (e) {
       return e.message;
+    }
+  }
+
+  Future<void> verifyMobileOTP(String otp, BuildContext context) async {
+    try {
+      if (kDebugMode) {
+        print("get veri id is ${_verificationId.value} ");
+      }
+      EasyLoading.show(status: 'Verifying');
+      final AuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId.value,
+        smsCode: otp,
+      );
+      Get.to(() => const WelComePage());
+    } catch (e) {
+      kErrorSnakBar('$e');
+    } finally {
+      EasyLoading.dismiss();
     }
   }
 
