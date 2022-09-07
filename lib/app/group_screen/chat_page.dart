@@ -131,9 +131,11 @@ class _ChatPageState extends State<ChatPage> {
                             // backgroundColor: Colors.black,
                             itemBorderColor: AppColor().whiteColor,
                             imageList: snapshot.data!
-                                .map((e) =>
-                                    e.profilePic ??
-                                    "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80")
+                                .map(
+                                  (e) =>
+                                      e.profilePic ??
+                                      "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
+                                )
                                 .toList(),
                             showTotalCount: true,
                             totalCount: widget.member == null
