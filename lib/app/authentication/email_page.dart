@@ -1,6 +1,6 @@
 // ignore_for_file: override_on_non_overriding_member, use_build_context_synchronously, unused_local_variable, unused_field
 
-import 'package:agora_care/app/authentication/%20verify_email_page.dart';
+import 'package:agora_care/app/authentication/phone_num_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -200,7 +200,8 @@ class _EmailPageState extends State<EmailPage> {
             if (kDebugMode) {
               print(user);
             }
-            Get.to(() => const VerifyEmailPage());
+            Get.to(() => const PhonePage());
+            // Get.to(() => const VerifyEmailPage());
 
             if (kDebugMode) {
               print(UserCredential);

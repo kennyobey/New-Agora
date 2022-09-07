@@ -2,9 +2,9 @@
 
 import 'dart:async';
 
-import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -17,13 +17,18 @@ import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class VerifyEmailPage extends StatefulWidget {
-  const VerifyEmailPage({Key? key}) : super(key: key);
+  final String? passedPhone;
+  const VerifyEmailPage({
+    Key? key,
+    this.passedPhone,
+  }) : super(key: key);
 
   @override
   State<VerifyEmailPage> createState() => _VerifyEmailPageState();
 }
 
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
+  final _authController = Get.find<AuthControllers>();
   final pinController = TextEditingController();
   String? pin;
   late final bool _isLoading = false;
@@ -88,9 +93,10 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                 width: MediaQuery.of(context).size.width * 1,
                 child: PinCodeTextField(
                   controller: pinController,
-                  length: 5,
+                  length: 6,
                   obscureText: true,
                   obscuringCharacter: '*',
+                  autoDisposeControllers: false,
                   animationType: AnimationType.fade,
                   cursorColor: AppColor().blackColor,
                   keyboardType: TextInputType.number,
@@ -201,7 +207,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
               onTap: () async {
-                Get.to(() => const WelComePage());
+                // Get.to(() => const WelComePage());
+                _authController.verifyMobileOTP(
+                  pinController.text,
+                  context,
+                );
                 // final user = FirebaseAuth.instance.currentUser;
                 // print("The Use details are$user");
                 // if (user?.emailVerified ?? false) {
