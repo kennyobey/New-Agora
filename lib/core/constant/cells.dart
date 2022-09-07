@@ -8,16 +8,15 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class Cells extends StatelessWidget {
-  Cells(
-      {Key? key,
-      required this.groupId,
-      required this.members,
-      required this.time,
-      required this.groupName,
-      required this.assetName,
-      required this.userName,
-      required this.memberId})
-      : super(key: key);
+  const Cells({
+    Key? key,
+    required this.groupId,
+    required this.members,
+    required this.time,
+    required this.groupName,
+    required this.assetName,
+    required this.userName,
+  }) : super(key: key);
 
   final String members;
   final String time;
@@ -25,7 +24,6 @@ class Cells extends StatelessWidget {
   final String? groupName;
   final String? assetName;
   final String? userName;
-  List<String>? memberId;
 
   @override
   Widget build(BuildContext context) {
@@ -33,18 +31,13 @@ class Cells extends StatelessWidget {
       onTap: () {
         if (kDebugMode) {
           print('Joining Group');
-          print("me");
         }
         Get.to(
           () => ChatPage(
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
-<<<<<<< HEAD
-            member: memberId!,
-=======
             assetName: assetName!,
->>>>>>> new_cell
           ),
         );
       },
