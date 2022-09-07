@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:agora_care/app/authentication/phone_num_page.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -273,9 +274,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Consult a psychologist',
-                // onTap: () {
-                //   Get.to(() => const Psychologist());
-                // },
+                onTap: () {
+                  Get.to(() => const PhonePage());
+                },
               ),
               const Gap(15),
               CustomContainer(

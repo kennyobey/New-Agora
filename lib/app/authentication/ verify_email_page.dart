@@ -7,6 +7,7 @@ import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,60 +80,61 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
               fontSize: 14,
               fontWeight: FontWeight.w700,
               colors: AppColor().lightTextColor,
-            ), // const Gap(50),
-            // Center(
-            //   child: SizedBox(
-            //     height: 60,
-            //     width: MediaQuery.of(context).size.width * 1,
-            //     child: PinCodeTextField(
-            //       controller: pinController,
-            //       length: 5,
-            //       obscureText: true,
-            //       obscuringCharacter: '*',
-            //       animationType: AnimationType.fade,
-            //       cursorColor: AppColor().blackColor,
-            //       keyboardType: TextInputType.number,
-            //       blinkDuration: const Duration(milliseconds: 150),
-            //       blinkWhenObscuring: true,
-            //       pinTheme: PinTheme(
-            //           inactiveColor: AppColor().lightTextColor.withOpacity(0.2),
-            //           activeColor: AppColor().primaryColor,
-            //           selectedColor: AppColor().primaryColor,
-            //           selectedFillColor: AppColor().button1Color,
-            //           inactiveFillColor: AppColor().boxColor,
-            //           shape: PinCodeFieldShape.box,
-            //           borderRadius: BorderRadius.circular(5),
-            //           fieldHeight: 60,
-            //           fieldWidth: 60,
-            //           activeFillColor:
-            //               AppColor().filledTextField.withOpacity(0.5)),
-            //       animationDuration: const Duration(milliseconds: 300),
-            //       backgroundColor: Colors.white,
-            //       enableActiveFill: true,
-            //       errorAnimationController: changePinErrorController,
-            //       onCompleted: (v) {
-            //         if (kDebugMode) {
-            //           print("Completed");
-            //         }
-            //       },
-            //       onChanged: (value) {
-            //         pin = value;
-            //         if (kDebugMode) {
-            //           print(value);
-            //         }
-            //       },
-            //       beforeTextPaste: (text) {
-            //         if (kDebugMode) {
-            //           print("Allowing to paste $text");
-            //         }
-            //         //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-            //         //but you can show anything you want here, like your pop up saying wrong paste format or etc
-            //         return true;
-            //       },
-            //       appContext: context,
-            //     ),
-            //   ),
-            // ),
+            ),
+            const Gap(10), // const Gap(50),
+            Center(
+              child: SizedBox(
+                height: 60,
+                width: MediaQuery.of(context).size.width * 1,
+                child: PinCodeTextField(
+                  controller: pinController,
+                  length: 5,
+                  obscureText: true,
+                  obscuringCharacter: '*',
+                  animationType: AnimationType.fade,
+                  cursorColor: AppColor().blackColor,
+                  keyboardType: TextInputType.number,
+                  blinkDuration: const Duration(milliseconds: 150),
+                  blinkWhenObscuring: true,
+                  pinTheme: PinTheme(
+                      inactiveColor: AppColor().lightTextColor.withOpacity(0.2),
+                      activeColor: AppColor().primaryColor,
+                      selectedColor: AppColor().primaryColor,
+                      selectedFillColor: AppColor().button1Color,
+                      inactiveFillColor: AppColor().boxColor,
+                      shape: PinCodeFieldShape.box,
+                      borderRadius: BorderRadius.circular(5),
+                      fieldHeight: 60,
+                      fieldWidth: 60,
+                      activeFillColor:
+                          AppColor().filledTextField.withOpacity(0.5)),
+                  animationDuration: const Duration(milliseconds: 300),
+                  backgroundColor: Colors.white,
+                  enableActiveFill: true,
+                  errorAnimationController: changePinErrorController,
+                  onCompleted: (v) {
+                    if (kDebugMode) {
+                      print("Completed");
+                    }
+                  },
+                  onChanged: (value) {
+                    pin = value;
+                    if (kDebugMode) {
+                      print(value);
+                    }
+                  },
+                  beforeTextPaste: (text) {
+                    if (kDebugMode) {
+                      print("Allowing to paste $text");
+                    }
+                    //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
+                    //but you can show anything you want here, like your pop up saying wrong paste format or etc
+                    return true;
+                  },
+                  appContext: context,
+                ),
+              ),
+            ),
             const Gap(20),
             RichText(
               textAlign: TextAlign.center,

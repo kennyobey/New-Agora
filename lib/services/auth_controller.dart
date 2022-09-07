@@ -25,6 +25,8 @@ class AuthControllers extends GetxController {
   static AuthControllers to = Get.find();
   final bool isLoading = false;
 
+  final signupPhonenumberController = TextEditingController();
+
   RxString phone = ''.obs;
   RxString countryCode = '+1'.obs;
   final RxString _verificationId = ''.obs;
@@ -199,7 +201,11 @@ class AuthControllers extends GetxController {
 
   // Send Verification Code
   Future<void> sendVerificationCodes(String? phoneNum) async {
-    phone(countryCode.value + phoneNum!);
+    // phone(countryCode.value + phoneNum!);
+    // phone(phoneNum!);
+    if (kDebugMode) {
+      print("PHONE IS $phoneNum");
+    }
     final void Function(String verId, int? forceCodeResend) smsOTPSent =
         (String verId, int? forceCodeResend) {
       if (kDebugMode) {
