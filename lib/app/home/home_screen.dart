@@ -414,9 +414,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const Gap(20),
               Obx(() {
-                // if (_quoteContoller.quoteStatus == QuoteStatus.LOADING) {
-                //   return customDescriptionText('No Recent Quotes');
-                // } else {
                 return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.25,
                     child: ListView.builder(
