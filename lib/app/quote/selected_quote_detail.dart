@@ -139,11 +139,8 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                 const Gap(20),
                 Stack(
                   children: [
-                    Hero(
-                      tag: "img",
-                      child: SvgPicture.asset(
-                        'assets/svgs/quoteCard.svg',
-                      ),
+                    SvgPicture.asset(
+                      'assets/svgs/quoteCard.svg',
                     ),
                     Positioned(
                       top: 35,

@@ -365,15 +365,17 @@ class AuthControllers extends GetxController {
   }
 
   Future<List<UserModel>> getUserByModelList(List<String> ids) async {
-    List<UserModel> _list = [];
+    List<UserModel> list = [];
     await Future.forEach<String>(ids, (element) async {
       final result = await _userDoc.doc(element).get();
       final user = UserModel.fromJson(result.data()!);
-      print("memebr detail is ${user.toJson()}");
-      _list.add(user);
+      if (kDebugMode) {
+        print("member detail is ${user.toJson()}");
+      }
+      list.add(user);
     });
 
-    return _list;
+    return list;
   }
 
   // Get Users List

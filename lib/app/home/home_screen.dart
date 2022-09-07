@@ -392,6 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return recommendedCells(
                           groupId: item.groupId,
                           groupName: item.groupName,
+                          admin: item.admin,
                           colors: colorList[index],
                           assetName: 'assets/svgs/bank.svg',
                           userName: _authContoller.liveUser.value!.username!,
@@ -454,6 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
   GestureDetector recommendedCells({
     Color? colors,
     String? groupId,
+    String? admin,
     String? groupName,
     String? assetName,
     String? userName,
@@ -479,6 +481,7 @@ class _HomeScreenState extends State<HomeScreen> {
             groupName: groupName,
             userName: userName,
             member: memberId!,
+            admin: admin!,
           ),
         );
       },
@@ -554,20 +557,17 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Hero(
-                tag: "img",
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  decoration: BoxDecoration(
-                    color: colorList[random.nextInt(colorList.length)],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: customTitleText(
-                      quoteModel!.dailyQuote!,
-                      size: 16,
-                      colors: AppColor().whiteColor,
-                    ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.2,
+                decoration: BoxDecoration(
+                  color: colorList[random.nextInt(colorList.length)],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: customTitleText(
+                    quoteModel!.dailyQuote!,
+                    size: 16,
+                    colors: AppColor().whiteColor,
                   ),
                 ),
               ),

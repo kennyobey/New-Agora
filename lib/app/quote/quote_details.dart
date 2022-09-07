@@ -364,15 +364,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               const Gap(10),
                               InkWell(
                                 onTap: () async {
+                                  setState(() {
+                                    isLiked = !isLiked;
+                                  });
                                   isLiked
                                       ? _quoteContoller.likePost(
                                           _quoteContoller.allQuotes.last.id!)
                                       : _quoteContoller.unLikePost(
                                           _quoteContoller.allQuotes.last.id!);
-
-                                  setState(() {
-                                    isLiked = !isLiked;
-                                  });
                                 },
                                 child: isLiked
                                     ? SvgPicture.asset(

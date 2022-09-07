@@ -105,15 +105,15 @@ class _QuoteCommentTileState extends State<QuoteCommentTile> {
                       if (kDebugMode) {
                         print('Message ID is ${widget.messageid}');
                       }
+                      setState(() {
+                        isLiked = !isLiked;
+                      });
                       isLiked
                           ? _quoteController.likeQuotePost(
                               widget.groupId, widget.messageid)
                           : _quoteController.unLikeQuotePost(
                               widget.groupId, widget.messageid);
                       setState(() {});
-                      setState(() {
-                        isLiked = !isLiked;
-                      });
                       if (kDebugMode) {
                         print('Like State Changed');
                       }

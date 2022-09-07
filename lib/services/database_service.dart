@@ -11,7 +11,7 @@ class DatabaseService {
   final CollectionReference cellsCollection =
       FirebaseFirestore.instance.collection("cells");
   final CollectionReference quoteCollection =
-      FirebaseFirestore.instance.collection("quote");
+      FirebaseFirestore.instance.collection("quotes");
 
   // final _authController = Get.find<AuthControllers>();
 

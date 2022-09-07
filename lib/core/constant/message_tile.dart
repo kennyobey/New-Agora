@@ -37,6 +37,13 @@ class _MessageTileState extends State<MessageTile> {
   final _cellController = Get.find<CellControllers>();
   bool isLiked = false;
   Stream<QuerySnapshot>? chats;
+  FocusNode focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +98,9 @@ class _MessageTileState extends State<MessageTile> {
                     onTap: () async {
                       if (kDebugMode) {
                         print('Message ID is ${widget.messageid}');
+                        print('Request Comment');
                       }
+                      focusNode.requestFocus();
                       _cellController.comment(widget.groupId, widget.messageid);
                     },
                     child: SvgPicture.asset(
@@ -104,15 +113,14 @@ class _MessageTileState extends State<MessageTile> {
                       if (kDebugMode) {
                         print('Message ID is ${widget.messageid}');
                       }
+                      setState(() {
+                        isLiked = !isLiked;
+                      });
                       isLiked
                           ? _cellController.likePost(
                               widget.groupId, widget.messageid)
                           : _cellController.unLikePost(
                               widget.groupId, widget.messageid);
-                      setState(() {});
-                      setState(() {
-                        isLiked = !isLiked;
-                      });
                       if (kDebugMode) {
                         print('Like State Changed');
                       }
@@ -149,30 +157,11 @@ class _MessageTileState extends State<MessageTile> {
                     colors: AppColor().lightbackgroundColor,
                   ),
                   const Gap(20),
-                  // customDescriptionText(
-                  //   '143 likes',
-                  //   fontSize: 10,
-                  //   fontWeight: FontWeight.w500,
-                  //   colors: AppColor().lightbackgroundColor,
-                  // ),
-
-                  StreamBuilder(
-                    stream: chats,
-                    builder: (context, AsyncSnapshot snapshot) {
-                      return snapshot.hasData
-                          ? customDescriptionText(
-                              '${widget.like.length == null ? '0' : widget.like.length.toString()} likes',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              colors: AppColor().lightbackgroundColor,
-                            )
-                          : customDescriptionText(
-                              '${widget.like.length == null ? '0' : widget.like.length.toString()} likes',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              colors: AppColor().lightbackgroundColor,
-                            );
-                    },
+                  customDescriptionText(
+                    '${widget.like.length == null ? '0' : widget.like.length.toString()} likes',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    colors: AppColor().lightbackgroundColor,
                   )
                 ],
               ),

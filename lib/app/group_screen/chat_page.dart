@@ -5,24 +5,27 @@ import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../core/constant/message_tile.dart';
-import '../../services/cell_controller.dart';
 import '../../services/database_service.dart';
 import 'group_info.dart';
 
 class ChatPage extends StatefulWidget {
+  final String? admin;
   final String groupId;
   final String groupName;
   final String userName;
   final List<String>? member;
   const ChatPage({
     Key? key,
+    this.admin,
     required this.groupId,
     required this.groupName,
     required this.userName,
@@ -36,11 +39,13 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   Stream<QuerySnapshot>? chats;
   Stream? members;
-  final _cellController = Get.find<CellControllers>();
+  // final _cellController = Get.find<CellControllers>();
   final _authController = Get.find<AuthControllers>();
 
   TextEditingController messageController = TextEditingController();
   String admin = "";
+
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
@@ -48,6 +53,12 @@ class _ChatPageState extends State<ChatPage> {
 
     // members = _cellController.getGroupMembers(widget.groupId);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
   }
 
   getChatandAdmin() {
@@ -65,7 +76,9 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("memeber id is ${widget.member}");
+    if (kDebugMode) {
+      print("memeber length is ${widget.member}");
+    }
     return Scaffold(
       backgroundColor: AppColor().whiteColor,
       appBar: AppBar(
@@ -84,7 +97,7 @@ class _ChatPageState extends State<ChatPage> {
                 () => GroupInfo(
                   groupId: widget.groupId,
                   groupName: widget.groupName,
-                  adminName: admin,
+                  adminName: widget.admin!,
                 ),
               );
             },
@@ -206,6 +219,7 @@ class _ChatPageState extends State<ChatPage> {
                         children: [
                           Expanded(
                             child: TextFormField(
+                              focusNode: focusNode,
                               controller: messageController,
                               textInputAction: TextInputAction.send,
                               style: TextStyle(
@@ -291,6 +305,8 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         messageController.clear();
       });
+
+      SystemChannels.textInput.invokeMethod('TextInput.hide');
     }
   }
 }
