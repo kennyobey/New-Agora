@@ -293,7 +293,10 @@ class _CellInfoState extends State<CellInfo> {
                           groupId: item.groupId,
                           groupName: item.groupName,
                           colors: colorList[random.nextInt(colorList.length)],
-                          assetName: 'assets/svgs/bank.svg',
+                          assetName:
+                              _authContoller.liveUser.value!.profilePic == null
+                                  ? 'assets/svgs/bank.svg'
+                                  : _authContoller.liveUser.value!.profilePic!,
                           userName: _authContoller.liveUser.value!.username!,
                         );
                       },
@@ -324,6 +327,7 @@ class _CellInfoState extends State<CellInfo> {
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
+            assetName: assetName!,
           ),
         );
       },
@@ -378,6 +382,7 @@ class _CellInfoState extends State<CellInfo> {
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
+            assetName: assetName!,
           ),
         );
       },

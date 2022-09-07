@@ -40,7 +40,11 @@ class Cells extends StatelessWidget {
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
+<<<<<<< HEAD
             member: memberId!,
+=======
+            assetName: assetName!,
+>>>>>>> new_cell
           ),
         );
       },

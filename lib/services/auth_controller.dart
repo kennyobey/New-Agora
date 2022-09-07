@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison, unused_field, prefer_function_declarations_over_variables
+// ignore_for_file: unnecessary_null_comparison, unused_field, prefer_function_declarations_over_variables, unused_local_variable, avoid_function_literals_in_foreach_calls
 
 import 'dart:io';
 
@@ -11,7 +11,7 @@ import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -41,6 +41,8 @@ class AuthControllers extends GetxController {
   UserModel? get users => liveUser.value;
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  final firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
   final _userDoc = FirebaseFirestore.instance.collection("users");
 
   final _newQuote = FirebaseFirestore.instance.collection("quotes");
@@ -347,9 +349,11 @@ class AuthControllers extends GetxController {
     try {
       String name =
           "${DateTime.now().microsecondsSinceEpoch}.${file.path.split('.').last}";
-      Reference ref = FirebaseStorage.instance.ref().child(name);
+      // Reference ref = FirebaseStorage.instance.ref().child(name);
+      firebase_storage.Reference ref =
+          firebase_storage.FirebaseStorage.instance.ref('images/').child(name);
 
-      UploadTask task = ref.putFile(file);
+      firebase_storage.UploadTask task = ref.putFile(file);
       await task.whenComplete(() => null);
       return await ref.getDownloadURL();
     } catch (error) {
@@ -369,6 +373,38 @@ class AuthControllers extends GetxController {
     } finally {
       EasyLoading.dismiss();
     }
+  }
+
+  // Uploding User Avatar
+  Future uploadImageFiles(
+    String filePath,
+    String fileName,
+  ) async {
+    File file = File(filePath);
+    try {
+      EasyLoading.show(status: 'uploading');
+      await storage.ref('images/$fileName').putFile(file);
+      await userDb.doc(liveUser.value!.uid).update({'profilePic': image});
+    } catch (e) {
+      kErrorSnakBar('$e');
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
+  // Getting User Avatar
+  Future<void> listImageFiles() async {
+    firebase_storage.ListResult result = await storage.ref('images').listAll();
+    return result.items.forEach((firebase_storage.Reference ref) {
+      debugPrint("Find file: $ref");
+    });
+  }
+
+  // Getting Avatar Url
+  Future<String> downloadUrl(String imageName) async {
+    String downloadUrl =
+        await storage.ref('images/$imageName').getDownloadURL();
+    return downloadUrl;
   }
 
   // Sign Out

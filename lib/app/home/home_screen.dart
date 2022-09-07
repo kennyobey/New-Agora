@@ -210,12 +210,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: GestureDetector(
                       onTap: () {
-                        //     _quoteContoller.allQuotes.last.views.toString());
                         if (kDebugMode) {
+                          print('Clicking quote');
                           print(
                               'quote id is ${_quoteContoller.allQuotes.last.id!}');
                         }
-
                         _quoteContoller.joinedOrNot(
                           _authContoller.liveUser.value!.username!,
                           _quoteContoller.allQuotes.last.groupId!,
@@ -229,6 +228,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             groupName:
                                 _quoteContoller.allQuotes.last.dailyQuote!,
                             userName: _authContoller.liveUser.value!.username!,
+                            assetName: _authContoller
+                                        .liveUser.value!.profilePic ==
+                                    null
+                                ? 'assets/images/placeholder.png'
+                                : _authContoller.liveUser.value!.profilePic!,
                           ),
                           // transition: Transition.downToUp,
                         );
@@ -484,6 +488,7 @@ class _HomeScreenState extends State<HomeScreen> {
             userName: userName,
             member: memberId!,
             admin: admin!,
+            assetName: assetName!,
           ),
         );
       },

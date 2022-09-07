@@ -2,6 +2,7 @@
 
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -21,6 +22,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final _authController = Get.find<AuthControllers>();
   TextEditingController searchController = TextEditingController();
   bool isLoading = false;
   QuerySnapshot? searchSnapshot;
@@ -204,6 +206,7 @@ class _SearchPageState extends State<SearchPage> {
                     groupId: groupId,
                     groupName: groupName,
                     userName: userName,
+                    assetName: _authController.liveUser.value!.profilePic!,
                   ),
                 );
               },

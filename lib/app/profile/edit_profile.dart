@@ -30,6 +30,8 @@ class _EditProfileState extends State<EditProfile> {
   final formKey = GlobalKey<FormState>();
   late bool _isLoading = false;
 
+  PickedFile? file;
+
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
@@ -44,29 +46,20 @@ class _EditProfileState extends State<EditProfile> {
   bool isEditClicked = false;
 
   User? user;
-  String profilePicLink = "";
+  late String profilePicLink;
 
   var nickName = 'Tom';
   var profilePicUrl =
       'https://pixel.nymag.com/imgs/daily/vulture/2017/06/14/14-tom-cruise.w700.h700.jpg';
 
-  // @override
-  // void initState() {
-  //   user = FirebaseAuth.instance.currentUser!().then((user) {
-  //     setState(() {
-  //       profilePicUrl = user.photoUrl;
-  //       nickName = user.displayName;
-  //     });
-  //   }).catchError((e) {
-  //     if (kDebugMode) {
-  //       print(e);
-  //     }
-  //   });
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    profilePicLink = _authContoller.liveUser.value!.profilePic!;
+    super.initState();
+  }
 
   void pickUploadProfilePic() async {
-    final file = await ImagePicker().pickImage(
+    file = await ImagePicker.platform.pickImage(
       source: ImageSource.gallery,
       maxHeight: 512,
       maxWidth: 512,
@@ -74,17 +67,22 @@ class _EditProfileState extends State<EditProfile> {
     );
     if (file != null) {
       await _authContoller.updateAvatar(
-        File(file.path),
+        File(file!.path),
       );
     }
 
-    Reference ref = FirebaseStorage.instance.ref().child("profilepic.jpg");
+    Reference ref = FirebaseStorage.instance.ref("profilepic/${file!.path}");
+    // Reference ref = FirebaseStorage.instance.ref().child("profilepic/");
 
     await ref.putFile(File(file!.path));
 
     ref.getDownloadURL().then((value) async {
-      print(" Image link is ${value}");
-      print(" Image profilelink is ${profilePicUrl}");
+      if (kDebugMode) {
+        print(" Image link is $value");
+      }
+      if (kDebugMode) {
+        print(" Image profilelink is $profilePicUrl");
+      }
       setState(() {
         profilePicLink = value;
       });
@@ -127,71 +125,59 @@ class _EditProfileState extends State<EditProfile> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Center(
-                    //   child: GestureDetector(
-                    //     onTap: () async {
-                    //       PickedFile? file =
-                    //           await ImagePicker.platform.pickImage(
-                    //         source: ImageSource.gallery,
-                    //         imageQuality: 50,
-                    //       );
-                    //       if (file != null) {
-                    //         await _authContoller.updateAvatar(File(file.path));
-                    //       }
-                    //     },
-                    //     child: Image.asset(
-                    //       'assets/images/chatPic.png',
-                    //       height: 100,
-                    //       width: 100,
-                    //     ),
-                    //   ),
-                    // ),
                     Stack(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            GestureDetector(
-                              onTap: () {},
+                            Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                               child: Container(
-                                margin:
-                                    const EdgeInsets.only(top: 20, bottom: 10),
-                                height: 120,
-                                width: 120,
-                                alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.blueAccent,
+                                  color: AppColor().whiteColor,
+                                  border: Border.all(
+                                    width: 2,
+                                    color: AppColor().primaryColor,
+                                  ),
+                                  shape: BoxShape.circle,
                                 ),
                                 child: Center(
-                                  child: profilePicLink == " "
-                                      ? Image.asset(
-                                          'assets/images/chatPic.png',
-                                          height: 100,
-                                          width: 100,
-                                        )
-                                      : ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: Image.network(profilePicLink),
-                                        ),
+                                  child: CircleAvatar(
+                                    radius: 50,
+                                    backgroundColor: AppColor().whiteColor,
+                                    child: profilePicLink == ""
+                                        ? Image.asset(
+                                            'assets/images/placeholder.png',
+                                            height: 100,
+                                            width: 100,
+                                          )
+                                        : ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(80),
+                                                image: DecorationImage(
+                                                  image:
+                                                      CachedNetworkImageProvider(
+                                                    // _authContoller.liveUser
+                                                    //     .value!.profilePic!,
+                                                    profilePicLink,
+                                                  ),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                  ),
                                 ),
                               ),
                             ),
-                            // Container(
-                            //   height: 100,
-                            //   width: 100,
-                            //   decoration: BoxDecoration(
-                            //     borderRadius: BorderRadius.circular(80),
-                            //     image: const DecorationImage(
-                            //       image: CachedNetworkImageProvider(
-                            //         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mbF_vybC_Hlh8kW0mWpDp-RQ1P1f2qiKRO9jPX5UUFB8_nsYTFldK-ZT61FldtpK2k0&usqp=CAU',
-                            //       ),
-                            //       fit: BoxFit.cover,
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                         Positioned(
@@ -199,19 +185,14 @@ class _EditProfileState extends State<EditProfile> {
                           bottom: 1,
                           child: GestureDetector(
                             onTap: () async {
-                              pickUploadProfilePic();
-                              // PickedFile? file =
-                              //     await ImagePicker.platform.pickImage(
-                              //   source: ImageSource.gallery,
-                              //   imageQuality: 50,
-                              // );
+                              isEditClicked ? pickUploadProfilePic() : null;
                             },
                             child: Container(
                               height: 40,
                               width: 40,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
-                                color: AppColor().blueColor,
+                                color: AppColor().primaryColor,
                               ),
                               child: const Center(
                                 child: Icon(
@@ -311,7 +292,11 @@ class _EditProfileState extends State<EditProfile> {
                                         color: AppColor().primaryColor,
                                       ),
                                       hint: customDescriptionText(
-                                        'Gender',
+                                        _authContoller.liveUser.value!.gender ==
+                                                null
+                                            ? 'Gender'
+                                            : _authContoller
+                                                .liveUser.value!.gender!,
                                         fontSize: 14,
                                         fontWeight: FontWeight.normal,
                                       ),

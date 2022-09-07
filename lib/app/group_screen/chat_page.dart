@@ -22,6 +22,7 @@ class ChatPage extends StatefulWidget {
   final String groupId;
   final String groupName;
   final String userName;
+  final String assetName;
   final List<String>? member;
   final List<String>? memberName;
   const ChatPage({
@@ -30,6 +31,7 @@ class ChatPage extends StatefulWidget {
     required this.groupId,
     required this.groupName,
     required this.userName,
+    required this.assetName,
     this.member,
     this.memberName,
   }) : super(key: key);
@@ -169,21 +171,9 @@ class _ChatPageState extends State<ChatPage> {
                   height: 10,
                 ),
                 customDescriptionText(
-                    widget.member != null ? "${widget.member!.length}" : "0",
-                    colors: AppColor().whiteColor)
-                // StreamBuilder(
-                //     stream: members,
-                //     builder: (context, AsyncSnapshot snapshot) {
-                //       if (snapshot.hasData) {
-                //         return Text(
-                //           "${snapshot.data!.length} members",
-                //           style: const TextStyle(
-                //               color: Colors.white, fontSize: 20),
-                //         );
-                //       } else {
-                //         return Container();
-                //       }
-                //     })
+                  widget.member != null ? "${widget.member!.length}" : "0",
+                  colors: AppColor().whiteColor,
+                )
               ],
             ),
           ),
@@ -204,7 +194,7 @@ class _ChatPageState extends State<ChatPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SvgPicture.asset(
-                  'assets/svgs/bankofspain.svg',
+                  widget.assetName,
                   height: 50,
                   width: 50,
                 ),
