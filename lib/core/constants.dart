@@ -1,16 +1,14 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, avoid_function_literals_in_foreach_calls
 
 import 'dart:convert';
 
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/quote_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-
-const String GoogleMapAPI = 'AIzaSyBuuKWh4NumeNi3JXoOG2YqMHu399rOo9s';
 
 const String FWPublicKey = 'FLWPUBK-c609afd20eaa92830893fc89408d2fbf-X';
 const String FWSecretKey = 'FLWSECK-77a670d7c734149c075f3421cbc8042e-X';
@@ -103,10 +101,9 @@ Future sendFirebaseNotification(
       'user': userId,
       'avatar': avatar,
       'message': message,
-      'type': type,
       'id': id ?? '',
       'created_at': FieldValue.serverTimestamp(),
-      'sender': AuthControllers.to.liveUser.value!.uid,
+      'sender': QuoteControllers.to.allQuotes.forEach((element) => element.id),
     });
   } catch (e) {
     rethrow;

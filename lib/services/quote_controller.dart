@@ -2,6 +2,7 @@
 
 import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
+import 'package:agora_care/core/constants.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +14,8 @@ enum QuoteStatus { LOADING, ERROR, EMPTY, SUCCESS }
 
 class QuoteControllers extends GetxController {
   final _authController = Get.find<AuthControllers>();
+
+  static QuoteControllers to = Get.find();
   DatabaseService? uid;
   DocumentReference? groupDocumentReference;
 
@@ -220,6 +223,13 @@ class QuoteControllers extends GetxController {
 
       // Create reference and write data to Firebase
       await docUser.add(json);
+
+      await sendFirebaseNotification(
+        _authController.liveUser.value!.uid!,
+        "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
+        'Todays Quote has been posted',
+        quotesCollection.id,
+      );
 
       await groupDocumentReference!.update({
         "members": FieldValue.arrayUnion(

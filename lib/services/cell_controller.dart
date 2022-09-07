@@ -255,10 +255,6 @@ class CellControllers extends GetxController {
     });
   }
 
-  // Stream<QuerySnapshot<Object?>> getAllCells() {
-  //   final quotes = groupCollection.orderBy("createdAt").snapshots();
-  //   return quotes;
-  // }
   gettingUserData() async {
     await HelperFunction.getUserEmailFromSF().then((value) {});
     // getting the list of snapshots in our stream
