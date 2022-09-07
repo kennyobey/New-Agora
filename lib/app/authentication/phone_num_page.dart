@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
+
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import '../../services/auth_controller.dart';
 
