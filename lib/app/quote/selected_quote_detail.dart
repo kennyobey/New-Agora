@@ -7,8 +7,10 @@ import 'dart:ui';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -28,12 +30,14 @@ class SelectedQuoteDetails extends StatefulWidget {
   final String quoteText;
   final String groupId;
   final String userName;
+  final String userImage;
   const SelectedQuoteDetails({
     Key? key,
     required this.quoteId,
     required this.quoteText,
     required this.groupId,
     required this.userName,
+    required this.userImage,
   }) : super(key: key);
 
   @override
@@ -47,6 +51,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
   String admin = "";
   final commentController = TextEditingController();
 
+  final _authController = Get.find<AuthControllers>();
   final _quoteContoller = Get.find<QuoteControllers>();
 
   bool isLiked = false;
@@ -369,12 +374,12 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                                   });
                                 },
                                 child: isLiked
-                                    ? SvgPicture.asset(
-                                        'assets/svgs/heart.svg',
-                                      )
-                                    : Icon(
+                                    ? Icon(
                                         CupertinoIcons.heart_fill,
                                         color: AppColor().errorColor,
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/svgs/heart.svg',
                                       ),
                               ),
                             ],
@@ -394,11 +399,26 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SvgPicture.asset(
-                                'assets/svgs/bankofspain.svg',
-                                height: 50,
-                                width: 50,
-                              ),
+                              _authController.liveUser.value!.profilePic == null
+                                  ? Image.asset(
+                                      'assets/images/placeholder.png',
+                                      height: 50,
+                                      width: 50,
+                                    )
+                                  : Container(
+                                      height: 60,
+                                      width: 60,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(80),
+                                        image: DecorationImage(
+                                          image: CachedNetworkImageProvider(
+                                            _authController
+                                                .liveUser.value!.profilePic!,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
                               const Gap(5),
                               Expanded(
                                 child: Container(
@@ -464,182 +484,6 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                 )),
               ],
             ),
-            // DraggableScrollableSheet(
-            //   maxChildSize: 0.85,
-            //   initialChildSize: 0.35,
-            //   minChildSize: 0.2,
-            //   builder:
-            //       (BuildContext context, ScrollController scrollController) {
-            //     return Container(
-            //       height: double.infinity,
-            //       decoration: BoxDecoration(
-            //         color: AppColor().whiteColor,
-            //         borderRadius: const BorderRadius.only(
-            //           topLeft: Radius.circular(20),
-            //           topRight: Radius.circular(20),
-            //         ),
-            //       ),
-            //       child: ListView(
-            //         padding: EdgeInsets.zero,
-            //         controller: scrollController,
-            //         scrollDirection: Axis.vertical,
-            //         children: [
-            //           Padding(
-            //             padding: const EdgeInsets.symmetric(
-            //                 vertical: 20, horizontal: 20),
-            //             child: Row(
-            //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //               children: [
-            //                 customTitleText(
-            //                   'Discussions',
-            //                   size: 18,
-            //                   fontWeight: FontWeight.w700,
-            //                   colors: AppColor().primaryColor,
-            //                 ),
-            //                 const Spacer(),
-            //                 InkWell(
-            //                   onTap: () async {
-            //                     await _quoteContoller.sharePost(
-            //                         _quoteContoller.allQuotes.last.id!);
-            //                     RenderRepaintBoundary boundary =
-            //                         scr.currentContext!.findRenderObject()
-            //                             as RenderRepaintBoundary;
-            //                     var image = await boundary.toImage();
-            //                     var byteData = await image.toByteData(
-            //                         format: ImageByteFormat.png);
-            //                     var pngBytes = byteData!.buffer.asUint8List();
-            //                     String tempPath =
-            //                         (await getTemporaryDirectory()).path;
-            //                     var dates = DateTime.now().toLocal().toString();
-            //                     await getPdf(pngBytes, dates, tempPath);
-            //                     var pathurl = '$tempPath/$dates.pdf';
-            //                     await Share.shareFiles([pathurl]);
-            //                   },
-            //                   child: SvgPicture.asset(
-            //                     'assets/svgs/share.svg',
-            //                     height: 24,
-            //                   ),
-            //                 ),
-            //                 const Gap(10),
-            //                 InkWell(
-            //                   onTap: () {
-            //                     isLiked
-            //                         ? _quoteContoller.likePost(
-            //                             _quoteContoller.allQuotes.last.id!)
-            //                         : _quoteContoller.unLikePost(
-            //                             _quoteContoller.allQuotes.last.id!);
-
-            //                     setState(() {
-            //                       isLiked = !isLiked;
-            //                     });
-            //                   },
-            //                   child: isLiked
-            //                       ? SvgPicture.asset(
-            //                           'assets/svgs/heart.svg',
-            //                         )
-            //                       : Icon(
-            //                           CupertinoIcons.heart_fill,
-            //                           color: AppColor().errorColor,
-            //                         ),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //           ...List.generate(
-            //             10,
-            //             growable: true,
-            //             (index) => const Padding(
-            //               padding: EdgeInsets.only(bottom: 10),
-            //               child: ChatWidget(),
-            //             ),
-            //           ),
-            //           Padding(
-            //             padding: mediaQueryData.viewInsets,
-            //             child: Form(
-            //               child: Container(
-            //                 height: 80,
-            //                 padding: const EdgeInsets.symmetric(horizontal: 10),
-            //                 decoration: BoxDecoration(
-            //                   color: AppColor().whiteColor,
-            //                   boxShadow: const [
-            //                     BoxShadow(
-            //                       color: Colors.black26,
-            //                       spreadRadius: 0.1,
-            //                       blurRadius: 5,
-            //                       offset: Offset(0.0, 0.05),
-            //                     ),
-            //                   ],
-            //                 ),
-            //                 child: Row(
-            //                   children: [
-            //                     Image.asset(
-            //                       'assets/images/chatPic.png',
-            //                       height: 50,
-            //                     ),
-            //                     const Gap(10),
-            //                     Expanded(
-            //                       child: SizedBox(
-            //                         height: 45,
-            //                         child: TextFormField(
-            //                           autofocus: false,
-            //                           controller: commentController,
-            //                           keyboardType: TextInputType.text,
-            //                           textInputAction: TextInputAction.done,
-            //                           decoration: InputDecoration(
-            //                             isDense: true,
-            //                             fillColor: const Color(0xffFFFFFF),
-            //                             focusedBorder: OutlineInputBorder(
-            //                               borderSide: BorderSide(
-            //                                   color: AppColor().lightTextColor,
-            //                                   width: 1),
-            //                               borderRadius: const BorderRadius.all(
-            //                                 Radius.circular(20),
-            //                               ),
-            //                             ),
-            //                             enabledBorder: OutlineInputBorder(
-            //                               borderSide: BorderSide(
-            //                                   color: AppColor().lightTextColor,
-            //                                   width: 1),
-            //                               borderRadius: const BorderRadius.all(
-            //                                 Radius.circular(20),
-            //                               ),
-            //                             ),
-            //                             border: OutlineInputBorder(
-            //                               borderSide: BorderSide(
-            //                                   color: AppColor().lightTextColor,
-            //                                   width: 1),
-            //                               borderRadius: const BorderRadius.all(
-            //                                 Radius.circular(20),
-            //                               ),
-            //                             ),
-            //                             hintText: 'Add a comment...',
-            //                             suffix: customDescriptionText(
-            //                               'Post',
-            //                               fontSize: 12,
-            //                               fontWeight: FontWeight.w600,
-            //                               colors: AppColor().primaryColor,
-            //                             ),
-            //                             hintStyle: const TextStyle(
-            //                               fontFamily: 'HK GROTESK',
-            //                               fontSize: 14,
-            //                               fontStyle: FontStyle.normal,
-            //                               fontWeight: FontWeight.normal,
-            //                             ),
-            //                           ),
-            //                           // onFieldSubmitted: onSubmited,
-            //                         ),
-            //                       ),
-            //                     ),
-            //                   ],
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     );
-            //   },
-            // ),
           ],
         ),
       ),

@@ -25,7 +25,7 @@ class CellInfo extends StatefulWidget {
 
 class _CellInfoState extends State<CellInfo> {
   final _cellContoller = Get.find<CellControllers>();
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   String userName = "";
   String email = "";
   String groupName = "";
@@ -251,7 +251,7 @@ class _CellInfoState extends State<CellInfo> {
             //                         snapshot.data['groups'][reverseIndex]),
             //                     assetName: 'assets/svgs/bank.svg',
             //                     userName:
-            //                         _authContoller.liveUser.value!.username!,
+            //                         _authController.liveUser.value!.username!,
             //                   );
             //                 },
             //               );
@@ -294,10 +294,10 @@ class _CellInfoState extends State<CellInfo> {
                           groupName: item.groupName,
                           colors: colorList[random.nextInt(colorList.length)],
                           assetName:
-                              _authContoller.liveUser.value!.profilePic == null
+                              _authController.liveUser.value!.profilePic == null
                                   ? 'assets/svgs/bank.svg'
-                                  : _authContoller.liveUser.value!.profilePic!,
-                          userName: _authContoller.liveUser.value!.username!,
+                                  : _authController.liveUser.value!.profilePic!,
+                          userName: _authController.liveUser.value!.username!,
                         );
                       },
                     ));

@@ -3,13 +3,13 @@ import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_stack/flutter_image_stack.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -189,11 +189,25 @@ class _ChatPageState extends State<ChatPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SvgPicture.asset(
-                  widget.assetName,
-                  height: 50,
-                  width: 50,
-                ),
+                _authController.liveUser.value!.profilePic == null
+                    ? Image.asset(
+                        'assets/images/placeholder.png',
+                        height: 50,
+                        width: 50,
+                      )
+                    : Container(
+                        height: 60,
+                        width: 60,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(80),
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                              _authController.liveUser.value!.profilePic!,
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                 const Gap(5),
                 Expanded(
                   child: Container(

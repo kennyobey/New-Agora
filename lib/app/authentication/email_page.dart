@@ -25,7 +25,7 @@ class EmailPage extends StatefulWidget {
 }
 
 class _EmailPageState extends State<EmailPage> {
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   bool _isLoading = false;
   final formKey = GlobalKey<FormState>();
   String email = "";
@@ -178,7 +178,7 @@ class _EmailPageState extends State<EmailPage> {
       setState(() {
         _isLoading = true;
       });
-      await _authContoller
+      await _authController
           .registerUserWithEmailandPassword(
         _emailController.text.trim(),
         _passworController.text.trim(),

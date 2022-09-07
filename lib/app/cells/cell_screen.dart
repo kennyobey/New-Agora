@@ -29,7 +29,7 @@ class CellsScreen extends StatefulWidget {
 
 class _CellsScreenState extends State<CellsScreen> {
   final _cellContoller = Get.find<CellControllers>();
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   final _scaffoldState = GlobalKey();
 
   String userName = "";
@@ -243,7 +243,7 @@ class _CellsScreenState extends State<CellsScreen> {
             //                         snapshot.data['groups'][reverseIndex]),
             //                     assetName: 'assets/svgs/bank.svg',
             //                     userName:
-            //                         _authContoller.liveUser.value!.username!,
+            //                         _authController.liveUser.value!.username!,
             //                   );
             //                 },
             //               );
@@ -286,7 +286,7 @@ class _CellsScreenState extends State<CellsScreen> {
                           groupName: item.groupName,
                           colors: colorList[random.nextInt(colorList.length)],
                           assetName: 'assets/svgs/bank.svg',
-                          userName: _authContoller.liveUser.value!.username!,
+                          userName: _authController.liveUser.value!.username!,
                         );
                       },
                     ));
@@ -338,7 +338,7 @@ class _CellsScreenState extends State<CellsScreen> {
             //                     assetName: 'assets/svgs/bank.svg',
             //                     assetName2: 'assets/svgs/people.svg',
             //                     userName:
-            //                         _authContoller.liveUser.value!.username!,
+            //                         _authController.liveUser.value!.username!,
             //                   );
             //                 },
             //               );
@@ -385,7 +385,7 @@ class _CellsScreenState extends State<CellsScreen> {
                           groupName: item.groupName,
                           assetName: 'assets/svgs/bank.svg',
                           assetName2: 'assets/svgs/people.svg',
-                          userName: _authContoller.liveUser.value!.username!,
+                          userName: _authController.liveUser.value!.username!,
                         );
                       });
                 } else if (_cellContoller.cellStatus == CellStatus.EMPTY) {

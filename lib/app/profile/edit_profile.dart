@@ -26,7 +26,7 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   String? selectedGender;
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   final formKey = GlobalKey<FormState>();
   late bool _isLoading = false;
 
@@ -54,7 +54,7 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void initState() {
-    profilePicLink = _authContoller.liveUser.value!.profilePic!;
+    profilePicLink = _authController.liveUser.value!.profilePic!;
     super.initState();
   }
 
@@ -66,7 +66,7 @@ class _EditProfileState extends State<EditProfile> {
       imageQuality: 90,
     );
     if (file != null) {
-      await _authContoller.updateAvatar(
+      await _authController.updateAvatar(
         File(file!.path),
       );
     }
@@ -165,7 +165,7 @@ class _EditProfileState extends State<EditProfile> {
                                                 image: DecorationImage(
                                                   image:
                                                       CachedNetworkImageProvider(
-                                                    // _authContoller.liveUser
+                                                    // _authController.liveUser
                                                     //     .value!.profilePic!,
                                                     profilePicLink,
                                                   ),
@@ -232,9 +232,9 @@ class _EditProfileState extends State<EditProfile> {
                     const Gap(30),
                     CustomTextField(
                       label: 'Username',
-                      hint: _authContoller.liveUser.value!.username == null
+                      hint: _authController.liveUser.value!.username == null
                           ? 'Enter username'
-                          : _authContoller.liveUser.value!.username!,
+                          : _authController.liveUser.value!.username!,
                       keyType: TextInputType.name,
                       validatorText: '** Field cannot be empty',
                       color: AppColor().lightTextColor,
@@ -244,9 +244,9 @@ class _EditProfileState extends State<EditProfile> {
                     const Gap(15),
                     CustomTextField(
                       label: 'Fullname',
-                      hint: _authContoller.liveUser.value!.username == null
+                      hint: _authController.liveUser.value!.username == null
                           ? 'Enter username'
-                          : _authContoller.liveUser.value!.username!,
+                          : _authController.liveUser.value!.username!,
                       keyType: TextInputType.name,
                       validatorText: '** Field cannot be empty',
                       color: AppColor().lightTextColor,
@@ -292,10 +292,11 @@ class _EditProfileState extends State<EditProfile> {
                                         color: AppColor().primaryColor,
                                       ),
                                       hint: customDescriptionText(
-                                        _authContoller.liveUser.value!.gender ==
+                                        _authController
+                                                    .liveUser.value!.gender ==
                                                 null
                                             ? 'Gender'
-                                            : _authContoller
+                                            : _authController
                                                 .liveUser.value!.gender!,
                                         fontSize: 14,
                                         fontWeight: FontWeight.normal,
@@ -340,10 +341,10 @@ class _EditProfileState extends State<EditProfile> {
                                   children: [
                                     const Gap(10),
                                     customDescriptionText(
-                                      _authContoller.liveUser.value!.gender ==
+                                      _authController.liveUser.value!.gender ==
                                               null
                                           ? 'Gender'
-                                          : _authContoller
+                                          : _authController
                                               .liveUser.value!.gender!,
                                       colors: AppColor().lightTextColor,
                                     ),
@@ -355,9 +356,9 @@ class _EditProfileState extends State<EditProfile> {
                     const Gap(15),
                     CustomTextField(
                       label: 'City',
-                      hint: _authContoller.liveUser.value!.postalCode == null
+                      hint: _authController.liveUser.value!.postalCode == null
                           ? 'Enter city and postcode'
-                          : _authContoller.liveUser.value!.postalCode!,
+                          : _authController.liveUser.value!.postalCode!,
                       keyType: TextInputType.text,
                       validatorText: '** Field cannot be empty',
                       color: AppColor().lightTextColor,
@@ -367,9 +368,9 @@ class _EditProfileState extends State<EditProfile> {
                     const Gap(15),
                     CustomTextField(
                       label: 'Address',
-                      hint: _authContoller.liveUser.value!.address == null
+                      hint: _authController.liveUser.value!.address == null
                           ? 'Enter address'
-                          : _authContoller.liveUser.value!.address!,
+                          : _authController.liveUser.value!.address!,
                       keyType: TextInputType.streetAddress,
                       validatorText: '** Field cannot be empty',
                       color: AppColor().lightTextColor,
@@ -392,7 +393,7 @@ class _EditProfileState extends State<EditProfile> {
                                 setState(() {
                                   _isLoading = true;
                                 });
-                                await _authContoller.userChanges(
+                                await _authController.userChanges(
                                   _usernameController.text,
                                   _fullnameController.text,
                                   selectedGender.toString(),

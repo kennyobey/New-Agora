@@ -7,8 +7,10 @@ import 'dart:ui';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
 import 'package:agora_care/services/quote_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -26,12 +28,14 @@ class QuoteDetails extends StatefulWidget {
   final String groupId;
   final String groupName;
   final String userName;
+  final String userImage;
   final String assetName;
   const QuoteDetails({
     Key? key,
     required this.groupId,
     required this.groupName,
     required this.userName,
+    required this.userImage,
     required this.assetName,
   }) : super(key: key);
 
@@ -45,6 +49,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   Stream<QuerySnapshot>? chat;
   String admin = "";
 
+  final _authController = Get.find<AuthControllers>();
   final _quoteContoller = Get.find<QuoteControllers>();
 
   bool isLiked = false;
@@ -152,18 +157,11 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                       ),
                     ),
                     Positioned(
-                      top: 150,
+                      top: 120,
                       left: 10,
                       right: 10,
                       child: Column(
                         children: [
-                          // customDescriptionText(
-                          //   '“Be yourself everyone else is already taken.”',
-                          //   fontSize: 20,
-                          //   fontWeight: FontWeight.w700,
-                          //   textAlign: TextAlign.center,
-                          //   colors: AppColor().filledTextField,
-                          // ),
                           StreamBuilder<QuerySnapshot<Object?>>(
                               stream: _quoteContoller.getDailyQuote(),
                               builder: (context, AsyncSnapshot snapshot) {
@@ -200,7 +198,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                   );
                                 }
                               }),
-                          const Gap(30),
+                          const Gap(20),
                           Divider(
                             thickness: 1,
                             indent: 20,
@@ -376,12 +374,12 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                           _quoteContoller.allQuotes.last.id!);
                                 },
                                 child: isLiked
-                                    ? SvgPicture.asset(
-                                        'assets/svgs/heart.svg',
-                                      )
-                                    : Icon(
+                                    ? Icon(
                                         CupertinoIcons.heart_fill,
                                         color: AppColor().errorColor,
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/svgs/heart.svg',
                                       ),
                               ),
                             ],
@@ -401,11 +399,26 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SvgPicture.asset(
-                                'assets/svgs/bankofspain.svg',
-                                height: 50,
-                                width: 50,
-                              ),
+                              _authController.liveUser.value!.profilePic == null
+                                  ? Image.asset(
+                                      'assets/images/placeholder.png',
+                                      height: 50,
+                                      width: 50,
+                                    )
+                                  : Container(
+                                      height: 60,
+                                      width: 60,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(80),
+                                        image: DecorationImage(
+                                          image: CachedNetworkImageProvider(
+                                            _authController
+                                                .liveUser.value!.profilePic!,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
                               const Gap(5),
                               Expanded(
                                 child: Container(

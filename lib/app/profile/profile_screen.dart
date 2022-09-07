@@ -25,7 +25,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String email = "";
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   String profilePicLink =
       "https://github.com/Damscozy/agora_care/blob/2ce3a6a6952f9aa104921a3f4b50af251c621511/assets/images/chatPic.png";
 
@@ -39,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    _authContoller.getUserByModel(_authContoller.liveUser.value!.uid!);
+    _authController.getUserByModel(_authController.liveUser.value!.uid!);
     super.initState();
   }
 
@@ -91,9 +91,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Obx(() {
                               return customDescriptionText(
-                                _authContoller.liveUser.value!.fullName == null
+                                _authController.liveUser.value!.fullName == null
                                     ? 'Your Name'
-                                    : _authContoller.liveUser.value!.fullName!,
+                                    : _authController.liveUser.value!.fullName!,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 colors: AppColor().filledTextField,
@@ -101,11 +101,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }),
                             const Gap(5),
                             customDescriptionText(
-                              _authContoller.liveUser.value == null &&
-                                      _authContoller.liveUser.value!.email ==
+                              _authController.liveUser.value == null &&
+                                      _authController.liveUser.value!.email ==
                                           null
                                   ? 'example@mail.com'
-                                  : _authContoller.liveUser.value!.email!,
+                                  : _authController.liveUser.value!.email!,
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                               colors: Colors.black,
@@ -114,9 +114,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const Gap(5),
                         // Obx(() {
-                        //   if (_authContoller.liveUser.value!.profilePic ==
+                        //   if (_authController.liveUser.value!.profilePic ==
                         //           null ||
-                        //       _authContoller.liveUser.value!.profilePic == "") {
+                        //       _authController.liveUser.value!.profilePic == "") {
                         //     return Image.asset(
                         //       "assets/images/chatPic.png",
                         //       height: 50,
@@ -124,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         //     );
                         //   } else {
                         //     return Image.network(
-                        //       _authContoller.liveUser.value!.profilePic!,
+                        //       _authController.liveUser.value!.profilePic!,
                         //       // profilePicLink,
                         //       height: 50,
                         //       width: 50,
@@ -132,8 +132,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         //   }
                         // }),
                         FutureBuilder<UserModel>(
-                            future: _authContoller.getUserByModel(
-                                _authContoller.liveUser.value!.uid!),
+                            future: _authController.getUserByModel(
+                                _authController.liveUser.value!.uid!),
                             builder: (BuildContext context, snapshot) {
                               if (snapshot.connectionState ==
                                       ConnectionState.done &&
@@ -202,9 +202,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Obx(() {
                           return customDescriptionText(
                             // '5',
-                            _authContoller.liveUser.value!.streak == null
+                            _authController.liveUser.value!.streak == null
                                 ? '0'
-                                : _authContoller.liveUser.value!.streak
+                                : _authController.liveUser.value!.streak
                                     .toString(),
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -234,9 +234,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Obx(() {
                           return customDescriptionText(
                             // '20',
-                            _authContoller.liveUser.value!.weeks == null
+                            _authController.liveUser.value!.weeks == null
                                 ? '0'
-                                : _authContoller.liveUser.value!.weeks
+                                : _authController.liveUser.value!.weeks
                                     .toString(),
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -391,7 +391,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             IconButton(
                               onPressed: () async {
-                                await _authContoller.signOut();
+                                await _authController.signOut();
                               },
                               icon: const Icon(
                                 Icons.done,

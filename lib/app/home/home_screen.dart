@@ -29,7 +29,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   final cellContoller = Get.find<CellControllers>();
   final _quoteContoller = Get.find<QuoteControllers>();
 
@@ -85,25 +85,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // joinedOrNot(
-  //   String userName,
-  //   String groupId,
-  //   String groupname,
-  // ) async {
-  //   await DatabaseService(uid: _authContoller.liveUser.value!.uid)
-  //       .isUserJoined(groupname, groupId, userName)
-  //       .then((value) {
-  //     setState(() {
-  //       isJoined = value;
-  //     });
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     // if (kDebugMode) {
-    //   print("testing user is ${_authContoller.liveUser.value!.toJson()}");
-    //   print("testing user admin is ${_authContoller.liveUser.value!.admin}");
+    //   print("testing user is ${_authController.liveUser.value!.toJson()}");
+    //   print("testing user admin is ${_authController.liveUser.value!.admin}");
     // }
     return Scaffold(
       appBar: AppBar(
@@ -123,12 +109,12 @@ class _HomeScreenState extends State<HomeScreen> {
               const Gap(20),
               Center(
                 child: Obx(() {
-                  return (_authContoller.liveUser.value == null)
+                  return (_authController.liveUser.value == null)
                       ? CircularProgressIndicator(
                           color: AppColor().filledTextField,
                         )
                       : customTitleText(
-                          'Good afternoon, ${_authContoller.liveUser.value!.fullName}',
+                          'Good afternoon, ${_authController.liveUser.value!.fullName}',
                           size: 20,
                           spacing: -0.1,
                           fontWeight: FontWeight.w700,
@@ -145,15 +131,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   Obx(() {
-                    return _authContoller.liveUser.value == null
+                    return _authController.liveUser.value == null
                         ? CircularProgressIndicator(
                             color: AppColor().filledTextField,
                           )
                         : customDescriptionText(
                             // '5',
-                            _authContoller.liveUser.value!.streak == null
+                            _authController.liveUser.value!.streak == null
                                 ? '0'
-                                : _authContoller.liveUser.value!.streak
+                                : _authController.liveUser.value!.streak
                                     .toString(),
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -181,13 +167,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   Obx(() {
-                    return _authContoller.liveUser.value == null
+                    return _authController.liveUser.value == null
                         ? Container()
                         : customDescriptionText(
                             // '20',
-                            _authContoller.liveUser.value!.weeks == null
+                            _authController.liveUser.value!.weeks == null
                                 ? '0'
-                                : _authContoller.liveUser.value!.weeks
+                                : _authController.liveUser.value!.weeks
                                     .toString(),
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -216,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               'quote id is ${_quoteContoller.allQuotes.last.id!}');
                         }
                         _quoteContoller.joinedOrNot(
-                          _authContoller.liveUser.value!.username!,
+                          _authController.liveUser.value!.username!,
                           _quoteContoller.allQuotes.last.groupId!,
                           _quoteContoller.allQuotes.last.dailyQuote!,
                         );
@@ -227,12 +213,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             groupId: _quoteContoller.allQuotes.last.groupId!,
                             groupName:
                                 _quoteContoller.allQuotes.last.dailyQuote!,
-                            userName: _authContoller.liveUser.value!.username!,
-                            assetName: _authContoller
+                            userName: _authController.liveUser.value!.username!,
+                            userImage:
+                                _authController.liveUser.value!.profilePic!,
+                            assetName: _authController
                                         .liveUser.value!.profilePic ==
                                     null
                                 ? 'assets/images/placeholder.png'
-                                : _authContoller.liveUser.value!.profilePic!,
+                                : _authController.liveUser.value!.profilePic!,
                           ),
                           // transition: Transition.downToUp,
                         );
@@ -398,8 +386,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           groupName: item.groupName,
                           admin: item.admin,
                           colors: colorList[index],
-                          assetName: 'assets/svgs/bank.svg',
-                          userName: _authContoller.liveUser.value!.username!,
+                          assetName: item.profilePic == null
+                              ? 'assets/svgs/bank.svg'
+                              : item.profilePic!,
+                          userName: _authController.liveUser.value!.username!,
                           memberId: item.members,
                         );
                       },
@@ -432,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
-                      // itemCount: imageName.length,
+                      reverse: true,
                       itemCount: _quoteContoller.allQuotes.length > 4
                           ? 4
                           : _quoteContoller.allQuotes.length,
@@ -526,6 +516,7 @@ class _HomeScreenState extends State<HomeScreen> {
   GestureDetector recentQuotes({
     QuoteModel? quoteModel,
     String? assetName,
+    String? userImage,
   }) {
     final random = Random();
     return GestureDetector(
@@ -536,7 +527,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         _quoteContoller.joinedOrNot(
-          _authContoller.liveUser.value!.username!,
+          _authController.liveUser.value!.username!,
           quoteModel!.groupId!,
           quoteModel.dailyQuote!,
         );
@@ -549,7 +540,8 @@ class _HomeScreenState extends State<HomeScreen> {
             quoteId: quoteModel.id!,
             groupId: quoteModel.groupId!,
             quoteText: quoteModel.dailyQuote!,
-            userName: _authContoller.liveUser.value!.username!,
+            userName: _authController.liveUser.value!.username!,
+            userImage: _authController.liveUser.value!.profilePic!,
           ),
         );
       },

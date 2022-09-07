@@ -23,7 +23,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   bool _isLoading = false;
 
   String email = "";
@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoading = true;
       });
-      await _authContoller
+      await _authController
           .loginWithUserNameandPassword(
         _emailController.text.trim(),
         _passworController.text.trim(),

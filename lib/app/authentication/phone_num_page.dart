@@ -20,7 +20,7 @@ class PhonePage extends StatefulWidget {
 }
 
 class _PhonePageState extends State<PhonePage> {
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   final formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
   String initialCountry = 'NG';
@@ -141,7 +141,7 @@ class _PhonePageState extends State<PhonePage> {
                         ),
                         initialValue: number,
                         textFieldController:
-                            _authContoller.signupPhonenumberController,
+                            _authController.signupPhonenumberController,
                         formatInput: false,
                         // cursorColor: UIData.kbrightColor,
                         hintText: "07012345678",
@@ -207,7 +207,7 @@ class _PhonePageState extends State<PhonePage> {
                         if (kDebugMode) {
                           print('Sending OTP');
                         }
-                        await _authContoller
+                        await _authController
                             .sendVerificationCodes(number.phoneNumber);
                       },
                     ),

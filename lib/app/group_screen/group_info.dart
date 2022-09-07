@@ -26,7 +26,7 @@ class GroupInfo extends StatefulWidget {
 }
 
 class _GroupInfoState extends State<GroupInfo> {
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   // final _cellController = Get.find<CellControllers>();
   Stream? members;
   int? memberslen;
@@ -178,7 +178,7 @@ class _GroupInfoState extends State<GroupInfo> {
                           ),
                           const Gap(5),
                           customDescriptionText(
-                            _authContoller.liveUser.value!.admin == true
+                            _authController.liveUser.value!.admin == true
                                 ? getName(widget.adminName)
                                 : widget.adminName,
                           ),

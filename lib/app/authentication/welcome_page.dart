@@ -20,7 +20,7 @@ class WelComePage extends StatefulWidget {
 class _WelComePageState extends State<WelComePage> {
   final formKey = GlobalKey<FormState>();
   String? selectedGender;
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   late bool _isLoading = false;
 
   final TextEditingController _usernameController = TextEditingController();
@@ -208,7 +208,7 @@ class _WelComePageState extends State<WelComePage> {
                             setState(() {
                               _isLoading = true;
                             });
-                            await _authContoller.userChanges(
+                            await _authController.userChanges(
                               _usernameController.text,
                               _fullnameController.text,
                               selectedGender.toString(),

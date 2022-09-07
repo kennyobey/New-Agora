@@ -29,7 +29,7 @@ class AdminHomeScreen extends StatefulWidget {
 
 class _AdminHomeScreenState extends State<AdminHomeScreen>
     with TickerProviderStateMixin {
-  final _authContoller = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   final cellContoller = Get.find<CellControllers>();
 
   final _quoteContoller = Get.find<QuoteControllers>();
@@ -60,7 +60,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
   void initState() {
     super.initState();
     gettingUserData();
-    // _authContoller.readtUserList();
+    // _authController.readtUserList();
     _tabController = TabController(length: 3, vsync: this);
     _scrollController = ScrollController();
   }
@@ -95,8 +95,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
     final orientation = MediaQuery.of(context).orientation;
 
     if (kDebugMode) {
-      print("testing user is ${_authContoller.liveUser.value!.toJson()}");
-      print("testing user admin is ${_authContoller.liveUser.value!.admin}");
+      print("testing user is ${_authController.liveUser.value!.toJson()}");
+      print("testing user admin is ${_authController.liveUser.value!.admin}");
     }
     return Scaffold(
       floatingActionButton: Align(
@@ -154,7 +154,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
             Center(
               child: Obx(() {
                 return customTitleText(
-                  'Good afternoon, ${_authContoller.liveUser.value!.role}',
+                  'Good afternoon, ${_authController.liveUser.value!.role}',
                   size: 20,
                   spacing: -0.1,
                   fontWeight: FontWeight.w700,
@@ -173,9 +173,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 Obx(() {
                   return customDescriptionText(
                     // '5',
-                    _authContoller.liveUser.value!.streak == null
+                    _authController.liveUser.value!.streak == null
                         ? '0'
-                        : _authContoller.liveUser.value!.streak.toString(),
+                        : _authController.liveUser.value!.streak.toString(),
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     colors: AppColor().textColor,
@@ -204,9 +204,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 Obx(() {
                   return customDescriptionText(
                     // '20',
-                    _authContoller.liveUser.value!.weeks == null
+                    _authController.liveUser.value!.weeks == null
                         ? '0'
-                        : _authContoller.liveUser.value!.weeks.toString(),
+                        : _authController.liveUser.value!.weeks.toString(),
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     colors: AppColor().textColor,
@@ -445,7 +445,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     //                                       [reverseIndex]),
                     //                               assetName:
                     //                                   'assets/svgs/bank.svg',
-                    //                               userName: _authContoller
+                    //                               userName: _authController
                     //                                   .liveUser
                     //                                   .value!
                     //                                   .username!,
@@ -519,7 +519,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                               groupId: item.groupId,
                                               groupName: item.groupName,
                                               assetName: 'assets/svgs/bank.svg',
-                                              userName: _authContoller
+                                              userName: _authController
                                                   .liveUser.value!.username!,
                                             ),
                                           ],
@@ -535,7 +535,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.5,
                       child: StreamBuilder<List<UserList>>(
-                          stream: _authContoller.readtUserList(),
+                          stream: _authController.readtUserList(),
                           builder: (context, snapshot) {
                             if (snapshot.hasError) {
                               return customDescriptionText('Error');

@@ -22,7 +22,7 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   String userName = "";
   String email = "";
-  // final _authContoller = Get.find<AuthControllers>();
+  // final _authController = Get.find<AuthControllers>();
   Stream? groups;
   bool _isLoading = false;
   String groupName = "";

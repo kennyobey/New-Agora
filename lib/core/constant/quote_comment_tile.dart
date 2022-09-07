@@ -1,7 +1,9 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/quote_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +36,7 @@ class QuoteCommentTile extends StatefulWidget {
 }
 
 class _QuoteCommentTileState extends State<QuoteCommentTile> {
+  final _authController = Get.find<AuthControllers>();
   final _quoteController = Get.find<QuoteControllers>();
   bool isLiked = false;
   Stream<QuerySnapshot>? chat;
@@ -71,11 +74,25 @@ class _QuoteCommentTileState extends State<QuoteCommentTile> {
         ),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: SvgPicture.asset(
-            'assets/svgs/bankofspain.svg',
-            height: 50,
-            width: 50,
-          ),
+          leading: _authController.liveUser.value!.profilePic == null
+              ? Image.asset(
+                  'assets/images/placeholder.png',
+                  height: 50,
+                  width: 50,
+                )
+              : Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(80),
+                    image: DecorationImage(
+                      image: CachedNetworkImageProvider(
+                        _authController.liveUser.value!.profilePic!,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
