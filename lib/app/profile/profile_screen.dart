@@ -274,9 +274,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: 'Consult a psychologist',
-                onTap: () {
-                  Get.to(() => const PhonePage());
-                },
+                // onTap: () {
+                //   Get.to(() => const PhonePage());
+                // },
               ),
               const Gap(15),
               CustomContainer(
@@ -334,6 +334,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               const Gap(15),
+              CustomBorderButton(
+                borderColor: AppColor().errorColor,
+                buttonText: 'Delete Account',
+                buttonColor: AppColor().errorColor,
+                textColor: AppColor().whiteColor,
+              )
             ],
           ),
         ),
