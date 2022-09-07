@@ -567,6 +567,7 @@ class CustomBorderButton extends StatelessWidget {
     Key? key,
     this.onTap,
     this.width,
+    this.textSize,
     this.textColor,
     this.buttonColor,
     this.borderRadius,
@@ -574,6 +575,7 @@ class CustomBorderButton extends StatelessWidget {
     required this.borderColor,
   }) : super(key: key);
   final double? width;
+  final double? textSize;
   final Color? textColor;
   final Color borderColor;
   final String? buttonText;
@@ -598,7 +600,7 @@ class CustomBorderButton extends StatelessWidget {
         child: Center(
           child: customTitleText(
             buttonText!,
-            size: 16,
+            size: textSize ?? 16,
             colors: textColor,
           ),
         ),

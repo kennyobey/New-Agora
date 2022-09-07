@@ -406,12 +406,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Get.to(() => const AccountStatement());
                 },
               ),
-              const Gap(15),
+              const Gap(20),
               CustomBorderButton(
                 borderColor: AppColor().errorColor,
                 buttonText: 'Delete Account',
-                buttonColor: AppColor().errorColor,
-                textColor: AppColor().whiteColor,
+                textSize: 14,
+                textColor: AppColor().errorColor,
               )
             ],
           ),
