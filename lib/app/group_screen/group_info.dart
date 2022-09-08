@@ -15,6 +15,7 @@ class GroupInfo extends StatefulWidget {
   final String groupName;
   final String adminName;
   final String userName;
+  final List<String>? member;
   final List<String>? memberName;
 
   const GroupInfo(
@@ -23,7 +24,8 @@ class GroupInfo extends StatefulWidget {
       required this.groupName,
       required this.groupId,
       this.memberName,
-      required this.userName})
+      required this.userName,
+      this.member})
       : super(key: key);
 
   @override
@@ -66,6 +68,7 @@ class _GroupInfoState extends State<GroupInfo> {
 
   @override
   Widget build(BuildContext context) {
+    print("memeber length is for info ${widget.member}");
     if (kDebugMode) {
       print('members numbers is $memberslen');
     }
