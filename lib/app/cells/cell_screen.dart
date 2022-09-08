@@ -247,7 +247,10 @@ class _CellsScreenState extends State<CellsScreen> {
                           description: item.description,
                           assetName: 'assets/svgs/bank.svg',
                           colors: colorList[random.nextInt(colorList.length)],
-                          userName: _authController.liveUser.value!.username!,
+                          userName:
+                              _authController.liveUser.value!.username == null
+                                  ? 'No Username'
+                                  : _authController.liveUser.value!.username!,
                         );
                       },
                     ));
@@ -301,7 +304,10 @@ class _CellsScreenState extends State<CellsScreen> {
                           time: item.createdAt!,
                           admin: item.admin!,
                           description: item.description!,
-                          userName: _authController.liveUser.value!.username!,
+                          userName:
+                              _authController.liveUser.value!.username == null
+                                  ? 'No Username'
+                                  : _authController.liveUser.value!.username!,
                         );
                       });
                 } else if (_cellController.cellStatus == CellStatus.EMPTY) {

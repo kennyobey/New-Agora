@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison, unused_field
 
-import 'package:agora_care/app/group_screen/message.dart';
 import 'package:agora_care/app/model/cells_model.dart';
+import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';

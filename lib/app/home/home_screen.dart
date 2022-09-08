@@ -395,7 +395,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           assetName: item.profilePic == null
                               ? 'assets/svgs/bank.svg'
                               : item.profilePic!,
-                          userName: _authController.liveUser.value!.username!,
+                          userName:
+                              _authController.liveUser.value!.username == null
+                                  ? 'No Username'
+                                  : _authController.liveUser.value!.username!,
                         );
                       },
                     ),

@@ -1,4 +1,4 @@
-import 'package:agora_care/app/group_screen/chat_page.dart';
+import 'package:agora_care/app/cells/chat_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:flutter/foundation.dart';

@@ -1,12 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -128,76 +126,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                         const Gap(5),
-                        // Obx(() {
-                        //   if (_authController.liveUser.value!.profilePic ==
-                        //           null ||
-                        //       _authController.liveUser.value!.profilePic == "") {
-                        //     return Image.asset(
-                        //       "assets/images/chatPic.png",
-                        //       height: 50,
-                        //       width: 50,
-                        //     );
-                        //   } else {
-                        //     return Image.network(
-                        //       _authController.liveUser.value!.profilePic!,
-                        //       // profilePicLink,
-                        //       height: 50,
-                        //       width: 50,
-                        //     );
-                        //   }
-                        // }),
-                        FutureBuilder<UserModel>(
-                            future: _authController.getUserByModel(
-                                _authController.liveUser.value!.uid!),
-                            builder: (BuildContext context, snapshot) {
-                              if (snapshot.connectionState ==
-                                      ConnectionState.done &&
-                                  snapshot.hasData) {
-                                return Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(80),
-                                    image: DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                        snapshot.data!.profilePic!,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              } else if (snapshot.connectionState ==
-                                      ConnectionState.waiting ||
-                                  !snapshot.hasData) {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColor().primaryColor,
-                                  ),
-                                );
-                              } else {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColor().whiteColor,
-                                    border: Border.all(
-                                      width: 2,
-                                      color: AppColor().primaryColor,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: CircleAvatar(
-                                      radius: 50,
-                                      backgroundColor: AppColor().whiteColor,
-                                      child: Image.network(
-                                        "assets/images/placeholder.png",
-                                        height: 50,
-                                        width: 50,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                            }),
+                        Obx(() {
+                          if (_authController.liveUser.value!.profilePic ==
+                                  null ||
+                              _authController.liveUser.value!.profilePic ==
+                                  "") {
+                            return Image.asset(
+                              "assets/images/placeholder.png",
+                              height: 50,
+                              width: 50,
+                            );
+                          } else {
+                            return Image.network(
+                              _authController.liveUser.value!.profilePic!,
+                              height: 50,
+                              width: 50,
+                            );
+                          }
+                        }),
+                        // FutureBuilder<UserModel>(
+                        //     future: _authController.getUserByModel(
+                        //         _authController.liveUser.value!.uid!),
+                        //     builder: (BuildContext context, snapshot) {
+                        //       if (snapshot.connectionState ==
+                        //               ConnectionState.done &&
+                        //           snapshot.hasData) {
+                        //         return Container(
+                        //           height: 60,
+                        //           width: 60,
+                        //           decoration: BoxDecoration(
+                        //             borderRadius: BorderRadius.circular(80),
+                        //             image: DecorationImage(
+                        //               image: CachedNetworkImageProvider(
+                        //                 snapshot.data!.profilePic!,
+                        //               ),
+                        //               fit: BoxFit.cover,
+                        //             ),
+                        //           ),
+                        //         );
+                        //       } else if (snapshot.connectionState ==
+                        //           ConnectionState.waiting) {
+                        //         return Center(
+                        //           child: CircularProgressIndicator(
+                        //             color: AppColor().primaryColor,
+                        //           ),
+                        //         );
+                        //       } else {
+                        //         return Container(
+                        //           decoration: BoxDecoration(
+                        //             color: AppColor().whiteColor,
+                        //             border: Border.all(
+                        //               width: 2,
+                        //               color: AppColor().primaryColor,
+                        //             ),
+                        //             shape: BoxShape.circle,
+                        //           ),
+                        //           child: Center(
+                        //             child: CircleAvatar(
+                        //               radius: 50,
+                        //               backgroundColor: AppColor().whiteColor,
+                        //               child: Image.asset(
+                        //                 "assets/images/placeholder.png",
+                        //                 height: 50,
+                        //                 width: 50,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         );
+                        //       }
+                        //     }),
                       ],
                     ),
                     _authController.liveUser.value!.admin == true
@@ -439,6 +436,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       buttonText: 'Delete Account',
                       textSize: 14,
                       textColor: AppColor().errorColor,
+                      onTap: () async {
+                        showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: customDescriptionText(
+                                  "Delete Account",
+                                  fontWeight: FontWeight.bold,
+                                  colors: AppColor().primaryColor,
+                                ),
+                                content: customDescriptionText(
+                                    "Are you sure you want to delete your account?"),
+                                actions: [
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(
+                                      Icons.cancel,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  //Leave Chat
+                                  IconButton(
+                                    onPressed: () async {
+                                      await _authController.deleteUserAccount(
+                                          _authController.liveUser.value!.uid!);
+                                    },
+                                    icon: const Icon(
+                                      Icons.done,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            });
+                      },
                     )
             ],
           ),

@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:agora_care/app/authentication/%20verify_email_page.dart';
+import 'package:agora_care/app/authentication/email_page.dart';
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/app/home/admin_nav_screen.dart';
@@ -449,4 +450,19 @@ class AuthControllers extends GetxController {
       .snapshots()
       .map((snapshot) =>
           snapshot.docs.map((doc) => UserList.fromJson(doc.data())).toList());
+
+  Future deleteUserAccount(String userId) async {
+    try {
+      final user = _userDoc.doc(userId).delete().then(
+            (value) => Get.offAll(
+              () => const EmailPage(),
+            ),
+          );
+    } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return e.message;
+    }
+  }
 }
