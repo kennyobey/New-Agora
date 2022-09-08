@@ -12,6 +12,7 @@ class Cells extends StatelessWidget {
     Key? key,
     required this.groupId,
     required this.members,
+    required this.memberId,
     required this.time,
     required this.groupName,
     required this.assetName,
@@ -24,6 +25,7 @@ class Cells extends StatelessWidget {
   final String? groupName;
   final String? assetName;
   final String? userName;
+  final List<String>? memberId;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +75,7 @@ class Cells extends StatelessWidget {
                       ),
                       const Gap(10),
                       customDescriptionText(
-                        "$members members",
+                        memberId != null ? "${memberId!.length} members" : "0",
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         colors: AppColor().lightTextColor,

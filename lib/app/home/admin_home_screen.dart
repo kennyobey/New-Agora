@@ -378,106 +378,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 body: TabBarView(
                   controller: _tabController,
                   children: [
-                    // SizedBox(
-                    //   height: MediaQuery.of(context).size.height * 0.5,
-                    //   child: StreamBuilder(
-                    //     stream: groups,
-                    //     builder: (context, AsyncSnapshot snapshot) {
-                    //       if (snapshot.hasData) {
-                    //         if (snapshot.data['groups'] != null) {
-                    //           if (snapshot.data['groups'].length != 0) {
-                    //             return ListView.builder(
-                    //               padding: EdgeInsets.zero,
-                    //               scrollDirection: Axis.vertical,
-                    //               itemCount: snapshot.data['groups'].length > 4
-                    //                   ? 4
-                    //                   : snapshot.data['groups'].length,
-                    //               itemBuilder:
-                    //                   (BuildContext context, int index) {
-                    //                 int reverseIndex =
-                    //                     snapshot.data['groups'].length -
-                    //                         index -
-                    //                         1;
-
-                    //                 final member =
-                    //                     _quoteContoller.allQuotes.length;
-
-                    //                 return Container(
-                    //                   margin: const EdgeInsets.only(
-                    //                       left: 0,
-                    //                       right: 0,
-                    //                       top: 10,
-                    //                       bottom: 10),
-                    //                   child: Container(
-                    //                     padding: const EdgeInsets.all(4),
-                    //                     child: Row(
-                    //                       children: [
-                    //                         const SizedBox(
-                    //                           width: 10,
-                    //                         ),
-                    //                         Column(
-                    //                           crossAxisAlignment:
-                    //                               CrossAxisAlignment.start,
-                    //                           mainAxisAlignment:
-                    //                               MainAxisAlignment.spaceEvenly,
-                    //                           children: [
-                    //                             Cells(
-                    //                               members: member == null
-                    //                                   ? 'No members yet'
-                    //                                   : member.toString(),
-                    //                               time:
-                    //                                   "Last activity: 7th May 2022",
-                    //                               // time: snapshot.data[
-                    //                               //                 'groups']
-                    //                               //             ['members'] ==
-                    //                               //         null
-                    //                               //     ? "Last activity: No activites yet"
-                    //                               //     : snapshot
-                    //                               //         .data['groups']
-                    //                               //             ['members'][
-                    //                               //             'recentMessageTime']
-                    //                               //         .toString(),
-                    //                               groupId: getId(
-                    //                                   snapshot.data['groups']
-                    //                                       [reverseIndex]),
-                    //                               groupName: getName(
-                    //                                   snapshot.data['groups']
-                    //                                       [reverseIndex]),
-                    //                               assetName:
-                    //                                   'assets/svgs/bank.svg',
-                    //                               userName: _authController
-                    //                                   .liveUser
-                    //                                   .value!
-                    //                                   .username!,
-                    //                             ),
-                    //                           ],
-                    //                         )
-                    //                       ],
-                    //                     ),
-                    //                   ),
-                    //                 );
-                    //               },
-                    //             );
-                    //           } else {
-                    //             return customDescriptionText(
-                    //               'No Available Cell to join',
-                    //             );
-                    //           }
-                    //         } else {
-                    //           return customDescriptionText(
-                    //             'No Available Cell to join',
-                    //           );
-                    //         }
-                    //       } else {
-                    //         return Center(
-                    //           child: CircularProgressIndicator(
-                    //             color: Theme.of(context).primaryColor,
-                    //           ),
-                    //         );
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
+                    //CELLS LIST
                     Obx(() {
                       if (cellContoller.cellStatus == CellStatus.LOADING) {
                         return customDescriptionText('No Available  Cell');
@@ -492,6 +393,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                   print(
                                       'Cell is now ${item.groupName!.length}');
                                   print("group id for cell is ${item.groupId}");
+                                  print(
+                                      "memeber lenght for admin cell is ${item.members!.length}");
                                 }
                                 final member = _quoteContoller.allQuotes.length;
                                 return Container(
@@ -519,6 +422,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                               groupId: item.groupId,
                                               groupName: item.groupName,
                                               assetName: 'assets/svgs/bank.svg',
+                                              memberId: item.members,
                                               userName: _authController
                                                   .liveUser.value!.username!,
                                             ),
@@ -532,6 +436,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                         );
                       }
                     }),
+                    //MEMBER LIST
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.5,
                       child: StreamBuilder<List<UserList>>(
@@ -558,31 +463,27 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                             }
                           }),
                     ),
+                    //QUOTE LIST
                     Obx(() {
-                      return SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.25,
-                          child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        (orientation == Orientation.landscape)
-                                            ? 2
-                                            : 2),
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.vertical,
-                            // itemCount: imageName.length,
-                            itemCount: _quoteContoller.allQuotes.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final item = _quoteContoller.allQuotes[index];
-                              return recentQuotes(
-                                quote: item.dailyQuote,
-                                assetName: imageName[index],
-                                views: item.likes!.length.toString(),
-                                messages: item.reply!.length.toString(),
-                                shares: item.share!.length.toString(),
-                              );
-                            },
-                          ));
+                      return GridView.builder(
+                        padding: EdgeInsets.zero,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                (orientation == Orientation.landscape) ? 2 : 2),
+                        scrollDirection: Axis.vertical,
+                        // itemCount: imageName.length,
+                        itemCount: _quoteContoller.allQuotes.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = _quoteContoller.allQuotes[index];
+                          return recentQuotes(
+                            quote: item.dailyQuote,
+                            assetName: imageName[index],
+                            views: item.likes!.length.toString(),
+                            messages: item.reply!.length.toString(),
+                            shares: item.share!.length.toString(),
+                          );
+                        },
+                      );
                     }),
                   ],
                 ),
@@ -701,16 +602,19 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
   }) {
     final random = Random();
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.only(
+        right: 10,
+        bottom: 10,
+      ),
       child: SizedBox(
-        //width: MediaQuery.of(context).size.width * 0.5,
         height: MediaQuery.of(context).size.height * 0.25,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.2,
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              height: MediaQuery.of(context).size.height * 0.18,
               decoration: BoxDecoration(
                 color: colorList[random.nextInt(colorList.length)],
                 borderRadius: BorderRadius.circular(10),
