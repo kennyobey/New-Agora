@@ -2,8 +2,8 @@
 
 import 'dart:math';
 
+import 'package:agora_care/app/cells/cell_info.dart';
 import 'package:agora_care/app/cells/cell_screen.dart';
-import 'package:agora_care/app/group_screen/chat_page.dart';
 import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/app/quote/quote_details.dart';
 import 'package:agora_care/app/quote/selected_quote_detail.dart';
@@ -373,28 +373,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
-                      // itemCount: imageName.length,
                       itemCount: cellContoller.allAvailableCell.length > 4
                           ? 4
                           : cellContoller.allAvailableCell.length,
                       itemBuilder: (BuildContext context, int index) {
                         final item = cellContoller.allAvailableCell[index];
-                        if (kDebugMode) {
-                          print('Cell is now ${item.groupName!.length}');
-                          print("group id for cell is ${item.groupId}");
-                          print(
-                              "memeber lenght for cell is ${item.members!.length}");
-                        }
+                        // if (kDebugMode) {
+                        //   print('Cell is now ${item.groupName!.length}');
+                        //   print("group id for cell is ${item.groupId}");
+                        //   print(
+                        //       "memeber lenght for cell is ${item.members!.length}");
+                        // }
                         return recommendedCells(
                           groupId: item.groupId,
-                          groupName: item.groupName,
                           admin: item.admin,
+                          time: item.createdAt,
+                          memberId: item.members,
                           colors: colorList[index],
+                          groupName: item.groupName,
+                          description: item.description,
                           assetName: item.profilePic == null
                               ? 'assets/svgs/bank.svg'
                               : item.profilePic!,
                           userName: _authController.liveUser.value!.username!,
-                          memberId: item.members,
                         );
                       },
                     ),
@@ -430,9 +431,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           : _quoteContoller.allQuotes.length,
                       itemBuilder: (BuildContext context, int index) {
                         final item = _quoteContoller.allQuotes[index];
-                        if (kDebugMode) {
-                          print('Like is now ${item.likes!.length}');
-                        }
+                        // if (kDebugMode) {
+                        //   print('Like is now ${item.likes!.length}');
+                        // }
                         return recentQuotes(
                           assetName: imageName[index],
                           quoteModel: item,
@@ -450,11 +451,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   GestureDetector recommendedCells({
     Color? colors,
-    String? groupId,
     String? admin,
+    DateTime? time,
+    String? groupId,
+    String? userName,
     String? groupName,
     String? assetName,
-    String? userName,
+    String? description,
     List<String>? memberId,
   }) {
     cellContoller.joinedOrNot(
@@ -466,21 +469,32 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () async {
         if (kDebugMode) {
-          print('Joining Group');
+          print('GOING TO CELL INFO');
         }
 
-        cellContoller.memberAdd(groupId);
-
         Get.to(
-          () => ChatPage(
-            groupId: groupId,
-            groupName: groupName,
-            userName: userName,
-            member: memberId!,
+          () => CellInfo(
+            time: time!,
             admin: admin!,
+            groupId: groupId,
+            userName: userName,
+            groupName: groupName,
             assetName: assetName!,
+            memberList: memberId!,
+            description: description!,
           ),
         );
+
+        // Get.to(
+        //   () => ChatPage(
+        //     groupId: groupId,
+        //     groupName: groupName,
+        //     userName: userName,
+        //     member: memberId!,
+        //     admin: admin!,
+        //     assetName: assetName!,
+        //   ),
+        // );
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),

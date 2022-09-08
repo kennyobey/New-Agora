@@ -19,15 +19,17 @@ import 'package:intl/intl.dart';
 
 class CellInfo extends StatefulWidget {
   final DateTime time;
+  final String admin;
   final String groupId;
-  final String groupName;
   final String userName;
+  final String groupName;
   final String assetName;
   final String description;
   final List<String> memberList;
   const CellInfo({
     Key? key,
     required this.time,
+    required this.admin,
     required this.groupId,
     required this.groupName,
     required this.userName,
@@ -41,7 +43,7 @@ class CellInfo extends StatefulWidget {
 }
 
 class _CellInfoState extends State<CellInfo> {
-  final _cellContoller = Get.find<CellControllers>();
+  final _cellController = Get.find<CellControllers>();
   final _authController = Get.find<AuthControllers>();
   String userName = "";
   String email = "";
@@ -236,11 +238,18 @@ class _CellInfoState extends State<CellInfo> {
               buttonColor: AppColor().primaryColor,
               isLoading: _isLoading,
               onTap: () async {
+                if (kDebugMode) {
+                  print(
+                      '${widget.userName} is Joining ${widget.groupName} Cell');
+                }
+                await _cellController.memberAdd(widget.groupId);
                 Get.to(
                   () => ChatPage(
+                    admin: widget.admin,
                     groupId: widget.groupId,
-                    groupName: widget.groupName,
                     userName: widget.userName,
+                    member: widget.memberList,
+                    groupName: widget.groupName,
                     assetName: widget.assetName,
                   ),
                 );
@@ -263,29 +272,30 @@ class _CellInfoState extends State<CellInfo> {
             ),
             const Gap(20),
             Obx(() {
-              if (_cellContoller.cellStatus == CellStatus.LOADING) {
-                return customDescriptionText('No Available  Cell');
+              if (_cellController.cellStatus == CellStatus.LOADING) {
+                return customDescriptionText(
+                  'No Available  Cell',
+                );
               } else {
                 return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.1,
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
-                      // itemCount: imageName.length,
-                      itemCount: _cellContoller.allAvailableCell.length,
+                      itemCount: _cellController.allAvailableCell.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final item = _cellContoller.allAvailableCell[index];
-                        if (kDebugMode) {
-                          print('Cell is now ${item.groupName!.length}');
-                          print("group id for cell is ${item.groupId}");
-                        }
+                        final item = _cellController.allAvailableCell[index];
+                        // if (kDebugMode) {
+                        //   print('Cell is now ${item.groupName!.length}');
+                        //   print("group id for cell is ${item.groupId}");
+                        // }
                         final random = Random();
                         return recommendedCells(
+                          admin: item.admin!,
                           groupId: item.groupId,
                           groupName: item.groupName,
-                          memberlist: item.members!,
-                          colors: colorList[random.nextInt(colorList.length)],
                           assetName: 'assets/svgs/bank.svg',
+                          colors: colorList[random.nextInt(colorList.length)],
                           userName: _authController.liveUser.value!.username!,
                         );
                       },
@@ -301,23 +311,25 @@ class _CellInfoState extends State<CellInfo> {
 
   GestureDetector recommendedCells({
     Color? colors,
+    String? admin,
     String? groupId,
     String? groupName,
     String? assetName,
     String? userName,
-    List<String>? memberlist,
   }) {
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
-          print('$userName is Joining Group');
+          print('${widget.userName} is entering ${widget.groupName} cell');
         }
         Get.to(
           () => ChatPage(
+            admin: admin!,
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
             assetName: assetName!,
+            member: widget.memberList,
           ),
         );
       },
@@ -368,7 +380,9 @@ class _CellInfoState extends State<CellInfo> {
                       ),
                       const Gap(5),
                       customTitleText(
-                        memberlist != null ? "${memberlist.length}" : "0",
+                        widget.memberList != null
+                            ? "${widget.memberList.length}"
+                            : "0",
                         textAlign: TextAlign.left,
                         size: 12,
                         colors: AppColor().textColor,
@@ -387,6 +401,7 @@ class _CellInfoState extends State<CellInfo> {
   GestureDetector otherCells({
     Color? colors,
     String? groupId,
+    String? admin,
     String? groupName,
     String? assetName,
     String? userName,
@@ -395,14 +410,16 @@ class _CellInfoState extends State<CellInfo> {
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
-          print('Joining Group');
+          print('entering ${widget.memberList} Cell');
         }
         Get.to(
           () => ChatPage(
+            admin: admin!,
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
             assetName: assetName!,
+            member: widget.memberList,
           ),
         );
       },

@@ -30,7 +30,7 @@ class CellsScreen extends StatefulWidget {
 }
 
 class _CellsScreenState extends State<CellsScreen> {
-  final _cellContoller = Get.find<CellControllers>();
+  final _cellController = Get.find<CellControllers>();
   final _authController = Get.find<AuthControllers>();
   final _scaffoldState = GlobalKey();
 
@@ -221,7 +221,7 @@ class _CellsScreenState extends State<CellsScreen> {
             ),
             const Gap(20),
             Obx(() {
-              if (_cellContoller.cellStatus == CellStatus.LOADING) {
+              if (_cellController.cellStatus == CellStatus.LOADING) {
                 return customDescriptionText('No Available  Cell');
               } else {
                 return SizedBox(
@@ -230,22 +230,23 @@ class _CellsScreenState extends State<CellsScreen> {
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
                       // itemCount: imageName.length,
-                      itemCount: _cellContoller.allAvailableCell.length,
+                      itemCount: _cellController.allAvailableCell.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final item = _cellContoller.allAvailableCell[index];
-                        if (kDebugMode) {
-                          print('Cell is now ${item.groupName!.length}');
-                          print("group id for cell is ${item.groupId}");
-                        }
+                        final item = _cellController.allAvailableCell[index];
+                        // if (kDebugMode) {
+                        //   print('Cell is now ${item.groupName!.length}');
+                        //   print("group id for cell is ${item.groupId}");
+                        // }
                         final random = Random();
                         return recommendedCells(
+                          admin: item.admin,
+                          time: item.createdAt,
                           groupId: item.groupId,
                           groupName: item.groupName,
-                          description: item.description,
                           memberList: item.members!,
-                          time: item.createdAt,
-                          colors: colorList[random.nextInt(colorList.length)],
+                          description: item.description,
                           assetName: 'assets/svgs/bank.svg',
+                          colors: colorList[random.nextInt(colorList.length)],
                           userName: _authController.liveUser.value!.username!,
                         );
                       },
@@ -271,25 +272,25 @@ class _CellsScreenState extends State<CellsScreen> {
             const Gap(10),
             Expanded(
               child: Obx(() {
-                if (_cellContoller.cellStatus == CellStatus.LOADING) {
+                if (_cellController.cellStatus == CellStatus.LOADING) {
                   return Center(
                     child: CircularProgressIndicator(
                         color: AppColor().primaryColor),
                   );
-                } else if (_cellContoller.cellStatus != CellStatus.LOADING) {
+                } else if (_cellController.cellStatus != CellStatus.LOADING) {
                   return GridView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.vertical,
-                      itemCount: _cellContoller.allAvailableCell.length,
+                      itemCount: _cellController.allAvailableCell.length,
                       // itemCount: colorList.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               childAspectRatio: 5 / 3.7, crossAxisCount: 2),
                       itemBuilder: (BuildContext context, int index) {
                         // int reverseIndex =
-                        //     _cellContoller.allAvailableCell.length - index - 1;
+                        //     _cellController.allAvailableCell.length - index - 1;
                         final random = Random();
-                        final item = _cellContoller.allAvailableCell[index];
+                        final item = _cellController.allAvailableCell[index];
                         return otherCells(
                           colors: colorList[random.nextInt(colorList.length)],
                           groupId: item.groupId,
@@ -298,11 +299,12 @@ class _CellsScreenState extends State<CellsScreen> {
                           assetName2: 'assets/svgs/people.svg',
                           memberLength: item.members!,
                           time: item.createdAt!,
+                          admin: item.admin!,
                           description: item.description!,
                           userName: _authController.liveUser.value!.username!,
                         );
                       });
-                } else if (_cellContoller.cellStatus == CellStatus.EMPTY) {
+                } else if (_cellController.cellStatus == CellStatus.EMPTY) {
                   return customDescriptionText('No Available Cell to join');
                 } else {
                   return customDescriptionText('No Available Cell to join');
@@ -322,19 +324,17 @@ class _CellsScreenState extends State<CellsScreen> {
 
   GestureDetector recommendedCells({
     Color? colors,
-    String? groupId,
-    String? groupName,
+    String? admin,
     DateTime? time,
-    List<String>? memberList,
-    String? assetName,
+    String? groupId,
     String? userName,
+    String? groupName,
+    String? assetName,
     String? description,
+    List<String>? memberList,
   }) {
     return GestureDetector(
       onTap: () {
-        if (kDebugMode) {
-          print('$userName is Joining Group');
-        }
         // Get.to(
         //   () => ChatPage(
         //     groupId: groupId!,
@@ -344,6 +344,7 @@ class _CellsScreenState extends State<CellsScreen> {
         //   ),
         // );
         Get.to(() => CellInfo(
+              admin: admin!,
               time: time!,
               groupId: groupId!,
               groupName: groupName!,
@@ -389,6 +390,7 @@ class _CellsScreenState extends State<CellsScreen> {
   GestureDetector otherCells({
     Color? colors,
     DateTime? time,
+    String? admin,
     String? groupId,
     String? groupName,
     String? assetName,
@@ -403,6 +405,7 @@ class _CellsScreenState extends State<CellsScreen> {
           print('Joining Group');
         }
         Get.to(() => CellInfo(
+              admin: admin!,
               time: time!,
               groupId: groupId!,
               groupName: groupName!,

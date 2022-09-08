@@ -390,13 +390,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                               itemBuilder: (BuildContext context, int index) {
                                 final item =
                                     cellContoller.allAvailableCell[index];
-                                if (kDebugMode) {
-                                  print(
-                                      'Cell is now ${item.groupName!.length}');
-                                  print("group id for cell is ${item.groupId}");
-                                  print(
-                                      "memeber lenght for admin cell is ${item.members!.length}");
-                                }
+                                // if (kDebugMode) {
+                                //   print(
+                                //       'Cell is now ${item.groupName!.length}');
+                                //   print("group id for cell is ${item.groupId}");
+                                //   print(
+                                //       "memeber length for admin cell is ${item.members!.length}");
+                                // }
                                 final member = _quoteContoller.allQuotes.length;
                                 return Container(
                                   margin: const EdgeInsets.only(
@@ -426,10 +426,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                                       .toString())),
                                               groupId: item.groupId,
                                               groupName: item.groupName,
-                                              assetName: 'assets/svgs/bank.svg',
                                               memberId: item.members,
                                               userName: _authController
                                                   .liveUser.value!.username!,
+                                              assetName: 'assets/svgs/bank.svg',
                                             ),
                                           ],
                                         )

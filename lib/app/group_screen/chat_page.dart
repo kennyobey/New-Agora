@@ -1,14 +1,19 @@
+// ignore_for_file: unused_field
+
 import 'package:agora_care/app/group_screen/message.dart';
+import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/cell_controller.dart';
+import 'package:agora_care/widget/bottom_modal.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -24,16 +29,14 @@ class ChatPage extends StatefulWidget {
   final String userName;
   final String assetName;
   final List<String>? member;
-  final List<String>? memberName;
   const ChatPage({
     Key? key,
     this.admin,
-    required this.groupId,
-    required this.groupName,
-    required this.userName,
-    required this.assetName,
     this.member,
-    this.memberName,
+    required this.groupId,
+    required this.userName,
+    required this.groupName,
+    required this.assetName,
   }) : super(key: key);
 
   @override
@@ -43,12 +46,12 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   Stream<QuerySnapshot>? chats;
   Stream? members;
-  // final _cellController = Get.find<CellControllers>();
+  final _cellController = Get.find<CellControllers>();
   final _authController = Get.find<AuthControllers>();
 
   TextEditingController messageController = TextEditingController();
   String admin = "";
-
+  bool _isLoading = false;
   FocusNode focusNode = FocusNode();
 
   @override
@@ -80,10 +83,10 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) {
-      print("memeber length is ${widget.member}");
-      print("memeber name is ${widget.userName}");
-    }
+    // if (kDebugMode) {
+    //   print("memeber length is ${widget.member!.length}");
+    //   print("memeber name is ${widget.userName}");
+    // }
     return Scaffold(
       backgroundColor: AppColor().whiteColor,
       appBar: AppBar(
@@ -101,9 +104,9 @@ class _ChatPageState extends State<ChatPage> {
               Get.to(
                 () => GroupInfo(
                   groupId: widget.groupId,
-                  groupName: widget.groupName,
                   adminName: widget.admin!,
                   userName: widget.userName,
+                  groupName: widget.groupName,
                 ),
               );
             },
@@ -144,7 +147,8 @@ class _ChatPageState extends State<ChatPage> {
                                     .map(
                                       (e) =>
                                           e.profilePic ??
-                                          "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
+                                          'assets/images/placeholder.png',
+                                      // "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
                                     )
                                     .toList(),
                                 showTotalCount: true,
@@ -161,19 +165,83 @@ class _ChatPageState extends State<ChatPage> {
                                 itemBorderWidth:
                                     2, // Border width around the images
                               ),
-                              const Gap(20),
+                              const Gap(15),
                               customDescriptionText(
                                 "You and ${widget.member!.length} users are in this cell",
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 colors: AppColor().whiteColor,
                               ),
+                              const Gap(5),
+                              customDescriptionText(
+                                "Leave Cell",
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                colors: AppColor().errorColor,
+                                decoration: TextDecoration.underline,
+                                onTap: () {
+                                  // showModalBottomSheet(
+                                  //   isScrollControlled: true,
+                                  //   backgroundColor: AppColor().whiteColor,
+                                  //   shape: const RoundedRectangleBorder(
+                                  //     borderRadius: BorderRadius.only(
+                                  //       topLeft: Radius.circular(25),
+                                  //       topRight: Radius.circular(25),
+                                  //     ),
+                                  //   ),
+                                  //   context: context,
+                                  //   builder: (context) => GlobalDialogue(
+                                  //     text1: 'You have joined this cell',
+                                  //     text2:
+                                  //         'Be gentle and choose your words carefully to avoid ban on your account. You can leave the cell at any point in time or report any user or message you deem inappropriate.',
+                                  //     asset: 'assets/svgs/success.svg',
+                                  //     action: () {
+                                  //       Get.close(1);
+                                  //     },
+                                  //   ),
+                                  // );
+                                  showModalBottomSheet(
+                                    isScrollControlled: true,
+                                    backgroundColor: AppColor().whiteColor,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(25),
+                                        topRight: Radius.circular(25),
+                                      ),
+                                    ),
+                                    context: context,
+                                    builder: (context) => GlobalDialogue(
+                                      text1: 'Leave cell?',
+                                      text2:
+                                          'Leaving this cell takes away your access to the cell, conversations and everything. Sure you want to do this?',
+                                      asset: 'assets/svgs/cancel.svg',
+                                      dailogText: 'Yes, I want to leave',
+                                      dialogColor: AppColor().errorColor,
+                                      dialogBordColor: AppColor().errorColor,
+                                      action: () async {
+                                        EasyLoading.show();
+                                        await Future.delayed(
+                                          const Duration(milliseconds: 3000),
+                                        );
+                                        await _cellController
+                                            .memberRemove(widget.groupId);
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Get.offAll(() => UserNavScreen());
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
                             ],
                           );
                         } else if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return CircularProgressIndicator(
-                            color: AppColor().primaryColor,
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: AppColor().whiteColor,
+                            ),
                           );
                         } else {
                           return Column(
@@ -198,7 +266,6 @@ class _ChatPageState extends State<ChatPage> {
                         }
                       }),
                 ),
-                const Gap(20),
                 // customDescriptionText(
                 //   widget.member != null ? "${widget.member!.length}" : "0",
                 //   colors: AppColor().whiteColor,
@@ -209,7 +276,9 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child:
                 // chat messages here
-                chatMessages(),
+                (widget.member!.contains(_authController.liveUser.value!.uid))
+                    ? chatMessages()
+                    : customDescriptionText("No message"),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

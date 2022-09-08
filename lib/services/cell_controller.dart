@@ -98,6 +98,18 @@ class CellControllers extends GetxController {
     });
   }
 
+  Future memberRemove(String groupId) async {
+    if (kDebugMode) {
+      print("member id is $groupId");
+    }
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_cellsDoc.doc(groupId), {
+        "members":
+            FieldValue.arrayRemove([_authController.liveUser.value!.uid!]),
+      });
+    });
+  }
+
   Future likePost(String cellId, String messageId) async {
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction
