@@ -2,7 +2,7 @@
 
 import 'dart:math';
 
-import 'package:agora_care/app/group_screen/chat_page.dart';
+import 'package:agora_care/app/cells/cell_info.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
@@ -21,8 +21,9 @@ import '../home/nav_screen.dart';
 import '../profile/profile_screen.dart';
 
 class CellsScreen extends StatefulWidget {
-  final List<String>? member;
-  const CellsScreen({Key? key, this.member}) : super(key: key);
+  const CellsScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<CellsScreen> createState() => _CellsScreenState();
@@ -219,51 +220,6 @@ class _CellsScreenState extends State<CellsScreen> {
               ],
             ),
             const Gap(20),
-            // SizedBox(
-            //   height: MediaQuery.of(context).size.height * 0.1,
-            //   child: StreamBuilder(
-            //       stream: groups,
-            //       builder: (context, AsyncSnapshot snapshot) {
-            //         if (snapshot.hasData) {
-            //           if (snapshot.data['groups'] != null) {
-            //             if (snapshot.data['groups'].length != 0) {
-            //               return ListView.builder(
-            //                 padding: EdgeInsets.zero,
-            //                 scrollDirection: Axis.horizontal,
-            //                 // itemCount: colorList.length,
-            //                 itemCount: snapshot.data['groups'].length,
-            //                 itemBuilder: (BuildContext context, int index) {
-            //                   int reverseIndex =
-            //                       snapshot.data['groups'].length - index - 1;
-
-            //                   return recommendedCells(
-            //                     groupId: getId(
-            //                         snapshot.data['groups'][reverseIndex]),
-            //                     colors: colorList[index],
-            //                     groupName: getName(
-            //                         snapshot.data['groups'][reverseIndex]),
-            //                     assetName: 'assets/svgs/bank.svg',
-            //                     userName:
-            //                         _authController.liveUser.value!.username!,
-            //                   );
-            //                 },
-            //               );
-            //             } else {
-            //               return customDescriptionText(
-            //                   'No Available Cell to join');
-            //             }
-            //           } else {
-            //             return customDescriptionText(
-            //                 'No Available Cell to join');
-            //           }
-            //         } else {
-            //           return Center(
-            //             child: CircularProgressIndicator(
-            //                 color: Theme.of(context).primaryColor),
-            //           );
-            //         }
-            //       }),
-            // ),
             Obx(() {
               if (_cellContoller.cellStatus == CellStatus.LOADING) {
                 return customDescriptionText('No Available  Cell');
@@ -285,6 +241,9 @@ class _CellsScreenState extends State<CellsScreen> {
                         return recommendedCells(
                           groupId: item.groupId,
                           groupName: item.groupName,
+                          description: item.description,
+                          memberList: item.members!,
+                          time: item.createdAt,
                           colors: colorList[random.nextInt(colorList.length)],
                           assetName: 'assets/svgs/bank.svg',
                           userName: _authController.liveUser.value!.username!,
@@ -310,55 +269,6 @@ class _CellsScreenState extends State<CellsScreen> {
               ],
             ),
             const Gap(10),
-            // Expanded(
-            //   child: StreamBuilder(
-            //       stream: groups,
-            //       builder: (context, AsyncSnapshot snapshot) {
-            //         if (snapshot.hasData) {
-            //           if (snapshot.data['groups'] != null) {
-            //             if (snapshot.data['groups'].length != 0) {
-            //               return GridView.builder(
-            //                 padding: EdgeInsets.zero,
-            //                 scrollDirection: Axis.vertical,
-            //                 itemCount: snapshot.data['groups'].length,
-            //                 // itemCount: colorList.length,
-            //                 gridDelegate:
-            //                     const SliverGridDelegateWithFixedCrossAxisCount(
-            //                         childAspectRatio: 5 / 3, crossAxisCount: 2),
-            //                 itemBuilder: (BuildContext context, int index) {
-            //                   int reverseIndex =
-            //                       snapshot.data['groups'].length - index - 1;
-            //                   final random = Random();
-            //                   return otherCells(
-            //                     colors:
-            //                         colorList[random.nextInt(colorList.length)],
-            //                     groupId: getId(
-            //                         snapshot.data['groups'][reverseIndex]),
-            //                     groupName: getName(
-            //                         snapshot.data['groups'][reverseIndex]),
-            //                     assetName: 'assets/svgs/bank.svg',
-            //                     assetName2: 'assets/svgs/people.svg',
-            //                     userName:
-            //                         _authController.liveUser.value!.username!,
-            //                   );
-            //                 },
-            //               );
-            //             } else {
-            //               return customDescriptionText(
-            //                   'No Available Cell to join');
-            //             }
-            //           } else {
-            //             return customDescriptionText(
-            //                 'No Available Cell to join');
-            //           }
-            //         } else {
-            //           return Center(
-            //             child: CircularProgressIndicator(
-            //                 color: Theme.of(context).primaryColor),
-            //           );
-            //         }
-            //       }),
-            // ),
             Expanded(
               child: Obx(() {
                 if (_cellContoller.cellStatus == CellStatus.LOADING) {
@@ -374,7 +284,7 @@ class _CellsScreenState extends State<CellsScreen> {
                       // itemCount: colorList.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                              childAspectRatio: 5 / 3, crossAxisCount: 2),
+                              childAspectRatio: 5 / 3.7, crossAxisCount: 2),
                       itemBuilder: (BuildContext context, int index) {
                         // int reverseIndex =
                         //     _cellContoller.allAvailableCell.length - index - 1;
@@ -386,6 +296,9 @@ class _CellsScreenState extends State<CellsScreen> {
                           groupName: item.groupName,
                           assetName: 'assets/svgs/bank.svg',
                           assetName2: 'assets/svgs/people.svg',
+                          memberLength: item.members!,
+                          time: item.createdAt!,
+                          description: item.description!,
                           userName: _authController.liveUser.value!.username!,
                         );
                       });
@@ -411,22 +324,34 @@ class _CellsScreenState extends State<CellsScreen> {
     Color? colors,
     String? groupId,
     String? groupName,
+    DateTime? time,
+    List<String>? memberList,
     String? assetName,
     String? userName,
+    String? description,
   }) {
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
           print('$userName is Joining Group');
         }
-        Get.to(
-          () => ChatPage(
-            groupId: groupId!,
-            groupName: groupName!,
-            userName: userName!,
-            assetName: assetName!,
-          ),
-        );
+        // Get.to(
+        //   () => ChatPage(
+        //     groupId: groupId!,
+        //     groupName: groupName!,
+        //     userName: userName!,
+        //     assetName: assetName!,
+        //   ),
+        // );
+        Get.to(() => CellInfo(
+              time: time!,
+              groupId: groupId!,
+              groupName: groupName!,
+              userName: userName!,
+              assetName: assetName!,
+              memberList: memberList!,
+              description: description!,
+            ));
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),
@@ -463,69 +388,93 @@ class _CellsScreenState extends State<CellsScreen> {
 
   GestureDetector otherCells({
     Color? colors,
+    DateTime? time,
     String? groupId,
     String? groupName,
     String? assetName,
     String? userName,
     String? assetName2,
+    String? description,
+    List<String>? memberLength,
   }) {
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
           print('Joining Group');
         }
-        Get.to(
-          () => ChatPage(
-            groupId: groupId!,
-            groupName: groupName!,
-            userName: userName!,
-            assetName: assetName!,
-          ),
-        );
+        Get.to(() => CellInfo(
+              time: time!,
+              groupId: groupId!,
+              groupName: groupName!,
+              userName: userName!,
+              assetName: assetName!,
+              memberList: memberLength!,
+              description: description!,
+            ));
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
           decoration: BoxDecoration(
             color: AppColor().whiteColor,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Row(
+          child: Column(
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                margin: const EdgeInsets.only(top: 10, bottom: 10),
-                decoration: BoxDecoration(
-                  color: colors,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      assetName!,
-                      height: 24,
-                      color: AppColor().whiteColor,
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   width: MediaQuery.of(context).size.width * 0.1,
+              //   padding:
+              //       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              //   margin: const EdgeInsets.only(top: 10, bottom: 10),
+              //   decoration: BoxDecoration(
+              //     color: colors,
+              //     borderRadius: BorderRadius.circular(10),
+              //   ),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     mainAxisAlignment: MainAxisAlignment.start,
+              //     children: [
+              //       SvgPicture.asset(
+              //         assetName!,
+              //         height: 18,
+              //         color: AppColor().whiteColor,
+              //       ),
+              //     ],
+              //   ),
+              // ),
               const Gap(5),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 80,
-                    child: customTitleText(
-                      groupName!,
-                      textAlign: TextAlign.left,
-                      colors: AppColor().textColor,
-                      size: 16,
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.15,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 15),
+                    margin: const EdgeInsets.only(top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: colors,
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          assetName!,
+                          height: 18,
+                          color: AppColor().whiteColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Gap(10),
+                  customTitleText(
+                    groupName!,
+                    size: 14,
+                    textAlign: TextAlign.left,
+                    colors: AppColor().textColor,
+                    // textOverflow: TextOverflow.clip,
                   ),
                   const Gap(5),
                   Row(
@@ -537,9 +486,7 @@ class _CellsScreenState extends State<CellsScreen> {
                       ),
                       const Gap(5),
                       customTitleText(
-                        widget.member != null
-                            ? "${widget.member!.length}"
-                            : "0",
+                        memberLength != null ? "${memberLength.length}" : "0",
                         textAlign: TextAlign.left,
                         size: 12,
                         colors: AppColor().textColor,

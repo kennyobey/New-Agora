@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({Key? key}) : super(key: key);
@@ -162,65 +163,65 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 );
               }),
             ),
-            const Gap(10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  'assets/svgs/streak.svg',
-                ),
-                const Gap(5),
-                Obx(() {
-                  return customDescriptionText(
-                    // '5',
-                    _authController.liveUser.value!.streak == null
-                        ? '0'
-                        : _authController.liveUser.value!.streak.toString(),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().textColor,
-                  );
-                }),
-                const Gap(5),
-                customDescriptionText(
-                  'Streak',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  colors: AppColor().lightTextColor,
-                ),
-                const Gap(10),
-                /////
-                Container(
-                  height: 15,
-                  width: 1.5,
-                  color: AppColor().lightTextColor,
-                ),
-                /////
-                const Gap(10),
-                SvgPicture.asset(
-                  'assets/svgs/calender.svg',
-                ),
-                const Gap(5),
-                Obx(() {
-                  return customDescriptionText(
-                    // '20',
-                    _authController.liveUser.value!.weeks == null
-                        ? '0'
-                        : _authController.liveUser.value!.weeks.toString(),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().textColor,
-                  );
-                }),
-                const Gap(5),
-                customDescriptionText(
-                  'Weeks',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  colors: AppColor().lightTextColor,
-                ),
-              ],
-            ),
+            // const Gap(10),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     SvgPicture.asset(
+            //       'assets/svgs/streak.svg',
+            //     ),
+            //     const Gap(5),
+            //     Obx(() {
+            //       return customDescriptionText(
+            //         // '5',
+            //         _authController.liveUser.value!.streak == null
+            //             ? '0'
+            //             : _authController.liveUser.value!.streak.toString(),
+            //         fontSize: 16,
+            //         fontWeight: FontWeight.w700,
+            //         colors: AppColor().textColor,
+            //       );
+            //     }),
+            //     const Gap(5),
+            //     customDescriptionText(
+            //       'Streak',
+            //       fontSize: 14,
+            //       fontWeight: FontWeight.w700,
+            //       colors: AppColor().lightTextColor,
+            //     ),
+            //     const Gap(10),
+            //     /////
+            //     Container(
+            //       height: 15,
+            //       width: 1.5,
+            //       color: AppColor().lightTextColor,
+            //     ),
+            //     /////
+            //     const Gap(10),
+            //     SvgPicture.asset(
+            //       'assets/svgs/calender.svg',
+            //     ),
+            //     const Gap(5),
+            //     Obx(() {
+            //       return customDescriptionText(
+            //         // '20',
+            //         _authController.liveUser.value!.weeks == null
+            //             ? '0'
+            //             : _authController.liveUser.value!.weeks.toString(),
+            //         fontSize: 16,
+            //         fontWeight: FontWeight.w700,
+            //         colors: AppColor().textColor,
+            //       );
+            //     }),
+            //     const Gap(5),
+            //     customDescriptionText(
+            //       'Weeks',
+            //       fontSize: 14,
+            //       fontWeight: FontWeight.w700,
+            //       colors: AppColor().lightTextColor,
+            //     ),
+            //   ],
+            // ),
             const Gap(20),
             InkWell(
               onTap: () {
@@ -417,8 +418,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                               members: member == null
                                                   ? 'No members yet'
                                                   : member.toString(),
-                                              time:
-                                                  "Last activity: 7th May 2022",
+                                              // time:
+                                              //     "Last activity: 7th May 2022",
+                                              time: DateFormat('MMM dd yyy')
+                                                  .format(DateTime.parse(item
+                                                      .createdAt
+                                                      .toString())),
                                               groupId: item.groupId,
                                               groupName: item.groupName,
                                               assetName: 'assets/svgs/bank.svg',
@@ -623,7 +628,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 child: customTitleText(
                   quote!,
                   size: 16,
+                  textAlign: TextAlign.center,
                   colors: AppColor().whiteColor,
+                  textOverflow: TextOverflow.clip,
                 ),
               ),
             ),

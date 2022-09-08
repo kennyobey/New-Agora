@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/quote_comment_tile.dart';
@@ -15,11 +14,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
@@ -161,42 +158,13 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                       right: 10,
                       child: Column(
                         children: [
-                          StreamBuilder<QuerySnapshot<Object?>>(
-                              stream: _quoteContoller.getDailyQuote(),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  if (snapshot.data != null) {
-                                    return customDescriptionText(
-                                      snapshot.data!.docs.last
-                                          .data()!['dailyQuote']
-                                          .toString(),
-
-                                      // snapshot.hasData.toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().filledTextField,
-                                    );
-                                  } else if (snapshot.data == null) {
-                                    return SvgPicture.asset(
-                                      'assets/svgs/fluent_tap-single-48-filled.svg',
-                                    );
-                                  } else {
-                                    return customDescriptionText(
-                                      'No Quote Today',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().whiteColor,
-                                    );
-                                  }
-                                } else {
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                        color: AppColor().primaryColor),
-                                  );
-                                }
-                              }),
+                          customDescriptionText(
+                            widget.quoteText,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            textAlign: TextAlign.center,
+                            colors: AppColor().filledTextField,
+                          ),
                           const Gap(30),
                           Divider(
                             thickness: 1,
@@ -337,23 +305,26 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                               ),
                               const Spacer(),
                               InkWell(
+                                // onTap: () async {
+                                //   await _quoteContoller.sharePost(
+                                //       _quoteContoller.allQuotes.last.id!);
+                                //   RenderRepaintBoundary boundary =
+                                //       scr.currentContext!.findRenderObject()
+                                //           as RenderRepaintBoundary;
+                                //   var image = await boundary.toImage();
+                                //   var byteData = await image.toByteData(
+                                //       format: ImageByteFormat.png);
+                                //   var pngBytes = byteData!.buffer.asUint8List();
+                                //   String tempPath =
+                                //       (await getTemporaryDirectory()).path;
+                                //   var dates =
+                                //       DateTime.now().toLocal().toString();
+                                //   await getPdf(pngBytes, dates, tempPath);
+                                //   var pathurl = '$tempPath/$dates.pdf';
+                                //   await Share.shareFiles([pathurl]);
+                                // },
                                 onTap: () async {
-                                  await _quoteContoller.sharePost(
-                                      _quoteContoller.allQuotes.last.id!);
-                                  RenderRepaintBoundary boundary =
-                                      scr.currentContext!.findRenderObject()
-                                          as RenderRepaintBoundary;
-                                  var image = await boundary.toImage();
-                                  var byteData = await image.toByteData(
-                                      format: ImageByteFormat.png);
-                                  var pngBytes = byteData!.buffer.asUint8List();
-                                  String tempPath =
-                                      (await getTemporaryDirectory()).path;
-                                  var dates =
-                                      DateTime.now().toLocal().toString();
-                                  await getPdf(pngBytes, dates, tempPath);
-                                  var pathurl = '$tempPath/$dates.pdf';
-                                  await Share.shareFiles([pathurl]);
+                                  await Share.share(widget.quoteText);
                                 },
                                 child: SvgPicture.asset(
                                   'assets/svgs/share.svg',
@@ -363,15 +334,14 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                               const Gap(10),
                               InkWell(
                                 onTap: () async {
+                                  setState(() {
+                                    isLiked = !isLiked;
+                                  });
                                   isLiked
                                       ? _quoteContoller.likePost(
                                           _quoteContoller.allQuotes.last.id!)
                                       : _quoteContoller.unLikePost(
                                           _quoteContoller.allQuotes.last.id!);
-
-                                  setState(() {
-                                    isLiked = !isLiked;
-                                  });
                                 },
                                 child: isLiked
                                     ? Icon(

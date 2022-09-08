@@ -158,10 +158,10 @@ class AuthControllers extends GetxController {
       }
       liveUser(userModel);
 
-      if (userModel.admin!) {
-        Get.to(() => AdminUserNavScreen());
+      if (userModel.admin == true) {
+        Get.offAll(() => AdminUserNavScreen());
       } else {
-        Get.to(() => UserNavScreen());
+        Get.offAll(() => UserNavScreen());
       }
       if (userModel.lastLoginTime == null ||
           userModel.weeklyLoginTime == null) {

@@ -87,10 +87,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // if (kDebugMode) {
-    //   print("testing user is ${_authController.liveUser.value!.toJson()}");
-    //   print("testing user admin is ${_authController.liveUser.value!.admin}");
-    // }
+    if (kDebugMode) {
+      print("testing user is ${_authController.liveUser.value!.toJson()}");
+      print("testing user admin is ${_authController.liveUser.value!.admin}");
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
@@ -210,6 +210,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             .viewPost(_quoteContoller.allQuotes.last.id!);
                         Get.to(
                           () => QuoteDetails(
+                            dailyQuote:
+                                _quoteContoller.allQuotes.last.dailyQuote!,
                             groupId: _quoteContoller.allQuotes.last.groupId!,
                             groupName:
                                 _quoteContoller.allQuotes.last.dailyQuote!,
@@ -421,7 +423,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
-                      reverse: true,
+                      reverse: false,
+                      shrinkWrap: true,
                       itemCount: _quoteContoller.allQuotes.length > 4
                           ? 4
                           : _quoteContoller.allQuotes.length,
@@ -564,8 +567,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: customTitleText(
                     quoteModel!.dailyQuote!,
                     size: 16,
-                    textOverflow: TextOverflow.clip,
+                    textAlign: TextAlign.center,
                     colors: AppColor().whiteColor,
+                    textOverflow: TextOverflow.clip,
                   ),
                 ),
               ),

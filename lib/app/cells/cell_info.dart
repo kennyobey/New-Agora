@@ -1,4 +1,4 @@
-// ignore_for_file: unused_field
+// ignore_for_file: unused_field, unnecessary_null_comparison
 
 import 'dart:math';
 
@@ -15,9 +15,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class CellInfo extends StatefulWidget {
-  const CellInfo({Key? key}) : super(key: key);
+  final DateTime time;
+  final String groupId;
+  final String groupName;
+  final String userName;
+  final String assetName;
+  final String description;
+  final List<String> memberList;
+  const CellInfo({
+    Key? key,
+    required this.time,
+    required this.groupId,
+    required this.groupName,
+    required this.userName,
+    required this.assetName,
+    required this.memberList,
+    required this.description,
+  }) : super(key: key);
 
   @override
   State<CellInfo> createState() => _CellInfoState();
@@ -91,8 +108,16 @@ class _CellInfoState extends State<CellInfo> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Gap(20),
+            IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => Get.back(),
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: AppColor().blackColor,
+              ),
+            ),
             const Gap(80),
-
             Center(
               child: Column(
                 children: [
@@ -100,7 +125,7 @@ class _CellInfoState extends State<CellInfo> {
                     'assets/svgs/circularbank.svg',
                   ),
                   customTitleText(
-                    'Chephas cells',
+                    widget.groupName,
                     size: 32,
                     spacing: -0.1,
                     fontWeight: FontWeight.w700,
@@ -109,7 +134,6 @@ class _CellInfoState extends State<CellInfo> {
                 ],
               ),
             ),
-
             const Gap(30),
             customDescriptionText(
               'About',
@@ -118,7 +142,7 @@ class _CellInfoState extends State<CellInfo> {
               colors: AppColor().filledTextField,
             ),
             customDescriptionText(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Et magna egestas senectus tellus est, mauris. Consequat eget non sapien a fermentum, pellentesque erat.',
+              widget.description,
               fontSize: 14,
               fontWeight: FontWeight.w400,
               colors: AppColor().filledTextField,
@@ -134,20 +158,23 @@ class _CellInfoState extends State<CellInfo> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 customDescriptionText(
-                  '14,000',
+                  widget.memberList != null
+                      ? '${widget.memberList.length}'
+                      : '0 member',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   colors: AppColor().filledTextField,
                 ),
                 customDescriptionText(
-                  'Last activity: Jan 4, 2022',
+                  widget.time == null
+                      ? 'Not available'
+                      : 'Last activity: ${DateFormat('MMM dd yyy').format(DateTime.parse(widget.time.toString()))}',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   colors: AppColor().lastActivity,
                 ),
               ],
             ),
-
             const Gap(30),
             customDescriptionText(
               'Tags',
@@ -208,7 +235,16 @@ class _CellInfoState extends State<CellInfo> {
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
               isLoading: _isLoading,
-              onTap: () async {},
+              onTap: () async {
+                Get.to(
+                  () => ChatPage(
+                    groupId: widget.groupId,
+                    groupName: widget.groupName,
+                    userName: widget.userName,
+                    assetName: widget.assetName,
+                  ),
+                );
+              },
             ),
             const Gap(30),
             Row(
@@ -226,51 +262,6 @@ class _CellInfoState extends State<CellInfo> {
               ],
             ),
             const Gap(20),
-            // SizedBox(
-            //   height: MediaQuery.of(context).size.height * 0.1,
-            //   child: StreamBuilder(
-            //       stream: groups,
-            //       builder: (context, AsyncSnapshot snapshot) {
-            //         if (snapshot.hasData) {
-            //           if (snapshot.data['groups'] != null) {
-            //             if (snapshot.data['groups'].length != 0) {
-            //               return ListView.builder(
-            //                 padding: EdgeInsets.zero,
-            //                 scrollDirection: Axis.horizontal,
-            //                 // itemCount: colorList.length,
-            //                 itemCount: snapshot.data['groups'].length,
-            //                 itemBuilder: (BuildContext context, int index) {
-            //                   int reverseIndex =
-            //                       snapshot.data['groups'].length - index - 1;
-
-            //                   return recommendedCells(
-            //                     groupId: getId(
-            //                         snapshot.data['groups'][reverseIndex]),
-            //                     colors: colorList[index],
-            //                     groupName: getName(
-            //                         snapshot.data['groups'][reverseIndex]),
-            //                     assetName: 'assets/svgs/bank.svg',
-            //                     userName:
-            //                         _authController.liveUser.value!.username!,
-            //                   );
-            //                 },
-            //               );
-            //             } else {
-            //               return customDescriptionText(
-            //                   'No Available Cell to join');
-            //             }
-            //           } else {
-            //             return customDescriptionText(
-            //                 'No Available Cell to join');
-            //           }
-            //         } else {
-            //           return Center(
-            //             child: CircularProgressIndicator(
-            //                 color: Theme.of(context).primaryColor),
-            //           );
-            //         }
-            //       }),
-            // ),
             Obx(() {
               if (_cellContoller.cellStatus == CellStatus.LOADING) {
                 return customDescriptionText('No Available  Cell');
@@ -292,11 +283,9 @@ class _CellInfoState extends State<CellInfo> {
                         return recommendedCells(
                           groupId: item.groupId,
                           groupName: item.groupName,
+                          memberlist: item.members!,
                           colors: colorList[random.nextInt(colorList.length)],
-                          assetName:
-                              _authController.liveUser.value!.profilePic == null
-                                  ? 'assets/svgs/bank.svg'
-                                  : _authController.liveUser.value!.profilePic!,
+                          assetName: 'assets/svgs/bank.svg',
                           userName: _authController.liveUser.value!.username!,
                         );
                       },
@@ -316,6 +305,7 @@ class _CellInfoState extends State<CellInfo> {
     String? groupName,
     String? assetName,
     String? userName,
+    List<String>? memberlist,
   }) {
     return GestureDetector(
       onTap: () {
@@ -335,27 +325,57 @@ class _CellInfoState extends State<CellInfo> {
         padding: const EdgeInsets.only(right: 10, bottom: 10),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-          width: MediaQuery.of(context).size.width * 0.35,
+          width: MediaQuery.of(context).size.width * 0.4,
           height: MediaQuery.of(context).size.height * 0.2,
           decoration: BoxDecoration(
-            color: colors,
+            color: AppColor().whiteColor,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Row(
             children: [
-              SvgPicture.asset(
-                assetName!,
-                height: 30,
-                color: AppColor().whiteColor,
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  color: colors,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: SvgPicture.asset(
+                  assetName!,
+                  height: 20,
+                  color: AppColor().whiteColor,
+                ),
               ),
               const Gap(10),
-              customTitleText(
-                groupName!,
-                textAlign: TextAlign.left,
-                colors: AppColor().whiteColor,
-                size: 16,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  customTitleText(
+                    groupName!,
+                    size: 12,
+                    textAlign: TextAlign.left,
+                    colors: AppColor().blackColor,
+                    textOverflow: TextOverflow.clip,
+                  ),
+                  const Gap(5),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/svgs/people.svg',
+                        height: 16,
+                        color: AppColor().textColor,
+                      ),
+                      const Gap(5),
+                      customTitleText(
+                        memberlist != null ? "${memberlist.length}" : "0",
+                        textAlign: TextAlign.left,
+                        size: 12,
+                        colors: AppColor().textColor,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

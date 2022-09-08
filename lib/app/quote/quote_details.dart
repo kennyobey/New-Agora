@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/quote_comment_tile.dart';
@@ -15,11 +14,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
@@ -30,6 +27,7 @@ class QuoteDetails extends StatefulWidget {
   final String userName;
   final String userImage;
   final String assetName;
+  final String dailyQuote;
   const QuoteDetails({
     Key? key,
     required this.groupId,
@@ -37,6 +35,7 @@ class QuoteDetails extends StatefulWidget {
     required this.userName,
     required this.userImage,
     required this.assetName,
+    required this.dailyQuote,
   }) : super(key: key);
 
   @override
@@ -338,23 +337,26 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               ),
                               const Spacer(),
                               InkWell(
+                                // onTap: () async {
+                                //   await _quoteContoller.sharePost(
+                                //       _quoteContoller.allQuotes.last.id!);
+                                //   RenderRepaintBoundary boundary =
+                                //       scr.currentContext!.findRenderObject()
+                                //           as RenderRepaintBoundary;
+                                //   var image = await boundary.toImage();
+                                //   var byteData = await image.toByteData(
+                                //       format: ImageByteFormat.png);
+                                //   var pngBytes = byteData!.buffer.asUint8List();
+                                //   String tempPath =
+                                //       (await getTemporaryDirectory()).path;
+                                //   var dates =
+                                //       DateTime.now().toLocal().toString();
+                                //   await getPdf(pngBytes, dates, tempPath);
+                                //   var pathurl = '$tempPath/$dates.pdf';
+                                //   await Share.shareFiles([pathurl]);
+                                // },
                                 onTap: () async {
-                                  await _quoteContoller.sharePost(
-                                      _quoteContoller.allQuotes.last.id!);
-                                  RenderRepaintBoundary boundary =
-                                      scr.currentContext!.findRenderObject()
-                                          as RenderRepaintBoundary;
-                                  var image = await boundary.toImage();
-                                  var byteData = await image.toByteData(
-                                      format: ImageByteFormat.png);
-                                  var pngBytes = byteData!.buffer.asUint8List();
-                                  String tempPath =
-                                      (await getTemporaryDirectory()).path;
-                                  var dates =
-                                      DateTime.now().toLocal().toString();
-                                  await getPdf(pngBytes, dates, tempPath);
-                                  var pathurl = '$tempPath/$dates.pdf';
-                                  await Share.shareFiles([pathurl]);
+                                  await Share.share(widget.dailyQuote);
                                 },
                                 child: SvgPicture.asset(
                                   'assets/svgs/share.svg',

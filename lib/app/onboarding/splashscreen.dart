@@ -12,6 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../helper/helper_function.dart';
+import '../home/admin_nav_screen.dart';
 import '../home/home_screen.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -28,11 +29,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    _timer = Timer(const Duration(milliseconds: 3000), () {
+    _timer = Timer(const Duration(milliseconds: 5000), () async {
       // if (controller.status == Status.IsFirstTime) {
       //   Get.off(() => OnboardAuth(locations, context));
       // } else if (controller.status == Status.Authenticated) {
-      //   Get.off(() => const UserNavScreen());
+      //   Get.offAll(() => const UserNavScreen());
       // } else {
       //   _save('0');
       if (FirebaseAuth.instance.currentUser != null) {
@@ -43,13 +44,26 @@ class _SplashScreenState extends State<SplashScreen> {
         //   ),
         // );
         // } else {
-        // Get.off(() => AdminUserNavScreen())
+        // Get.offAll(() => AdminUserNavScreen())
         // ;
+        if (controller.liveUser.value == null) {
+          final user = await controller
+              .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
 
-        Get.off(() => UserNavScreen());
-        // }
+          if (user.admin == true) {
+            Get.offAll(() => AdminUserNavScreen());
+          } else {
+            Get.offAll(() => UserNavScreen());
+          }
+        } else {
+          if (controller.liveUser.value!.admin == true) {
+            Get.offAll(() => AdminUserNavScreen());
+          } else {
+            Get.offAll(() => UserNavScreen());
+          }
+        }
       } else {
-        Get.off(() => Onboarding());
+        Get.offAll(() => Onboarding());
       }
 
       //   }
@@ -57,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
   }
 
-  getUserLogggedInStatus() async {
+  getUserLogggedInStatu() async {
     await HelperFunction.getUserLogggedInStatus().then((value) {
       if (value != null) {
         setState(() {

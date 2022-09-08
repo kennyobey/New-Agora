@@ -9,12 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../customWidgets.dart';
 
 class MessageTile extends StatefulWidget {
   final String message;
-  final String time;
+  final String? time;
   final String messageid;
   final String sender;
   final String groupId;
@@ -27,7 +28,7 @@ class MessageTile extends StatefulWidget {
     required this.message,
     required this.sender,
     required this.groupId,
-    required this.time,
+    this.time,
     required this.like,
     required this.sentByMe,
   }) : super(key: key);
@@ -155,7 +156,12 @@ class _MessageTileState extends State<MessageTile> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   customDescriptionText(
-                    '19hrs',
+                    widget.time == null
+                        ? '19hrs'
+                        : DateFormat.jm()
+                            .format(DateTime.parse(widget.time!.toString())),
+                    //  : DateFormat('MMM.dd.yyyy | EEEE')
+                    // .format(DateTime.parse(widget.time!.toString())),
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     colors: AppColor().lightbackgroundColor,

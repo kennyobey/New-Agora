@@ -5,6 +5,7 @@ import 'package:agora_care/app/profile/profile_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/widget/global_bottom_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -117,13 +118,22 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).bottomAppBarColor,
             label: '',
-            tooltip: 'Users',
-            icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
+            tooltip: 'Messages',
+            icon: Icon(
+              CupertinoIcons.mail,
+              color: AppColor().primaryColor,
+            ),
             activeIcon: Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
-                SvgPicture.asset('assets/svgs/user-tag.svg'),
+                Icon(
+                  CupertinoIcons.mail,
+                  color: AppColor().primaryColor,
+                ),
+                Icon(
+                  CupertinoIcons.mail,
+                  color: AppColor().primaryColor,
+                ),
               ],
             ),
           ),

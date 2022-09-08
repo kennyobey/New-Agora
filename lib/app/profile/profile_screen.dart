@@ -88,16 +88,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Obx(() {
-                              return customDescriptionText(
-                                _authController.liveUser.value!.fullName == null
-                                    ? 'Your Name'
-                                    : _authController.liveUser.value!.fullName!,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                colors: AppColor().filledTextField,
-                              );
-                            }),
+                            _authController.liveUser.value!.admin == true
+                                ? Obx(() {
+                                    return customDescriptionText(
+                                      _authController.liveUser.value!.role ==
+                                              null
+                                          ? 'Admin'
+                                          : _authController
+                                              .liveUser.value!.role!,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      colors: AppColor().filledTextField,
+                                    );
+                                  })
+                                : Obx(() {
+                                    return customDescriptionText(
+                                      _authController
+                                                  .liveUser.value!.fullName ==
+                                              null
+                                          ? 'Your Name'
+                                          : _authController
+                                              .liveUser.value!.fullName!,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      colors: AppColor().filledTextField,
+                                    );
+                                  }),
                             const Gap(5),
                             customDescriptionText(
                               _authController.liveUser.value == null &&
@@ -145,7 +161,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     image: DecorationImage(
                                       image: CachedNetworkImageProvider(
                                         snapshot.data!.profilePic!,
-                                        // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mbF_vybC_Hlh8kW0mWpDp-RQ1P1f2qiKRO9jPX5UUFB8_nsYTFldK-ZT61FldtpK2k0&usqp=CAU',
                                       ),
                                       fit: BoxFit.cover,
                                     ),
@@ -185,77 +200,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }),
                       ],
                     ),
-                    const Gap(15),
-                    const Divider(
-                      height: 1,
-                      thickness: 1,
-                    ),
-                    const Gap(15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/svgs/streak.svg',
-                        ),
-                        const Gap(5),
-                        Obx(() {
-                          return customDescriptionText(
-                            // '5',
-                            _authController.liveUser.value!.streak == null
-                                ? '0'
-                                : _authController.liveUser.value!.streak
-                                    .toString(),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            colors: AppColor().textColor,
-                          );
-                        }),
-                        const Gap(5),
-                        customDescriptionText(
-                          'Streak',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          colors: AppColor().lightTextColor,
-                        ),
-                        const Gap(30),
-                        /////
-                        Container(
-                          height: 15,
-                          width: 1.5,
-                          color: AppColor().lightTextColor,
-                        ),
-                        /////
-                        const Gap(30),
-                        SvgPicture.asset(
-                          'assets/svgs/calender.svg',
-                        ),
-                        const Gap(5),
-                        Obx(() {
-                          return customDescriptionText(
-                            // '20',
-                            _authController.liveUser.value!.weeks == null
-                                ? '0'
-                                : _authController.liveUser.value!.weeks
-                                    .toString(),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            colors: AppColor().textColor,
-                          );
-                        }),
-                        const Gap(5),
-                        customDescriptionText(
-                          'Weeks',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          colors: AppColor().lightTextColor,
-                        ),
-                        const Gap(40),
-                        Icon(
-                          Icons.keyboard_arrow_right,
-                          color: AppColor().blackColor,
-                        ),
-                      ],
-                    ),
+                    _authController.liveUser.value!.admin == true
+                        ? Container()
+                        : const Gap(15),
+                    _authController.liveUser.value!.admin == true
+                        ? Container()
+                        : const Divider(
+                            height: 1,
+                            thickness: 1,
+                          ),
+                    _authController.liveUser.value!.admin == true
+                        ? Container()
+                        : const Gap(15),
+                    _authController.liveUser.value!.admin == true
+                        ? Container()
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svgs/streak.svg',
+                              ),
+                              const Gap(5),
+                              Obx(() {
+                                return customDescriptionText(
+                                  // '5',
+                                  _authController.liveUser.value!.streak == null
+                                      ? '0'
+                                      : _authController.liveUser.value!.streak
+                                          .toString(),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  colors: AppColor().textColor,
+                                );
+                              }),
+                              const Gap(5),
+                              customDescriptionText(
+                                'Streak',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                colors: AppColor().lightTextColor,
+                              ),
+                              const Gap(30),
+                              /////
+                              Container(
+                                height: 15,
+                                width: 1.5,
+                                color: AppColor().lightTextColor,
+                              ),
+                              /////
+                              const Gap(30),
+                              SvgPicture.asset(
+                                'assets/svgs/calender.svg',
+                              ),
+                              const Gap(5),
+                              Obx(() {
+                                return customDescriptionText(
+                                  // '20',
+                                  _authController.liveUser.value!.weeks == null
+                                      ? '0'
+                                      : _authController.liveUser.value!.weeks
+                                          .toString(),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  colors: AppColor().textColor,
+                                );
+                              }),
+                              const Gap(5),
+                              customDescriptionText(
+                                'Weeks',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                colors: AppColor().lightTextColor,
+                              ),
+                              const Gap(40),
+                              Icon(
+                                Icons.keyboard_arrow_right,
+                                color: AppColor().blackColor,
+                              ),
+                            ],
+                          ),
                     const Gap(10),
                   ],
                 ),
@@ -346,7 +369,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   'assets/svgs/keyboard_arrow_right.svg',
                   height: 14,
                 ),
-                titleText: 'Consult a psychologist',
+                titleText: _authController.liveUser.value!.admin == true
+                    ? 'See ticket'
+                    : 'Consult a psychologist',
                 // onTap: () {
                 //   Get.to(() => const PhonePage());
                 // },
@@ -407,12 +432,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               const Gap(20),
-              CustomBorderButton(
-                borderColor: AppColor().errorColor,
-                buttonText: 'Delete Account',
-                textSize: 14,
-                textColor: AppColor().errorColor,
-              )
+              _authController.liveUser.value!.admin == true
+                  ? Container()
+                  : CustomBorderButton(
+                      borderColor: AppColor().errorColor,
+                      buttonText: 'Delete Account',
+                      textSize: 14,
+                      textColor: AppColor().errorColor,
+                    )
             ],
           ),
         ),

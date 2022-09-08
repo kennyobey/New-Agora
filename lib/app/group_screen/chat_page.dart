@@ -133,29 +133,42 @@ class _ChatPageState extends State<ChatPage> {
                           .getUserByModelList(widget.member ?? []),
                       builder: (context, snapshot) {
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                          return FlutterImageStack(
-                            // backgroundColor: Colors.black,
-                            itemBorderColor: AppColor().whiteColor,
-                            imageList: snapshot.data!
-                                .map(
-                                  (e) =>
-                                      e.profilePic ??
-                                      "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
-                                )
-                                .toList(),
-                            showTotalCount: true,
-                            totalCount: widget.member == null
-                                ? 0
-                                : widget.member!.length,
-                            itemRadius: 50, // Radius of each images
-                            itemCount: widget.member == null
-                                ? 0
-                                : widget.member!.length > 4
-                                    ? 4
-                                    : widget.member!
-                                        .length, // Maximum number of images to be shown in stack
-                            itemBorderWidth:
-                                2, // Border width around the images
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FlutterImageStack(
+                                // backgroundColor: Colors.black,
+                                itemBorderColor: AppColor().whiteColor,
+                                imageList: snapshot.data!
+                                    .map(
+                                      (e) =>
+                                          e.profilePic ??
+                                          "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
+                                    )
+                                    .toList(),
+                                showTotalCount: true,
+                                totalCount: widget.member == null
+                                    ? 0
+                                    : widget.member!.length,
+                                itemRadius: 50, // Radius of each images
+                                itemCount: widget.member == null
+                                    ? 0
+                                    : widget.member!.length > 4
+                                        ? 4
+                                        : widget.member!
+                                            .length, // Maximum number of images to be shown in stack
+                                itemBorderWidth:
+                                    2, // Border width around the images
+                              ),
+                              const Gap(20),
+                              customDescriptionText(
+                                "You and ${widget.member!.length} users are in this cell",
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                colors: AppColor().whiteColor,
+                              ),
+                            ],
                           );
                         } else if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -163,17 +176,33 @@ class _ChatPageState extends State<ChatPage> {
                             color: AppColor().primaryColor,
                           );
                         } else {
-                          return customDescriptionText("No member available ");
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              customDescriptionText(
+                                "No member available",
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                colors: AppColor().whiteColor,
+                              ),
+                              const Gap(20),
+                              customDescriptionText(
+                                'start or join a conversation'.toUpperCase(),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                colors: AppColor().whiteColor.withOpacity(0.3),
+                              )
+                            ],
+                          );
                         }
                       }),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                customDescriptionText(
-                  widget.member != null ? "${widget.member!.length}" : "0",
-                  colors: AppColor().whiteColor,
-                )
+                const Gap(20),
+                // customDescriptionText(
+                //   widget.member != null ? "${widget.member!.length}" : "0",
+                //   colors: AppColor().whiteColor,
+                // ),
               ],
             ),
           ),
@@ -183,7 +212,7 @@ class _ChatPageState extends State<ChatPage> {
                 chatMessages(),
           ),
           Container(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             alignment: Alignment.bottomCenter,
             height: 70,
             decoration: BoxDecoration(
@@ -193,15 +222,22 @@ class _ChatPageState extends State<ChatPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const Gap(5),
                 _authController.liveUser.value!.profilePic == null
-                    ? Image.asset(
-                        'assets/images/placeholder.png',
-                        height: 50,
-                        width: 50,
+                    ? Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          borderRadius: BorderRadius.circular(80),
+                          image: const DecorationImage(
+                            image: AssetImage(
+                              'assets/images/placeholder.png',
+                            ),
+                          ),
+                        ),
                       )
                     : Container(
-                        height: 60,
-                        width: 60,
+                        height: 50,
+                        width: 50,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(80),
                           image: DecorationImage(
@@ -258,9 +294,9 @@ class _ChatPageState extends State<ChatPage> {
                             },
                             child: customDescriptionText(
                               'Post',
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              colors: AppColor().backgroundColor,
+                              colors: AppColor().primaryColor,
                             ),
                           )
                         ]),
@@ -283,7 +319,7 @@ class _ChatPageState extends State<ChatPage> {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return MessageTile(
-                    time: snapshot.data.docs[index]['createdAt'],
+                    time: snapshot.data.docs[index]['time'],
                     message: snapshot.data.docs[index]['message'],
                     sender: snapshot.data.docs[index]['sender'],
                     like: snapshot.data.docs[index]['like'],
