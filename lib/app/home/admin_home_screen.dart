@@ -445,7 +445,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.5,
                       child: StreamBuilder<List<UserList>>(
-                          stream: _authController.readtUserList(),
+                          stream: _authController.readUserList(),
                           builder: (context, snapshot) {
                             if (snapshot.hasError) {
                               return customDescriptionText('Error');

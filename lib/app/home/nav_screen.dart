@@ -130,7 +130,7 @@ class _UserNavScreenState extends State<UserNavScreen> {
               ],
             ),
           ),
-          _authController.liveUser.value!.admin != true
+          _authController.liveUser.value!.role != 'consultant'
               ? BottomNavigationBarItem(
                   backgroundColor: Theme.of(context).bottomAppBarColor,
                   label: '',

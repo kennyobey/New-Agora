@@ -118,25 +118,16 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).bottomAppBarColor,
             label: '',
-            tooltip: 'Messages',
-            icon: Icon(
-              CupertinoIcons.mail,
-              color: AppColor().primaryColor,
-            ),
+            tooltip: 'Users',
+            icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
             activeIcon: Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                Icon(
-                  CupertinoIcons.mail,
-                  color: AppColor().primaryColor,
-                ),
-                Icon(
-                  CupertinoIcons.mail,
-                  color: AppColor().primaryColor,
-                ),
+                SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
+                SvgPicture.asset('assets/svgs/user-tag.svg'),
               ],
             ),
-          ),
+          )
         ],
       ),
     );

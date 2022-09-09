@@ -280,9 +280,45 @@ class AuthControllers extends GetxController {
         'dailyQuote': userDocQuote,
       };
       if (kDebugMode) {
-        print("valuw od chages is $up");
+        print("value of changes is $up");
       }
       await _userDoc.doc(FirebaseAuth.instance.currentUser!.uid).update(up);
+
+      final newUser =
+          await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
+      liveUser(newUser);
+      if (kDebugMode) {
+        print("new user update is ${newUser.toJson()}");
+      }
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    }
+  }
+
+  Future changeConsultant(
+    String uid,
+    String username,
+    String fullName,
+    String role,
+    String number,
+  ) async {
+    try {
+      if (kDebugMode) {
+        print("user detail update profile $uid ");
+      }
+      final patchData = {
+        'uid': uid,
+        'username': username,
+        'fullName': fullName,
+        'role': role,
+        'number': number,
+      };
+      if (kDebugMode) {
+        print("valuw od chages is $patchData");
+      }
+      await _userDoc
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update(patchData);
 
       final newUser =
           await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
@@ -453,7 +489,7 @@ class AuthControllers extends GetxController {
   }
 
   // Get Users List
-  Stream<List<UserList>> readtUserList() => FirebaseFirestore.instance
+  Stream<List<UserList>> readUserList() => FirebaseFirestore.instance
       .collection('users')
       .snapshots()
       .map((snapshot) =>
@@ -471,6 +507,19 @@ class AuthControllers extends GetxController {
         print(e);
       }
       return e.message;
+    }
+  }
+
+  // final _userDoc = FirebaseFirestore.instance.collection("users");
+
+  Stream<QuerySnapshot> getStreamFireStore(int limit, String? textSearch) {
+    if (textSearch?.isNotEmpty == true) {
+      return _userDoc
+          .limit(limit)
+          .where(liveUser.value!.username!, isEqualTo: textSearch)
+          .snapshots();
+    } else {
+      return _newQuote.limit(limit).snapshots();
     }
   }
 }

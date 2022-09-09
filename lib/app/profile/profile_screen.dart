@@ -2,6 +2,7 @@
 
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
+import 'package:agora_care/app/quote/add_consultant.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -287,7 +288,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 fontWeight: FontWeight.w700,
                 colors: AppColor().filledTextField,
               ),
-              const Gap(15),
+              _authController.liveUser.value!.admin == true
+                  ? Container()
+                  : const Gap(15),
 
               // CustomContainer(
               //   selectedColor: Theme.of(context).primaryColor,
@@ -339,16 +342,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // ),
               // const Gap(15),
 
-              CustomContainer(
-                trailing: SvgPicture.asset(
-                  'assets/svgs/keyboard_arrow_right.svg',
-                  height: 14,
-                ),
-                titleText: 'Edit profile',
-                onTap: () {
-                  Get.to(() => const EditProfile());
-                },
-              ),
+              _authController.liveUser.value!.admin == true
+                  ? Container()
+                  : CustomContainer(
+                      trailing: SvgPicture.asset(
+                        'assets/svgs/keyboard_arrow_right.svg',
+                        height: 14,
+                      ),
+                      titleText: 'Edit profile',
+                      onTap: () {
+                        Get.to(() => const EditProfile());
+                      },
+                    ),
               const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
@@ -367,11 +372,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 14,
                 ),
                 titleText: _authController.liveUser.value!.admin == true
-                    ? 'See ticket'
+                    ? 'Add Consultant'
                     : 'Consult a psychologist',
-                // onTap: () {
-                //   Get.to(() => const PhonePage());
-                // },
+                onTap: () {
+                  Get.to(() => const AddConsultant());
+                },
               ),
               const Gap(15),
               CustomContainer(
