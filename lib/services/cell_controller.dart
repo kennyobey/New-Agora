@@ -202,6 +202,7 @@ class CellControllers extends GetxController {
     required String description,
     required String groupName,
     required String groupIcon,
+    required List<String> tags,
   }) async {
     try {
       final cellDocs = FirebaseFirestore.instance.collection("cells");
@@ -213,6 +214,7 @@ class CellControllers extends GetxController {
         description: description,
         email: email,
         members: [],
+        tags: tags,
         admin: admin,
         recentMessage: '',
         recentMessageSender: '',

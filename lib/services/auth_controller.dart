@@ -79,6 +79,16 @@ class AuthControllers extends GetxController {
     }
   }
 
+  //
+  Future<void> updateDataFirestore(
+      String path, Map<String, String> dataNeedUpdate) async {
+    // String? token = await FirebaseMessaging.instance.getToken();
+    // await userDb.doc(FirebaseAuth.instance.currentUser!.uid).update(
+    //   {'fcm_token': token},
+    // );
+    return _userDoc.doc(path).update(dataNeedUpdate);
+  }
+
   //Register
   Future registerUserWithEmailandPassword(String email, String password) async {
     try {
@@ -260,8 +270,6 @@ class AuthControllers extends GetxController {
           return;
         }
       }
-      // if (kDebugMode) {}
-      // userDocQuote.get().toString();
       final up = {
         'username': username,
         'fullName': fullName,

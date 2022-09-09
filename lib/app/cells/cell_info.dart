@@ -24,10 +24,12 @@ class CellInfo extends StatefulWidget {
   final String userName;
   final String groupName;
   final String assetName;
+  final List<String> tags;
   final String description;
   final List<String> memberList;
   const CellInfo({
     Key? key,
+    required this.tags,
     required this.time,
     required this.admin,
     required this.groupId,
@@ -185,52 +187,116 @@ class _CellInfoState extends State<CellInfo> {
               colors: AppColor().filledTextField,
             ),
             const Gap(10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 35,
-                  width: 70,
-                  decoration: BoxDecoration(color: AppColor().tagButton),
-                  alignment: Alignment.center,
-                  child: customDescriptionText(
-                    'Health',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    colors: AppColor().filledTextField,
-                    textAlign: TextAlign.center,
+            Obx(() {
+              if (_cellController.cellStatus == CellStatus.LOADING) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: AppColor().primaryColor,
                   ),
-                ),
-                const Gap(10),
-                Container(
-                  height: 35,
-                  width: 70,
-                  decoration: BoxDecoration(color: AppColor().tagButton),
-                  alignment: Alignment.center,
-                  child: customDescriptionText(
-                    'Sex',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    colors: AppColor().filledTextField,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const Gap(10),
-                Container(
-                  height: 35,
-                  width: 70,
-                  decoration: BoxDecoration(color: AppColor().tagButton),
-                  alignment: Alignment.center,
-                  child: customDescriptionText(
-                    'Sexual',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    colors: AppColor().filledTextField,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
+                );
+              } else if (_cellController.cellStatus != CellStatus.LOADING) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.04,
+                  child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.horizontal,
+                      itemCount:
+                          widget.tags.length > 4 ? 4 : widget.tags.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = widget.tags[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: AppColor().tagButton,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            alignment: Alignment.center,
+                            child: customDescriptionText(
+                              item,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              colors: AppColor().filledTextField,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }),
+                );
+              } else {
+                return customDescriptionText('No Tage  Available');
+              }
+            }),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.start,
+            //   children: [
+            //     Container(
+            //       height: 35,
+            //       width: 70,
+            //       decoration: BoxDecoration(color: AppColor().tagButton),
+            //       alignment: Alignment.center,
+            //       child: customDescriptionText(
+            //         (widget.tags.length == null || widget.tags.length == '')
+            //             ? ''
+            //             : widget.tags.first,
+            //         fontSize: 14,
+            //         fontWeight: FontWeight.w400,
+            //         colors: AppColor().filledTextField,
+            //         textAlign: TextAlign.center,
+            //       ),
+            //     ),
+            //     const Gap(10),
+            // Container(
+            //   height: 35,
+            //   width: 70,
+            //   decoration: BoxDecoration(color: AppColor().tagButton),
+            //   alignment: Alignment.center,
+            //   child: customDescriptionText(
+            //     (widget.tags.length == null || widget.tags.length == '')
+            //         ? ''
+            //         : widget.tags[1],
+            //     fontSize: 14,
+            //     fontWeight: FontWeight.w400,
+            //     colors: AppColor().filledTextField,
+            //     textAlign: TextAlign.center,
+            //   ),
+            // ),
+            // const Gap(10),
+            // Container(
+            //   height: 35,
+            //   width: 70,
+            //   decoration: BoxDecoration(color: AppColor().tagButton),
+            //   alignment: Alignment.center,
+            //   child: customDescriptionText(
+            //     (widget.tags.length == null || widget.tags.length == '')
+            //         ? ''
+            //         : widget.tags[2],
+            //     fontSize: 14,
+            //     fontWeight: FontWeight.w400,
+            //     colors: AppColor().filledTextField,
+            //     textAlign: TextAlign.center,
+            //   ),
+            // ),
+            // const Gap(10),
+            // Container(
+            //   height: 35,
+            //   width: 70,
+            //   decoration: BoxDecoration(color: AppColor().tagButton),
+            //   alignment: Alignment.center,
+            //   child: customDescriptionText(
+            //     (widget.tags.length == null || widget.tags.length == '')
+            //         ? ''
+            //         : widget.tags.last,
+            //     fontSize: 14,
+            //     fontWeight: FontWeight.w400,
+            //     colors: AppColor().filledTextField,
+            //     textAlign: TextAlign.center,
+            //   ),
+            // ),
+            //   ],
+            // ),
             const Gap(30),
             CustomFillButton(
               buttonText: 'Join Cells',

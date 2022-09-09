@@ -13,6 +13,7 @@ class CellModel {
   CellModel({
     this.id,
     this.uid,
+    this.tags,
     this.groupId,
     this.groupIcon,
     this.groupName,
@@ -31,6 +32,7 @@ class CellModel {
 
   final String? id;
   final String? uid;
+  final List<String>? tags;
   final String? groupId;
   final String? groupIcon;
   final String? groupName;
@@ -60,6 +62,9 @@ class CellModel {
         members: json["members"] == null
             ? []
             : List<String>.from(json["members"].map((x) => x)),
+        tags: json["tags"] == null
+            ? []
+            : List<String>.from(json["tags"].map((x) => x)),
         recentMessage: json["recentMessage"],
         profilePic: json["profilePic"],
         admin: json["admin"],
@@ -83,6 +88,7 @@ class CellModel {
         "recentMessageSender": recentMessageSender,
         "members":
             members == null ? null : List<dynamic>.from(members!.map((x) => x)),
+        "tags": tags == null ? null : List<dynamic>.from(tags!.map((x) => x)),
         "recentMessage": recentMessage,
         "profilePic": profilePic,
         "admin": admin,

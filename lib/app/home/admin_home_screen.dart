@@ -31,7 +31,7 @@ class AdminHomeScreen extends StatefulWidget {
 class _AdminHomeScreenState extends State<AdminHomeScreen>
     with TickerProviderStateMixin {
   final _authController = Get.find<AuthControllers>();
-  final cellContoller = Get.find<CellControllers>();
+  final cellController = Get.find<CellControllers>();
 
   final _quoteContoller = Get.find<QuoteControllers>();
 
@@ -381,15 +381,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                   children: [
                     //CELLS LIST
                     Obx(() {
-                      if (cellContoller.cellStatus == CellStatus.LOADING) {
+                      if (cellController.cellStatus == CellStatus.LOADING) {
                         return customDescriptionText('No Available  Cell');
                       } else {
                         return SizedBox(
                           child: ListView.builder(
-                              itemCount: cellContoller.allAvailableCell.length,
+                              itemCount: cellController.allAvailableCell.length,
                               itemBuilder: (BuildContext context, int index) {
                                 final item =
-                                    cellContoller.allAvailableCell[index];
+                                    cellController.allAvailableCell[index];
                                 // if (kDebugMode) {
                                 //   print(
                                 //       'Cell is now ${item.groupName!.length}');

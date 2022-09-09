@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously
 
+import 'dart:io';
 import 'dart:math';
 
 import 'package:agora_care/app/cells/cell_info.dart';
@@ -13,11 +14,15 @@ import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
 import 'package:agora_care/services/database_service.dart';
+import 'package:agora_care/services/notif_controller.dart';
 import 'package:agora_care/services/quote_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -29,9 +34,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final cellController = Get.find<CellControllers>();
   final _authController = Get.find<AuthControllers>();
-  final cellContoller = Get.find<CellControllers>();
   final _quoteContoller = Get.find<QuoteControllers>();
+
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   String userName = "";
   String email = "";
@@ -56,7 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // gettingUserData();
+    registerNotification();
+    configLocalNotification();
     _quoteContoller.getQuotes();
   }
 
@@ -83,6 +93,75 @@ class _HomeScreenState extends State<HomeScreen> {
         groups = snapshot;
       });
     });
+  }
+
+  void registerNotification() {
+    firebaseMessaging.requestPermission();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (kDebugMode) {
+        print('onMessage: $message');
+      }
+      if (message.notification != null) {
+        showNotification(message.notification!);
+      }
+      return;
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      FCMService().processNotification(event.data);
+    });
+
+    firebaseMessaging.getToken().then((token) {
+      if (kDebugMode) {
+        print('fcm_token: $token');
+      }
+      if (token != null) {
+        _authController.updateDataFirestore(
+            _authController.liveUser.value!.uid!, {'fcm_token': token});
+      }
+    }).catchError((err) {
+      Fluttertoast.showToast(msg: err.message.toString());
+    });
+  }
+
+  void configLocalNotification() {
+    AndroidInitializationSettings initializationSettingsAndroid =
+        const AndroidInitializationSettings('app_icon');
+    IOSInitializationSettings initializationSettingsIOS =
+        const IOSInitializationSettings();
+    InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  void showNotification(RemoteNotification remoteNotification) async {
+    AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      Platform.isAndroid ? 'com.agoracare.app' : 'com.agoracare.app',
+      'Agora Care',
+      playSound: true,
+      enableVibration: true,
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    IOSNotificationDetails iOSPlatformChannelSpecifics =
+        const IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
+
+    if (kDebugMode) {
+      print(remoteNotification);
+    }
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      remoteNotification.title,
+      remoteNotification.body,
+      platformChannelSpecifics,
+      payload: null,
+    );
   }
 
   @override
@@ -365,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const Gap(20),
               Obx(() {
-                if (cellContoller.cellStatus == CellStatus.LOADING) {
+                if (cellController.cellStatus == CellStatus.LOADING) {
                   return customDescriptionText('No Available  Cell');
                 } else {
                   return SizedBox(
@@ -373,11 +452,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
-                      itemCount: cellContoller.allAvailableCell.length > 4
+                      itemCount: cellController.allAvailableCell.length > 4
                           ? 4
-                          : cellContoller.allAvailableCell.length,
+                          : cellController.allAvailableCell.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final item = cellContoller.allAvailableCell[index];
+                        final item = cellController.allAvailableCell[index];
                         // if (kDebugMode) {
                         //   print('Cell is now ${item.groupName!.length}');
                         //   print("group id for cell is ${item.groupId}");
@@ -385,16 +464,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         //       "memeber lenght for cell is ${item.members!.length}");
                         // }
                         return recommendedCells(
-                          groupId: item.groupId,
+                          tags: item.tags,
                           admin: item.admin,
                           time: item.createdAt,
+                          groupId: item.groupId,
                           memberId: item.members,
                           colors: colorList[index],
                           groupName: item.groupName,
                           description: item.description,
-                          assetName: item.profilePic == null
-                              ? 'assets/svgs/bank.svg'
-                              : item.profilePic!,
+                          assetName: 'assets/svgs/bank.svg',
                           userName:
                               _authController.liveUser.value!.username == null
                                   ? 'No Username'
@@ -461,9 +539,10 @@ class _HomeScreenState extends State<HomeScreen> {
     String? groupName,
     String? assetName,
     String? description,
+    List<String>? tags,
     List<String>? memberId,
   }) {
-    cellContoller.joinedOrNot(
+    cellController.joinedOrNot(
       userName!,
       groupId!,
       groupName!,
@@ -477,6 +556,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         Get.to(
           () => CellInfo(
+            tags: tags!,
             time: time!,
             admin: admin!,
             groupId: groupId,

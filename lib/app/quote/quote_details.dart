@@ -401,7 +401,11 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _authController.liveUser.value!.profilePic == null
+                              (_authController.liveUser.value!.profilePic ==
+                                          null ||
+                                      _authController
+                                              .liveUser.value!.profilePic ==
+                                          '')
                                   ? Image.asset(
                                       'assets/images/placeholder.png',
                                       height: 50,

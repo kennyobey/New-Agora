@@ -1,7 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -38,7 +37,7 @@ class MessageTile extends StatefulWidget {
 }
 
 class _MessageTileState extends State<MessageTile> {
-  final _authController = Get.find<AuthControllers>();
+  // final _authController = Get.find<AuthControllers>();
   final _cellController = Get.find<CellControllers>();
   bool isLiked = false;
   Stream<QuerySnapshot>? chats;
@@ -126,9 +125,9 @@ class _MessageTileState extends State<MessageTile> {
                               widget.groupId, widget.messageid)
                           : _cellController.unLikePost(
                               widget.groupId, widget.messageid);
-                      if (kDebugMode) {
-                        print('Like State Changed');
-                      }
+                      setState(() {
+                        isLiked = isLiked;
+                      });
                     },
                     child: isLiked
                         ? SvgPicture.asset(

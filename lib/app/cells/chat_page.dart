@@ -143,14 +143,15 @@ class _ChatPageState extends State<ChatPage> {
                               FlutterImageStack(
                                 // backgroundColor: Colors.black,
                                 itemBorderColor: AppColor().whiteColor,
-                                imageList: snapshot.data!
-                                    .map(
-                                      (e) =>
-                                          e.profilePic ??
-                                          'assets/images/placeholder.png',
-                                      // "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
-                                    )
-                                    .toList(),
+                                imageList: snapshot.data != null
+                                    ? snapshot.data!
+                                        .map(
+                                          (e) =>
+                                              e.profilePic ??
+                                              "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
+                                        )
+                                        .toList()
+                                    : ['assets/images/placeholder.png'],
                                 showTotalCount: true,
                                 totalCount: widget.member == null
                                     ? 0
@@ -292,7 +293,8 @@ class _ChatPageState extends State<ChatPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Gap(5),
-                _authController.liveUser.value!.profilePic == null
+                (_authController.liveUser.value!.profilePic == null ||
+                        _authController.liveUser.value!.profilePic == '')
                     ? Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,

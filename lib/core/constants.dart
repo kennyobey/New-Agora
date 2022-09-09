@@ -10,10 +10,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
-const String FWPublicKey = 'FLWPUBK-c609afd20eaa92830893fc89408d2fbf-X';
-const String FWSecretKey = 'FLWSECK-77a670d7c734149c075f3421cbc8042e-X';
-const String FWEncryptionKey = '77a670d7c734f4bdb2afa66d';
-
 OutlineInputBorder appInputOutlineBorder() => OutlineInputBorder(
       borderRadius: BorderRadius.circular(5),
       borderSide: BorderSide(
@@ -25,10 +21,6 @@ OutlineInputBorder appInputOutlineBorder() => OutlineInputBorder(
 // Collections
 
 CollectionReference userDb = FirebaseFirestore.instance.collection('users');
-CollectionReference ordersDb = FirebaseFirestore.instance.collection('orders');
-CollectionReference? qutationsDb =
-    FirebaseFirestore.instance.collection('qutation');
-CollectionReference walletDB = FirebaseFirestore.instance.collection('wallet');
 CollectionReference notificationsDb =
     FirebaseFirestore.instance.collection('notifications');
 
@@ -75,7 +67,7 @@ Future sendHttpNotification(
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization':
-            'key=AAAAu7SwJSU:APA91bHVVOEWKIG-mm06w75dSvO4hUc_I4aJ9TAGF2IXynK-_uxuNxOml_x-Za5ysyjPYpwUqcl-UGO-VDwVMsztwpjwsZRTHJxXld9JgsAwZQAfRcEZ_2oWb_i1kgUYC5h5qrpJ_Wa5',
+            'key=BAQux8nHhR__PdT2OFr5Di_uK6s3Vbk4PNvRPVgNTOL1XVqF4pv_UzJ70vywnP9-bQk-sQVF9-xedek91sElqOE',
       },
       body: jsonEncode({
         'registration_ids': [token],

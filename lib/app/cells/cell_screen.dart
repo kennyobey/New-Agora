@@ -239,6 +239,7 @@ class _CellsScreenState extends State<CellsScreen> {
                         // }
                         final random = Random();
                         return recommendedCells(
+                          tags: item.tags!,
                           admin: item.admin,
                           time: item.createdAt,
                           groupId: item.groupId,
@@ -301,6 +302,7 @@ class _CellsScreenState extends State<CellsScreen> {
                           assetName: 'assets/svgs/bank.svg',
                           assetName2: 'assets/svgs/people.svg',
                           memberLength: item.members!,
+                          tags: item.tags!,
                           time: item.createdAt!,
                           admin: item.admin!,
                           description: item.description!,
@@ -336,6 +338,7 @@ class _CellsScreenState extends State<CellsScreen> {
     String? userName,
     String? groupName,
     String? assetName,
+    List<String>? tags,
     String? description,
     List<String>? memberList,
   }) {
@@ -350,6 +353,7 @@ class _CellsScreenState extends State<CellsScreen> {
         //   ),
         // );
         Get.to(() => CellInfo(
+              tags: tags!,
               admin: admin!,
               time: time!,
               groupId: groupId!,
@@ -402,6 +406,7 @@ class _CellsScreenState extends State<CellsScreen> {
     String? assetName,
     String? userName,
     String? assetName2,
+    List<String>? tags,
     String? description,
     List<String>? memberLength,
   }) {
@@ -411,8 +416,9 @@ class _CellsScreenState extends State<CellsScreen> {
           print('Joining Group');
         }
         Get.to(() => CellInfo(
-              admin: admin!,
+              tags: tags!,
               time: time!,
+              admin: admin!,
               groupId: groupId!,
               groupName: groupName!,
               userName: userName!,
