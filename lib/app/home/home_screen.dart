@@ -188,9 +188,13 @@ class _HomeScreenState extends State<HomeScreen> {
               const Gap(20),
               Center(
                 child: Obx(() {
-                  return (_authController.liveUser.value == null)
-                      ? CircularProgressIndicator(
-                          color: AppColor().filledTextField,
+                  return (_authController.liveUser.value!.fullName == null)
+                      ? customTitleText(
+                          'No Name Yet',
+                          size: 20,
+                          spacing: -0.1,
+                          fontWeight: FontWeight.w700,
+                          colors: AppColor().filledTextField,
                         )
                       : customTitleText(
                           'Good afternoon, ${_authController.liveUser.value!.fullName}',

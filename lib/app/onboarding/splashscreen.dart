@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-import 'package:agora_care/app/home/nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/nav_screen.dart';
 import 'package:agora_care/app/onboarding/onboarding.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
@@ -12,8 +12,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../helper/helper_function.dart';
-import '../home/admin_nav_screen.dart';
 import '../home/home_screen.dart';
+import '../home/navigation_bars/admin_nav_screen.dart';
 
 // ignore: use_key_in_widget_constructors
 class SplashScreen extends StatefulWidget {

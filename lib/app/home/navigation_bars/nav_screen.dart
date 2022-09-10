@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import 'home_screen.dart';
+import '../home_screen.dart';
 
 class UserNavScreen extends StatefulWidget {
   int? tabIndex;

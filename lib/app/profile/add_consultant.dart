@@ -6,6 +6,7 @@ import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/widget/bottom_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -86,10 +87,13 @@ class _AddConsultantState extends State<AddConsultant> {
                 color: AppColor().primaryColor,
               ),
             )
-          : Form(
-              key: formKey,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+          : Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: AppColor().whiteColor,
+              ),
+              child: Form(
+                key: formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -122,13 +126,48 @@ class _AddConsultantState extends State<AddConsultant> {
                             if ((snapshot.data!.length ?? 0) > 0) {
                               return Expanded(
                                 child: ListView.builder(
-                                    padding: const EdgeInsets.all(10),
+                                    padding: EdgeInsets.zero,
                                     controller: listScrollController,
                                     itemCount: snapshot.data.length,
                                     itemBuilder: (context, index) {
-                                      return buildItem(
-                                        context,
-                                        snapshot.data[index],
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10),
+                                        child: Slidable(
+                                          startActionPane: ActionPane(
+                                            motion: const ScrollMotion(),
+                                            children: [
+                                              SlidableAction(
+                                                onPressed: (context) => {},
+                                                backgroundColor:
+                                                    AppColor().primaryColor2,
+                                                foregroundColor: Colors.white,
+                                                icon: Icons
+                                                    .admin_panel_settings_sharp,
+                                                label: 'Make Consultant',
+                                              ),
+                                            ],
+                                          ),
+                                          endActionPane: ActionPane(
+                                            motion: const ScrollMotion(),
+                                            children: [
+                                              SlidableAction(
+                                                // An action can be bigger than the others.
+                                                flex: 2,
+                                                onPressed: (context) => {},
+                                                backgroundColor:
+                                                    AppColor().primaryColor,
+                                                foregroundColor: Colors.white,
+                                                icon: Icons.more_vert,
+                                                label: 'More',
+                                              ),
+                                            ],
+                                          ),
+                                          child: buildItem(
+                                            context,
+                                            snapshot.data[index],
+                                          ),
+                                        ),
                                       );
                                     }),
                               );
@@ -359,98 +398,96 @@ class _AddConsultantState extends State<AddConsultant> {
       if (document.uid == currentUserId) {
         return const SizedBox.shrink();
       } else {
-        return Container(
-          margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
-          child: TextButton(
-            // ignore: sort_child_properties_last
-            child: Row(
-              children: [
-                Material(
-                  borderRadius: const BorderRadius.all(Radius.circular(25)),
-                  clipBehavior: Clip.hardEdge,
-                  child: document != null
-                      ? Image.network(
-                          document.profilePic!,
-                          fit: BoxFit.cover,
-                          width: 50,
-                          height: 50,
-                          loadingBuilder: (
-                            BuildContext context,
-                            Widget child,
-                            ImageChunkEvent? loadingProgress,
-                          ) {
-                            if (loadingProgress == null) return child;
-                            return SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColor().primaryColor,
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
+        return TextButton(
+          // ignore: sort_child_properties_last
+          child: Row(
+            children: [
+              Material(
+                borderRadius: const BorderRadius.all(Radius.circular(25)),
+                clipBehavior: Clip.hardEdge,
+                child: document != null
+                    ? Image.network(
+                        document.profilePic!,
+                        fit: BoxFit.cover,
+                        width: 50,
+                        height: 50,
+                        loadingBuilder: (
+                          BuildContext context,
+                          Widget child,
+                          ImageChunkEvent? loadingProgress,
+                        ) {
+                          if (loadingProgress == null) return child;
+                          return SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColor().primaryColor,
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
                               ),
-                            );
-                          },
-                          errorBuilder: (context, object, stackTrace) {
-                            return Icon(
-                              Icons.account_circle,
-                              size: 50,
-                              color: AppColor().primaryColor,
-                            );
-                          },
-                        )
-                      : Icon(
-                          Icons.account_circle,
-                          size: 50,
-                          color: AppColor().primaryColor,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, object, stackTrace) {
+                          return Icon(
+                            Icons.account_circle,
+                            size: 50,
+                            color: AppColor().primaryColor,
+                          );
+                        },
+                      )
+                    : Icon(
+                        Icons.account_circle,
+                        size: 50,
+                        color: AppColor().primaryColor,
+                      ),
+              ),
+              Flexible(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 20),
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                        child: Text(
+                          'Username: ${document.username!}',
+                          maxLines: 1,
+                          style: TextStyle(color: AppColor().primaryColor),
                         ),
-                ),
-                Flexible(
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 20),
-                    child: Column(
-                      children: [
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          margin: const EdgeInsets.fromLTRB(10, 0, 0, 5),
-                          child: Text(
-                            'Username: ${document.username!}',
-                            maxLines: 1,
-                            style: TextStyle(color: AppColor().primaryColor),
-                          ),
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        child: Text(
+                          'User Email: ${document.email!}',
+                          maxLines: 1,
+                          style: TextStyle(color: AppColor().primaryColor),
                         ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                          child: Text(
-                            'User Email: ${document.email!}',
-                            maxLines: 1,
-                            style: TextStyle(color: AppColor().primaryColor),
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+              AppColor().primaryColor.withOpacity(0.2),
             ),
-            onPressed: () {},
-            style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(AppColor().whiteColor),
-              shape: MaterialStateProperty.all<OutlinedBorder>(
-                const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
+            shape: MaterialStateProperty.all<OutlinedBorder>(
+              const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
                 ),
               ),
             ),
           ),
+          onPressed: () {},
         );
       }
     } else {

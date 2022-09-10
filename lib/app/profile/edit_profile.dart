@@ -404,6 +404,10 @@ class _EditProfileState extends State<EditProfile> {
                                 setState(() {
                                   isEditClicked = !isEditClicked;
                                 });
+                                Get.snackbar(
+                                  'Alert',
+                                  'Profile Updated Successfully',
+                                );
                                 setState(() {
                                   _isLoading = false;
                                 });

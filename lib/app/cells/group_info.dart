@@ -1,4 +1,4 @@
-import 'package:agora_care/app/home/nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';

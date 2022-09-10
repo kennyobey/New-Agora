@@ -1,6 +1,6 @@
 // ignore_for_file: unused_field
 
-import 'package:agora_care/app/home/nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/nav_screen.dart';
 import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constant/colors.dart';

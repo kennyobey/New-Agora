@@ -36,7 +36,8 @@ dependencies:
   pin_code_fields: ^7.3.0
   carousel_slider: ^4.0.0
   cupertino_icons: ^1.0.2
-  # flutter_chip_tags: ^2.0.2
+  flutter_slidable: ^2.0.0
+  flutter_chip_tags: ^2.0.2
   percent_indicator: ^3.4.0
   shared_preferences: ^2.0.6
   flutter_easyloading: ^3.0.5

@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable
+// ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable, prefer_if_null_operators
 
 import 'package:agora_care/app/cells/cell_screen.dart';
 import 'package:agora_care/app/profile/profile_screen.dart';
@@ -11,17 +11,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import 'admin_home_screen.dart';
+import '../home_screen.dart';
 
-class AdminUserNavScreen extends StatefulWidget {
+class UserNavScreen extends StatefulWidget {
   int? tabIndex;
-  AdminUserNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
+  UserNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
 
   @override
-  _AdminUserNavScreenState createState() => _AdminUserNavScreenState();
+  _UserNavScreenState createState() => _UserNavScreenState();
 }
 
-class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
+class _UserNavScreenState extends State<UserNavScreen> {
   final _authController = Get.find<AuthControllers>();
   late List<Widget> _screens;
 
@@ -29,13 +29,17 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
 
   @override
   void initState() {
+    // checkAdmin();
+
     _screens = [
       //Home Screen
-      const AdminHomeScreen(),
+      // _authController.liveUser.value!.admin != true
+      //     ? const HomeScreen()
+      //     : const AdminHomeScreen(),
+      const HomeScreen(),
 
       // Cells Screens
       const CellsScreen(),
-      // showGlobalBottomSheet(context),
 
       // Profile Screen
       const ProfileScreen(),
@@ -43,13 +47,24 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
     super.initState();
   }
 
+  checkAdmin() {
+    // if (_authController.liveUser.value?.admin != true) {
+    //   const HomeScreen();
+    // } else {
+    //   const AdminHomeScreen();
+    // }
+    // setState(() {});
+    _authController.liveUser.value!.admin == null
+        ? Center(
+            child: CircularProgressIndicator(
+              color: AppColor().primaryColor,
+            ),
+          )
+        : _authController.liveUser.value!.admin;
+  }
+
   int _selectedIndex = 0;
   int? newIndex;
-  // void _selectPage(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -115,19 +130,42 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
               ],
             ),
           ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).bottomAppBarColor,
-            label: '',
-            tooltip: 'Users',
-            icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
-            activeIcon: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
-                SvgPicture.asset('assets/svgs/user-tag.svg'),
-              ],
-            ),
-          )
+          _authController.liveUser.value!.role != 'consultant'
+              ? BottomNavigationBarItem(
+                  backgroundColor: Theme.of(context).bottomAppBarColor,
+                  label: '',
+                  tooltip: 'Users',
+                  icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
+                  activeIcon: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
+                      SvgPicture.asset('assets/svgs/user-tag.svg'),
+                    ],
+                  ),
+                )
+              : BottomNavigationBarItem(
+                  backgroundColor: Theme.of(context).bottomAppBarColor,
+                  label: '',
+                  tooltip: 'Messages',
+                  icon: Icon(
+                    CupertinoIcons.mail,
+                    color: AppColor().primaryColor,
+                  ),
+                  activeIcon: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      Icon(
+                        CupertinoIcons.mail_solid,
+                        color: AppColor().primaryColor,
+                      ),
+                      Icon(
+                        CupertinoIcons.mail_solid,
+                        color: AppColor().primaryColor,
+                      ),
+                    ],
+                  ),
+                ),
         ],
       ),
     );
@@ -147,11 +185,11 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
           Get.close(1);
         },
         next: () async {
-          // await Get.to(() => AdminUserNavScreen(tabIndex: 1));
+          // await Get.to(() => UserNavScreen(tabIndex: 1));
           await Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => AdminUserNavScreen(tabIndex: 2)));
+                  builder: (context) => UserNavScreen(tabIndex: 2)));
           if (kDebugMode) {
             print('next pressed');
           }

@@ -6,7 +6,7 @@ import 'package:agora_care/app/authentication/%20verify_email_page.dart';
 import 'package:agora_care/app/authentication/email_page.dart';
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/authentication/welcome_page.dart';
-import 'package:agora_care/app/home/admin_nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/admin_nav_screen.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constants.dart';
@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
-import '../app/home/nav_screen.dart';
+import '../app/home/navigation_bars/nav_screen.dart';
 import '../helper/helper_function.dart';
 import 'database_service.dart';
 

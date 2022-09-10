@@ -349,6 +349,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
+  flutter_chip_tags:
+    dependency: "direct main"
+    description:
+      name: flutter_chip_tags
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   flutter_colorpicker:
     dependency: "direct main"
     description:
@@ -424,6 +431,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0-nullsafety"
+  flutter_slidable:
+    dependency: "direct main"
+    description:
+      name: flutter_slidable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   flutter_spinkit:
     dependency: transitive
     description:

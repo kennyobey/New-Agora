@@ -17,7 +17,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../home/home_screen.dart';
-import '../home/nav_screen.dart';
+import '../home/navigation_bars/nav_screen.dart';
 import '../profile/profile_screen.dart';
 
 class CellsScreen extends StatefulWidget {
