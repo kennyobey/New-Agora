@@ -2,6 +2,8 @@
 
 import 'dart:async';
 
+import 'package:agora_care/app/home/navigation_bars/admin_nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/consultant_nav_screen.dart';
 import 'package:agora_care/app/home/navigation_bars/nav_screen.dart';
 import 'package:agora_care/app/onboarding/onboarding.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -13,7 +15,6 @@ import 'package:get/get.dart';
 
 import '../../helper/helper_function.dart';
 import '../home/home_screen.dart';
-import '../home/navigation_bars/admin_nav_screen.dart';
 
 // ignore: use_key_in_widget_constructors
 class SplashScreen extends StatefulWidget {
@@ -52,12 +53,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
           if (user.admin == true) {
             Get.offAll(() => AdminUserNavScreen());
+          } else if (user.role == 'consultant') {
+            Get.offAll(() => ConsultantNavScreen());
           } else {
             Get.offAll(() => UserNavScreen());
           }
         } else {
           if (controller.liveUser.value!.admin == true) {
             Get.offAll(() => AdminUserNavScreen());
+          } else if (controller.liveUser.value!.role == 'consultant') {
+            Get.offAll(() => ConsultantNavScreen());
           } else {
             Get.offAll(() => UserNavScreen());
           }

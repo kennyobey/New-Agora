@@ -13,15 +13,15 @@ import 'package:get/get.dart';
 
 import '../home_screen.dart';
 
-class UserNavScreen extends StatefulWidget {
+class ConsultantNavScreen extends StatefulWidget {
   int? tabIndex;
-  UserNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
+  ConsultantNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
 
   @override
-  _UserNavScreenState createState() => _UserNavScreenState();
+  _ConsultantNavScreenState createState() => _ConsultantNavScreenState();
 }
 
-class _UserNavScreenState extends State<UserNavScreen> {
+class _ConsultantNavScreenState extends State<ConsultantNavScreen> {
   final _authController = Get.find<AuthControllers>();
   late List<Widget> _screens;
 
@@ -117,19 +117,6 @@ class _UserNavScreenState extends State<UserNavScreen> {
               ],
             ),
           ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).bottomAppBarColor,
-            icon: SvgPicture.asset('assets/svgs/people.svg'),
-            label: '',
-            tooltip: 'Cells',
-            activeIcon: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                SvgPicture.asset('assets/svgs/people_filled.svg'),
-                SvgPicture.asset('assets/svgs/people.svg'),
-              ],
-            ),
-          ),
           _authController.liveUser.value!.role != 'consultant'
               ? BottomNavigationBarItem(
                   backgroundColor: Theme.of(context).bottomAppBarColor,
@@ -185,11 +172,11 @@ class _UserNavScreenState extends State<UserNavScreen> {
           Get.close(1);
         },
         next: () async {
-          // await Get.to(() => UserNavScreen(tabIndex: 1));
+          // await Get.to(() => ConsultantNavScreen(tabIndex: 1));
           await Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => UserNavScreen(tabIndex: 2)));
+                  builder: (context) => ConsultantNavScreen(tabIndex: 2)));
           if (kDebugMode) {
             print('next pressed');
           }

@@ -7,6 +7,7 @@ import 'package:agora_care/app/authentication/email_page.dart';
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/app/home/navigation_bars/admin_nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/consultant_nav_screen.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constants.dart';
@@ -61,7 +62,7 @@ class AuthControllers extends GetxController {
       liveUser(newUser);
 
       if (newUser.lastLoginTime!.difference(now).inDays >= 1 &&
-          newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
+          newUser.weeklyLoginTime!.difference(now).inDays >= 7) {
         _userDoc.doc(FirebaseAuth.instance.currentUser!.uid).update({
           "weeks": FieldValue.increment(1),
           "streak": FieldValue.increment(1),
@@ -122,8 +123,10 @@ class AuthControllers extends GetxController {
         liveUser(newUser);
       } else {
         if (userModel.lastLoginTime!.difference(now).inDays >= 1 &&
-            userModel.weeklyLoginTime!.difference(now).inDays >= 1) {
+            userModel.weeklyLoginTime!.difference(now).inDays >= 7) {
           _userDoc.doc(user.uid).update({
+            "admin": false,
+            "role": "user",
             "weeks": FieldValue.increment(1),
             "streak": FieldValue.increment(1),
             "weeklyLoginTime": DateTime.now().toIso8601String(),
@@ -171,6 +174,8 @@ class AuthControllers extends GetxController {
 
       if (userModel.admin == true) {
         Get.offAll(() => AdminUserNavScreen());
+      } else if (userModel.role == 'consultant') {
+        Get.offAll(() => ConsultantNavScreen());
       } else {
         Get.offAll(() => UserNavScreen());
       }
@@ -190,7 +195,7 @@ class AuthControllers extends GetxController {
         liveUser(newUser);
       } else {
         if (userModel.lastLoginTime!.difference(now).inDays >= 1 &&
-            userModel.weeklyLoginTime!.difference(now).inDays >= 1) {
+            userModel.weeklyLoginTime!.difference(now).inDays >= 7) {
           _userDoc.doc(user.uid).update({
             "weeks": FieldValue.increment(1),
             "streak": FieldValue.increment(1),
