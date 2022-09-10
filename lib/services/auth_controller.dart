@@ -515,16 +515,22 @@ class AuthControllers extends GetxController {
     }
   }
 
-  // final _userDoc = FirebaseFirestore.instance.collection("users");
+  String? getUserFirebaseId() {
+    return getUserByModel(FirebaseAuth.instance.currentUser!.uid).toString();
+  }
 
-  Stream<QuerySnapshot> getStreamFireStore(int limit, String? textSearch) {
+  Stream<List<UserList>> getStreamFireStore(int limit, String? textSearch) {
     if (textSearch?.isNotEmpty == true) {
       return _userDoc
           .limit(limit)
           .where(liveUser.value!.username!, isEqualTo: textSearch)
-          .snapshots();
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => UserList.fromJson(doc.data()))
+              .toList());
     } else {
-      return _newQuote.limit(limit).snapshots();
+      return _userDoc.limit(limit).snapshots().map((snapshot) =>
+          snapshot.docs.map((doc) => UserList.fromJson(doc.data())).toList());
     }
   }
 }

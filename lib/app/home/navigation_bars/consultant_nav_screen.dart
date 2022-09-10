@@ -1,17 +1,14 @@
 // ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable, prefer_if_null_operators
 
-import 'package:agora_care/app/cells/cell_screen.dart';
+import 'package:agora_care/app/consultant/consultant_messages.dart';
+import 'package:agora_care/app/home/consultant_home_screen.dart';
 import 'package:agora_care/app/profile/profile_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
-import 'package:agora_care/widget/global_bottom_modal.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
-import '../home_screen.dart';
 
 class ConsultantNavScreen extends StatefulWidget {
   int? tabIndex;
@@ -33,13 +30,10 @@ class _ConsultantNavScreenState extends State<ConsultantNavScreen> {
 
     _screens = [
       //Home Screen
-      // _authController.liveUser.value!.admin != true
-      //     ? const HomeScreen()
-      //     : const AdminHomeScreen(),
-      const HomeScreen(),
+      const ConsultantHome(),
 
-      // Cells Screens
-      const CellsScreen(),
+      // Consultant Messassage Screens
+      const ConsultantMessage(),
 
       // Profile Screen
       const ProfileScreen(),
@@ -47,24 +41,12 @@ class _ConsultantNavScreenState extends State<ConsultantNavScreen> {
     super.initState();
   }
 
-  checkAdmin() {
-    // if (_authController.liveUser.value?.admin != true) {
-    //   const HomeScreen();
-    // } else {
-    //   const AdminHomeScreen();
-    // }
-    // setState(() {});
-    _authController.liveUser.value!.admin == null
-        ? Center(
-            child: CircularProgressIndicator(
-              color: AppColor().primaryColor,
-            ),
-          )
-        : _authController.liveUser.value!.admin;
-  }
-
   int _selectedIndex = 0;
-  int? newIndex;
+  void _selectPage(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,30 +54,11 @@ class _ConsultantNavScreenState extends State<ConsultantNavScreen> {
       resizeToAvoidBottomInset: false,
       body: IndexedStack(
         index: _selectedIndex,
-        // index: widget.tabIndex,
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-        onTap: (newIndex) async => {
-          if (newIndex == 1)
-            {
-              await showGlobalBottomSheet(context),
-              setState(() {
-                //
-              })
-            }
-          else
-            {
-              setState(() {
-                setState(() {
-                  widget.tabIndex = newIndex;
-                  _selectedIndex = widget.tabIndex!;
-                  // _selectPage;
-                });
-              })
-            }
-        },
+        onTap: _selectPage,
         backgroundColor: AppColor().whiteColor,
         currentIndex: _selectedIndex,
         elevation: 20,
@@ -117,70 +80,42 @@ class _ConsultantNavScreenState extends State<ConsultantNavScreen> {
               ],
             ),
           ),
-          _authController.liveUser.value!.role != 'consultant'
-              ? BottomNavigationBarItem(
-                  backgroundColor: Theme.of(context).bottomAppBarColor,
-                  label: '',
-                  tooltip: 'Users',
-                  icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
-                  activeIcon: Stack(
-                    alignment: AlignmentDirectional.center,
-                    children: [
-                      SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
-                      SvgPicture.asset('assets/svgs/user-tag.svg'),
-                    ],
-                  ),
-                )
-              : BottomNavigationBarItem(
-                  backgroundColor: Theme.of(context).bottomAppBarColor,
-                  label: '',
-                  tooltip: 'Messages',
-                  icon: Icon(
-                    CupertinoIcons.mail,
-                    color: AppColor().primaryColor,
-                  ),
-                  activeIcon: Stack(
-                    alignment: AlignmentDirectional.center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.mail_solid,
-                        color: AppColor().primaryColor,
-                      ),
-                      Icon(
-                        CupertinoIcons.mail_solid,
-                        color: AppColor().primaryColor,
-                      ),
-                    ],
-                  ),
+          BottomNavigationBarItem(
+            backgroundColor: Theme.of(context).bottomAppBarColor,
+            label: '',
+            tooltip: 'Messages',
+            icon: Icon(
+              CupertinoIcons.mail,
+              color: AppColor().primaryColor,
+            ),
+            activeIcon: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                Icon(
+                  CupertinoIcons.mail_solid,
+                  color: AppColor().primaryColor,
                 ),
+                Icon(
+                  CupertinoIcons.mail_solid,
+                  color: AppColor().primaryColor,
+                ),
+              ],
+            ),
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: Theme.of(context).bottomAppBarColor,
+            label: '',
+            tooltip: 'Users',
+            icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
+            activeIcon: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
+                SvgPicture.asset('assets/svgs/user-tag.svg'),
+              ],
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  showGlobalBottomSheet(context) async {
-    return await showModalBottomSheet(
-      isScrollControlled: true,
-      backgroundColor: AppColor().whiteColor,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      context: context,
-      builder: (context) => GlobalBottomDialogue(
-        back: () {
-          if (kDebugMode) {
-            print('back pressed');
-          }
-          Get.close(1);
-        },
-        next: () async {
-          // await Get.to(() => ConsultantNavScreen(tabIndex: 1));
-          await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ConsultantNavScreen(tabIndex: 2)));
-          if (kDebugMode) {
-            print('next pressed');
-          }
-        },
       ),
     );
   }

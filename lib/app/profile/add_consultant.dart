@@ -392,9 +392,6 @@ class _AddConsultantState extends State<AddConsultant> {
 
   Widget buildItem(BuildContext context, UserList? document) {
     if (document != null) {
-      // UserModel userChat = UserModel();
-      // if (userChat.uid == currentUserId) {
-      // UserList? userChat;
       if (document.uid == currentUserId) {
         return const SizedBox.shrink();
       } else {

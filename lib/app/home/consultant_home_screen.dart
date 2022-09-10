@@ -21,14 +21,14 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class AdminHomeScreen extends StatefulWidget {
-  const AdminHomeScreen({Key? key}) : super(key: key);
+class ConsultantHome extends StatefulWidget {
+  const ConsultantHome({Key? key}) : super(key: key);
 
   @override
-  State<AdminHomeScreen> createState() => _AdminHomeScreenState();
+  State<ConsultantHome> createState() => _ConsultantHomeState();
 }
 
-class _AdminHomeScreenState extends State<AdminHomeScreen>
+class _ConsultantHomeState extends State<ConsultantHome>
     with TickerProviderStateMixin {
   final _authController = Get.find<AuthControllers>();
   final cellController = Get.find<CellControllers>();

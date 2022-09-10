@@ -101,17 +101,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     );
                                   })
                                 : Obx(() {
-                                    return customDescriptionText(
-                                      _authController
-                                                  .liveUser.value!.fullName ==
-                                              null
-                                          ? 'Your Name'
-                                          : _authController
-                                              .liveUser.value!.fullName!,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      colors: AppColor().filledTextField,
-                                    );
+                                    if (_authController.liveUser.value!.role ==
+                                        'consultant') {
+                                      return customDescriptionText(
+                                        _authController.liveUser.value!.role ==
+                                                null
+                                            ? 'Your Name'
+                                            : _authController
+                                                .liveUser.value!.role!,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        colors: AppColor().filledTextField,
+                                      );
+                                    } else if (_authController
+                                            .liveUser.value!.admin ==
+                                        true) {
+                                      return customDescriptionText(
+                                        _authController.liveUser.value!.role ==
+                                                null
+                                            ? 'Your Name'
+                                            : _authController
+                                                .liveUser.value!.role!,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        colors: AppColor().filledTextField,
+                                      );
+                                    } else {
+                                      return customDescriptionText(
+                                        _authController
+                                                    .liveUser.value!.fullName ==
+                                                null
+                                            ? 'Your Name'
+                                            : _authController
+                                                .liveUser.value!.fullName!,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        colors: AppColor().filledTextField,
+                                      );
+                                    }
                                   }),
                             const Gap(5),
                             customDescriptionText(
