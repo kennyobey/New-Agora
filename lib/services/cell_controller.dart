@@ -245,7 +245,10 @@ class CellControllers extends GetxController {
 
   // function -> bool
   Future<bool> isUserJoined(
-      String groupName, String groupId, String userName) async {
+    String groupName,
+    String groupId,
+    String userName,
+  ) async {
     DocumentReference userDocumentReference = userCollection.doc(uid!.uid);
     DocumentSnapshot documentSnapshot = await userDocumentReference.get();
 

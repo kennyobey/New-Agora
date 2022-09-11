@@ -191,8 +191,8 @@ class UserConsultantMessageState extends State<UserConsultantMessage> {
                           ),
                         );
                       } else {
-                        return const Center(
-                          child: Text("No users"),
+                        return Center(
+                          child: customTitleText("No Consultant Available"),
                         );
                       }
                     } else {
@@ -258,7 +258,7 @@ class UserConsultantMessageState extends State<UserConsultantMessage> {
                 });
               },
               decoration: InputDecoration.collapsed(
-                hintText: 'Search email (you have to type exactly string)',
+                hintText: 'Search email (you have to type exact string)',
                 hintStyle: TextStyle(
                   fontSize: 13,
                   color: AppColor().primaryColor,
