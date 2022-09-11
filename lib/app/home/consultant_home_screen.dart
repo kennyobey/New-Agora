@@ -59,8 +59,9 @@ class _ConsultantHomeState extends State<ConsultantHome>
   @override
   void initState() {
     super.initState();
-    gettingUserData();
-    // _authController.readtUserList();
+    // gettingUserData();
+    // _authController.readUserList();
+    _quoteContoller.getQuotes();
     _tabController = TabController(length: 3, vsync: this);
     _scrollController = ScrollController();
   }
@@ -75,7 +76,7 @@ class _ConsultantHomeState extends State<ConsultantHome>
   }
 
   gettingUserData() async {
-    await HelperFunction.getUserEmailFromSF().then((value) {
+    HelperFunction.getUserEmailFromSF().then((value) {
       setState(() {
         email = value!;
       });

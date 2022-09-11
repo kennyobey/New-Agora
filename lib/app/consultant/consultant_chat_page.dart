@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, prefer_is_empty
+// ignore_for_file: deprecated_member_use, prefer_is_empty, unnecessary_null_comparison
 
 import 'dart:async';
 import 'dart:io';
@@ -10,8 +10,10 @@ import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/chat_provider.dart';
+import 'package:agora_care/services/notif_controller.dart';
 import 'package:agora_care/widget/loading_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -19,21 +21,23 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.arguments}) : super(key: key);
+class ConsultChatPage extends StatefulWidget {
+  const ConsultChatPage({Key? key, required this.arguments}) : super(key: key);
 
-  final ChatPageArguments arguments;
+  final ConsultChatPageArguments arguments;
 
   @override
-  ChatPageState createState() => ChatPageState();
+  ConsultChatPageState createState() => ConsultChatPageState();
 }
 
-class ChatPageState extends State<ChatPage> {
+class ConsultChatPageState extends State<ConsultChatPage> {
   final _chatProvider = Get.find<ChatProvider>();
   final _authController = Get.find<AuthControllers>();
+  final _notifController = Get.find<NotifControllers>();
+
+  RemoteMessage? message;
 
   late String currentUserId;
-  final _consultantDocs = FirebaseFirestore.instance.collection("consultant");
 
   List<QueryDocumentSnapshot> listMessage = [];
   int _limit = 20;
@@ -85,7 +89,6 @@ class ChatPageState extends State<ChatPage> {
   void readLocal() {
     if (_authController.getUserFirebaseId()?.isNotEmpty == true) {
       currentUserId = _authController.liveUser.value!.uid!;
-      // currentUserId = _authController.getUserFirebaseId()!;
     } else {
       // Navigator.of(context).pushAndRemoveUntil(
       //   MaterialPageRoute(builder: (context) => LoginPage()),
@@ -100,8 +103,6 @@ class ChatPageState extends State<ChatPage> {
     }
 
     _chatProvider.updateDataFirestore(
-      // _consultantDocs.toString(),
-      // 'consultant',
       currentUserId,
       {FirestoreConstants.chattingWith: peerId},
     );
@@ -149,7 +150,7 @@ class ChatPageState extends State<ChatPage> {
     }
   }
 
-  onSendMessage(String content, int type) {
+  onSendMessage(String content, int type) async {
     if (content.trim().isNotEmpty) {
       textEditingController.clear();
       _chatProvider.sendConsultantMessage(
@@ -163,6 +164,9 @@ class ChatPageState extends State<ChatPage> {
         listScrollController.animateTo(0,
             duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
       }
+      // _notifController.showNotification(content);
+      //  _notifController.showSentNotification(
+      //     widget.arguments.peerNickname, content);
     } else {
       Fluttertoast.showToast(
           msg: 'Nothing to send', backgroundColor: AppColor().blueColor);
@@ -274,7 +278,7 @@ class ChatPageState extends State<ChatPage> {
                             bottom: isLastMessageRight(index) ? 20 : 10,
                             right: 10),
                         child: Image.asset(
-                          'images/${messageChat.content}.gif',
+                          'assets/images/${messageChat.content}.gif',
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -298,33 +302,39 @@ class ChatPageState extends State<ChatPage> {
                             Radius.circular(18),
                           ),
                           clipBehavior: Clip.hardEdge,
-                          child: Image.network(
-                            widget.arguments.peerAvatar,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColor().primaryColor,
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, object, stackTrace) {
-                              return Icon(
-                                Icons.account_circle,
-                                size: 35,
-                                color: AppColor().blueColor,
-                              );
-                            },
-                            width: 35,
-                            height: 35,
-                            fit: BoxFit.cover,
-                          ),
+                          child: widget.arguments.peerAvatar != null
+                              ? Image.network(
+                                  widget.arguments.peerAvatar,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        color: AppColor().primaryColor,
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                            : null,
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (context, object, stackTrace) {
+                                    return Icon(
+                                      Icons.account_circle,
+                                      size: 35,
+                                      color: AppColor().blueColor,
+                                    );
+                                  },
+                                  width: 35,
+                                  height: 35,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset('assets/placeholder.png'),
                         )
                       : Container(width: 35),
                   messageChat.type == TypeMessage.text
@@ -549,7 +559,7 @@ class ChatPageState extends State<ChatPage> {
                 TextButton(
                   onPressed: () => onSendMessage('mimi1', TypeMessage.sticker),
                   child: Image.asset(
-                    'images/mimi1.gif',
+                    'assets/images/mimi1.gif',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -558,7 +568,7 @@ class ChatPageState extends State<ChatPage> {
                 TextButton(
                   onPressed: () => onSendMessage('mimi2', TypeMessage.sticker),
                   child: Image.asset(
-                    'images/mimi2.gif',
+                    'assets/images/mimi2.gif',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -567,7 +577,7 @@ class ChatPageState extends State<ChatPage> {
                 TextButton(
                   onPressed: () => onSendMessage('mimi3', TypeMessage.sticker),
                   child: Image.asset(
-                    'images/mimi3.gif',
+                    'assets/images/mimi3.gif',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -581,7 +591,7 @@ class ChatPageState extends State<ChatPage> {
                 TextButton(
                   onPressed: () => onSendMessage('mimi4', TypeMessage.sticker),
                   child: Image.asset(
-                    'images/mimi4.gif',
+                    'assets/images/mimi4.gif',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -590,7 +600,7 @@ class ChatPageState extends State<ChatPage> {
                 TextButton(
                   onPressed: () => onSendMessage('mimi5', TypeMessage.sticker),
                   child: Image.asset(
-                    'images/mimi5.gif',
+                    'assets/images/mimi5.gif',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -599,7 +609,7 @@ class ChatPageState extends State<ChatPage> {
                 TextButton(
                   onPressed: () => onSendMessage('mimi6', TypeMessage.sticker),
                   child: Image.asset(
-                    'images/mimi6.gif',
+                    'assets/images/mimi6.gif',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -613,7 +623,7 @@ class ChatPageState extends State<ChatPage> {
                 TextButton(
                   onPressed: () => onSendMessage('mimi7', TypeMessage.sticker),
                   child: Image.asset(
-                    'images/mimi7.gif',
+                    'assets/images/mimi7.gif',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -622,7 +632,7 @@ class ChatPageState extends State<ChatPage> {
                 TextButton(
                   onPressed: () => onSendMessage('mimi8', TypeMessage.sticker),
                   child: Image.asset(
-                    'images/mimi8.gif',
+                    'assets/images/mimi8.gif',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -631,7 +641,7 @@ class ChatPageState extends State<ChatPage> {
                 TextButton(
                   onPressed: () => onSendMessage('mimi9', TypeMessage.sticker),
                   child: Image.asset(
-                    'images/mimi9.gif',
+                    'assets/images/mimi9.gif',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -759,12 +769,12 @@ class ChatPageState extends State<ChatPage> {
   }
 }
 
-class ChatPageArguments {
+class ConsultChatPageArguments {
   final String peerId;
   final String peerAvatar;
   final String peerNickname;
 
-  ChatPageArguments({
+  ConsultChatPageArguments({
     required this.peerId,
     required this.peerAvatar,
     required this.peerNickname,

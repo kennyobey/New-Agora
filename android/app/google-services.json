@@ -48,50 +48,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:773858271905:android:849043bf14c0a77d5e06e0",
-        "android_client_info": {
-          "package_name": "com.example.agora_care"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "773858271905-pjovpgug6rsl44qf1l06s0f2tucitn80.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.agora_care",
-            "certificate_hash": "c26255a6db261b11ac1cd56fdb0e0f7f23a2c4cf"
-          }
-        },
-        {
-          "client_id": "773858271905-9t5mfqvc4uqd96neeh1ehb5390grd3cb.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD40sAA7uxn0YA78GiuDzrCD6Wz7ORMpjg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "773858271905-9t5mfqvc4uqd96neeh1ehb5390grd3cb.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "773858271905-gmb5d9rqi1qob4qske59cqe29sitklj4.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.agoracare.app"
-              }
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

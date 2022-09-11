@@ -10,7 +10,7 @@ import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/debouncer.dart';
 import 'package:agora_care/core/utilities.dart';
 import 'package:agora_care/services/auth_controller.dart';
-import 'package:agora_care/services/notif_controller.dart';
+import 'package:agora_care/services/fcm_controller.dart';
 import 'package:agora_care/widget/loading_view.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -316,8 +316,8 @@ class ConsultantMessageState extends State<ConsultantMessage> {
                 Utilities.closeKeyboard(context);
               }
               Get.to(
-                () => ChatPage(
-                  arguments: ChatPageArguments(
+                () => ConsultChatPage(
+                  arguments: ConsultChatPageArguments(
                     peerId: document.uid!,
                     peerAvatar: document.profilePic!,
                     peerNickname: document.username!,

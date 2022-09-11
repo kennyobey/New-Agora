@@ -1,6 +1,5 @@
 // ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously
 
-import 'dart:io';
 import 'dart:math';
 
 import 'package:agora_care/app/cells/cell_info.dart';
@@ -22,7 +21,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -34,8 +32,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final cellController = Get.find<CellControllers>();
   final _authController = Get.find<AuthControllers>();
+  final _notifController = Get.find<NotifControllers>();
+  final cellController = Get.find<CellControllers>();
   final _quoteContoller = Get.find<QuoteControllers>();
 
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
@@ -65,8 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    registerNotification();
-    configLocalNotification();
+    _notifController.registerNotification();
+    _notifController.configLocalNotification();
     _quoteContoller.getQuotes();
   }
 
@@ -93,75 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
         groups = snapshot;
       });
     });
-  }
-
-  void registerNotification() {
-    firebaseMessaging.requestPermission();
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (kDebugMode) {
-        print('onMessage: $message');
-      }
-      if (message.notification != null) {
-        showNotification(message.notification!);
-      }
-      return;
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      FCMService().processNotification(event.data);
-    });
-
-    firebaseMessaging.getToken().then((token) {
-      if (kDebugMode) {
-        print('fcm_token: $token');
-      }
-      if (token != null) {
-        _authController.updateDataFirestore(
-            _authController.liveUser.value!.uid!, {'fcm_token': token});
-      }
-    }).catchError((err) {
-      Fluttertoast.showToast(msg: err.message.toString());
-    });
-  }
-
-  void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid =
-        const AndroidInitializationSettings('app_icon');
-    IOSInitializationSettings initializationSettingsIOS =
-        const IOSInitializationSettings();
-    InitializationSettings initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
-
-  void showNotification(RemoteNotification remoteNotification) async {
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.agoracare.app' : 'com.agoracare.app',
-      'Agora Care',
-      playSound: true,
-      enableVibration: true,
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    IOSNotificationDetails iOSPlatformChannelSpecifics =
-        const IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics);
-
-    if (kDebugMode) {
-      print(remoteNotification);
-    }
-
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      remoteNotification.title,
-      remoteNotification.body,
-      platformChannelSpecifics,
-      payload: null,
-    );
   }
 
   @override
