@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_final_fields, must_be_immutable, unnecessary_null_comparison
+// ignore_for_file: prefer_final_fields, must_be_immutable, unnecessary_null_comparison, unused_field
 
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/core/custom_form_field.dart';

@@ -2,9 +2,8 @@
 
 import 'dart:math';
 
-import 'package:agora_care/app/cells/create_cell.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
-import 'package:agora_care/app/quote/post_qoute.dart';
+import 'package:agora_care/app/quote/quote_details.dart';
 import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -97,47 +96,9 @@ class _ConsultantHomeState extends State<ConsultantHome>
 
     if (kDebugMode) {
       print("testing user is ${_authController.liveUser.value!.toJson()}");
-      print("testing user admin is ${_authController.liveUser.value!.admin}");
+      print("testing consultant is ${_authController.liveUser.value!.role}");
     }
     return Scaffold(
-      floatingActionButton: Align(
-        alignment: Alignment.bottomRight,
-        child: GestureDetector(
-          onTap: () => Get.to(
-            () => const CreateCell(),
-            transition: Transition.downToUp,
-          ),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.35,
-            padding: const EdgeInsets.symmetric(
-              vertical: 10,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(20),
-              ),
-              color: AppColor().addCellColor,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                const Gap(5),
-                customDescriptionText(
-                  "Add Cell",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  colors: AppColor().whiteColor,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
         elevation: 0,
@@ -178,8 +139,18 @@ class _ConsultantHomeState extends State<ConsultantHome>
                   print("post quote card");
                 }
                 Get.to(
-                  () => const PostQoute(),
-                  transition: Transition.downToUp,
+                  () => QuoteDetails(
+                    dailyQuote: _quoteContoller.allQuotes.last.dailyQuote!,
+                    groupId: _quoteContoller.allQuotes.last.groupId!,
+                    groupName: _quoteContoller.allQuotes.last.dailyQuote!,
+                    userName: _authController.liveUser.value!.username!,
+                    userImage: _authController.liveUser.value!.profilePic!,
+                    assetName:
+                        _authController.liveUser.value!.profilePic == null
+                            ? 'assets/images/placeholder.png'
+                            : _authController.liveUser.value!.profilePic!,
+                  ),
+                  // transition: Transition.downToUp,
                 );
               },
               child: Stack(

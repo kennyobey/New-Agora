@@ -139,9 +139,6 @@ class AuthControllers extends GetxController {
           }
         }
       }
-      // if (userModel.admin == true) {
-      //   Get.to(() => AdminUserNavScreen());
-      // } else {
       Get.to(() => const WelComePage());
       // }
     } on FirebaseAuthException catch (e) {
@@ -173,7 +170,7 @@ class AuthControllers extends GetxController {
       liveUser(userModel);
 
       if (userModel.admin == true) {
-        Get.offAll(() => AdminUserNavScreen());
+        Get.offAll(() => AdminNavScreen());
       } else if (userModel.role == 'consultant') {
         Get.offAll(() => ConsultantNavScreen());
       } else {

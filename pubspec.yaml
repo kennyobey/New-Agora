@@ -23,6 +23,7 @@ dependencies:
   logger: ^1.0.0
   lottie: ^1.1.0
   path_provider:
+  timeago: ^3.3.0
   number_display:
   shimmer: ^2.0.0
   local_auth: ^2.1.0

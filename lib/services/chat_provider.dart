@@ -14,12 +14,12 @@ class ChatProvider extends GetxController {
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   final CollectionReference consultantCollection =
-      FirebaseFirestore.instance.collection("quotes");
+      FirebaseFirestore.instance.collection("consultant");
 
-  // ChatProvider(
-  //     {required this.firebaseFirestore,
-  //     required this.prefs,
-  //     required this.firebaseStorage});
+  final CollectionReference messagesCollection = FirebaseFirestore.instance
+      .collection("consultant")
+      .doc()
+      .collection('messages');
 
   String? getPref(String key) {
     return prefs.getString(key);
@@ -31,17 +31,13 @@ class ChatProvider extends GetxController {
     return uploadTask;
   }
 
-  Future<void> updateDataFirestore(String collectionPath, String docPath,
-      Map<String, dynamic> dataNeedUpdate) {
-    return firebaseFirestore
-        .collection(collectionPath)
-        .doc(docPath)
-        .update(dataNeedUpdate);
+  Future<void> updateDataFirestore(
+      String docPath, Map<String, dynamic> dataNeedUpdate) {
+    return consultantCollection.doc(docPath).update(dataNeedUpdate);
   }
 
   Stream<QuerySnapshot> getChatStream(String groupChatId, int limit) {
-    return firebaseFirestore
-        .collection(FirestoreConstants.pathMessageCollection)
+    return consultantCollection
         .doc(groupChatId)
         .collection(groupChatId)
         .orderBy(FirestoreConstants.timestamp, descending: true)
@@ -49,10 +45,14 @@ class ChatProvider extends GetxController {
         .snapshots();
   }
 
-  void sendMessage(String content, int type, String groupChatId,
-      String currentUserId, String peerId) {
-    DocumentReference documentReference = firebaseFirestore
-        .collection(FirestoreConstants.pathMessageCollection)
+  void sendConsultantMessage(
+    String content,
+    int type,
+    String groupChatId,
+    String currentUserId,
+    String peerId,
+  ) {
+    DocumentReference documentReference = consultantCollection
         .doc(groupChatId)
         .collection(groupChatId)
         .doc(DateTime.now().millisecondsSinceEpoch.toString());

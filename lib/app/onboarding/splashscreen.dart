@@ -45,14 +45,14 @@ class _SplashScreenState extends State<SplashScreen> {
         //   ),
         // );
         // } else {
-        // Get.offAll(() => AdminUserNavScreen())
+        // Get.offAll(() => AdminNavScreen())
         // ;
         if (controller.liveUser.value == null) {
           final user = await controller
               .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
 
           if (user.admin == true) {
-            Get.offAll(() => AdminUserNavScreen());
+            Get.offAll(() => AdminNavScreen());
           } else if (user.role == 'consultant') {
             Get.offAll(() => ConsultantNavScreen());
           } else {
@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
           }
         } else {
           if (controller.liveUser.value!.admin == true) {
-            Get.offAll(() => AdminUserNavScreen());
+            Get.offAll(() => AdminNavScreen());
           } else if (controller.liveUser.value!.role == 'consultant') {
             Get.offAll(() => ConsultantNavScreen());
           } else {

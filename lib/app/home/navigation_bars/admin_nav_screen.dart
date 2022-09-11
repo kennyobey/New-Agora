@@ -12,15 +12,15 @@ import 'package:get/get.dart';
 
 import '../admin_home_screen.dart';
 
-class AdminUserNavScreen extends StatefulWidget {
+class AdminNavScreen extends StatefulWidget {
   int? tabIndex;
-  AdminUserNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
+  AdminNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
 
   @override
-  _AdminUserNavScreenState createState() => _AdminUserNavScreenState();
+  _AdminNavScreenState createState() => _AdminNavScreenState();
 }
 
-class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
+class _AdminNavScreenState extends State<AdminNavScreen> {
   final _authController = Get.find<AuthControllers>();
   late List<Widget> _screens;
 
@@ -146,11 +146,11 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
           Get.close(1);
         },
         next: () async {
-          // await Get.to(() => AdminUserNavScreen(tabIndex: 1));
+          // await Get.to(() => AdminNavScreen(tabIndex: 1));
           await Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => AdminUserNavScreen(tabIndex: 2)));
+                  builder: (context) => AdminNavScreen(tabIndex: 2)));
           if (kDebugMode) {
             print('next pressed');
           }

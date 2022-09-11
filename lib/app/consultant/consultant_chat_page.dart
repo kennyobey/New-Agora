@@ -33,7 +33,7 @@ class ChatPageState extends State<ChatPage> {
   final _authController = Get.find<AuthControllers>();
 
   late String currentUserId;
-  final _userDoc = FirebaseFirestore.instance.collection("users");
+  final _consultantDocs = FirebaseFirestore.instance.collection("consultant");
 
   List<QueryDocumentSnapshot> listMessage = [];
   int _limit = 20;
@@ -84,7 +84,8 @@ class ChatPageState extends State<ChatPage> {
 
   void readLocal() {
     if (_authController.getUserFirebaseId()?.isNotEmpty == true) {
-      currentUserId = _authController.getUserFirebaseId()!;
+      currentUserId = _authController.liveUser.value!.uid!;
+      // currentUserId = _authController.getUserFirebaseId()!;
     } else {
       // Navigator.of(context).pushAndRemoveUntil(
       //   MaterialPageRoute(builder: (context) => LoginPage()),
@@ -99,7 +100,8 @@ class ChatPageState extends State<ChatPage> {
     }
 
     _chatProvider.updateDataFirestore(
-      _userDoc.toString(),
+      // _consultantDocs.toString(),
+      // 'consultant',
       currentUserId,
       {FirestoreConstants.chattingWith: peerId},
     );
@@ -147,11 +149,16 @@ class ChatPageState extends State<ChatPage> {
     }
   }
 
-  void onSendMessage(String content, int type) {
+  onSendMessage(String content, int type) {
     if (content.trim().isNotEmpty) {
       textEditingController.clear();
-      _chatProvider.sendMessage(
-          content, type, groupChatId, currentUserId, widget.arguments.peerId);
+      _chatProvider.sendConsultantMessage(
+        content,
+        type,
+        groupChatId,
+        currentUserId,
+        widget.arguments.peerId,
+      );
       if (listScrollController.hasClients) {
         listScrollController.animateTo(0,
             duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
@@ -474,7 +481,8 @@ class ChatPageState extends State<ChatPage> {
       });
     } else {
       _chatProvider.updateDataFirestore(
-        _userDoc.toString(),
+        // _consultantDocs.toString(),
+        // "consultant",
         currentUserId,
         {FirestoreConstants.chattingWith: null},
       );
@@ -500,9 +508,9 @@ class ChatPageState extends State<ChatPage> {
         child: WillPopScope(
           onWillPop: onBackPress,
           child: Stack(
-            children: <Widget>[
+            children: [
               Column(
-                children: <Widget>[
+                children: [
                   // List of messages
                   buildListMessage(),
 
@@ -756,8 +764,9 @@ class ChatPageArguments {
   final String peerAvatar;
   final String peerNickname;
 
-  ChatPageArguments(
-      {required this.peerId,
-      required this.peerAvatar,
-      required this.peerNickname});
+  ChatPageArguments({
+    required this.peerId,
+    required this.peerAvatar,
+    required this.peerNickname,
+  });
 }

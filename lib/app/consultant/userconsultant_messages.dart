@@ -20,14 +20,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-class ConsultantMessage extends StatefulWidget {
-  const ConsultantMessage({Key? key}) : super(key: key);
+class UserConsultantMessage extends StatefulWidget {
+  const UserConsultantMessage({Key? key}) : super(key: key);
 
   @override
-  State createState() => ConsultantMessageState();
+  State createState() => UserConsultantMessageState();
 }
 
-class ConsultantMessageState extends State<ConsultantMessage> {
+class UserConsultantMessageState extends State<UserConsultantMessage> {
   final _authController = Get.find<AuthControllers>();
 
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
@@ -36,13 +36,14 @@ class ConsultantMessageState extends State<ConsultantMessage> {
   final ScrollController listScrollController = ScrollController();
 
   int _limit = 20;
-  final int _limitIncrement = 20;
-  String _textSearch = "";
   bool isLoading = false;
+  String _textSearch = "";
   late String currentUserId;
+  final int _limitIncrement = 20;
+
   Debouncer searchDebouncer = Debouncer(milliseconds: 300);
-  StreamController<bool> btnClearController = StreamController<bool>();
   TextEditingController searchBarTec = TextEditingController();
+  StreamController<bool> btnClearController = StreamController<bool>();
 
   @override
   void initState() {
@@ -53,7 +54,7 @@ class ConsultantMessageState extends State<ConsultantMessage> {
     listScrollController.addListener(scrollListener);
 
     if (_authController.getUserFirebaseId()?.isNotEmpty == true) {
-      currentUserId = _authController.getUserFirebaseId()!;
+      currentUserId = _authController.liveUser.value!.uid!;
     } else {
       Center(child: customDescriptionText('Not available'));
     }

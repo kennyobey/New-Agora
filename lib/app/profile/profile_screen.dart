@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:agora_care/app/consultant/userconsultant_messages.dart';
 import 'package:agora_care/app/profile/add_consultant.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
@@ -106,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       return customDescriptionText(
                                         _authController.liveUser.value!.role ==
                                                 null
-                                            ? 'Your Name'
+                                            ? 'Your Role'
                                             : _authController
                                                 .liveUser.value!.role!,
                                         fontSize: 16,
@@ -119,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       return customDescriptionText(
                                         _authController.liveUser.value!.role ==
                                                 null
-                                            ? 'Your Name'
+                                            ? 'Your Role'
                                             : _authController
                                                 .liveUser.value!.role!,
                                         fontSize: 16,
@@ -225,19 +226,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         //     }),
                       ],
                     ),
-                    _authController.liveUser.value!.admin == true
+                    (_authController.liveUser.value!.admin == true ||
+                            _authController.liveUser.value!.role ==
+                                'consultant')
                         ? Container()
                         : const Gap(15),
-                    _authController.liveUser.value!.admin == true
+                    (_authController.liveUser.value!.admin == true ||
+                            _authController.liveUser.value!.role ==
+                                'consultant')
                         ? Container()
                         : const Divider(
                             height: 1,
                             thickness: 1,
                           ),
-                    _authController.liveUser.value!.admin == true
+                    (_authController.liveUser.value!.admin == true ||
+                            _authController.liveUser.value!.role ==
+                                'consultant')
                         ? Container()
                         : const Gap(15),
-                    _authController.liveUser.value!.admin == true
+                    (_authController.liveUser.value!.admin == true ||
+                            _authController.liveUser.value!.role ==
+                                'consultant')
                         ? Container()
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -389,34 +398,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Settings',
                 onTap: () {
-                  // Get.to(() => AnimationApp());
+                  // Get.to(() => SettingsPage());
                 },
               ),
               const Gap(15),
-              CustomContainer(
-                trailing: SvgPicture.asset(
-                  'assets/svgs/keyboard_arrow_right.svg',
-                  height: 14,
-                ),
-                titleText: _authController.liveUser.value!.admin == true
-                    ? 'Add Consultant'
-                    : 'Consult a psychologist',
-                onTap: () {
-                  Get.to(() => const AddConsultant());
+              Obx(
+                () {
+                  if (_authController.liveUser.value!.role == 'consultant') {
+                    return Container();
+                  } else if (_authController.liveUser.value!.admin == true) {
+                    return CustomContainer(
+                      trailing: SvgPicture.asset(
+                        'assets/svgs/keyboard_arrow_right.svg',
+                        height: 14,
+                      ),
+                      titleText: 'Add Consultant',
+                      onTap: () {
+                        Get.to(() => const AddConsultant());
+                      },
+                    );
+                  } else {
+                    return CustomContainer(
+                      trailing: SvgPicture.asset(
+                        'assets/svgs/keyboard_arrow_right.svg',
+                        height: 14,
+                      ),
+                      titleText: 'Consult a psychologist',
+                      onTap: () {
+                        Get.to(() => const UserConsultantMessage());
+                      },
+                    );
+                  }
                 },
               ),
-              const Gap(15),
-              CustomContainer(
-                trailing: SvgPicture.asset(
-                  'assets/svgs/keyboard_arrow_right.svg',
-                  height: 14,
-                ),
-                titleText: 'Support',
-                onTap: () {
-                  Get.to(() => const SupportPage());
-                },
-              ),
-              const Gap(15),
+              (_authController.liveUser.value!.admin == true ||
+                      _authController.liveUser.value!.role == 'consultant')
+                  ? Container()
+                  : const Gap(15),
+              (_authController.liveUser.value!.admin == true ||
+                      _authController.liveUser.value!.role == 'consultant')
+                  ? Container()
+                  : CustomContainer(
+                      trailing: SvgPicture.asset(
+                        'assets/svgs/keyboard_arrow_right.svg',
+                        height: 14,
+                      ),
+                      titleText: 'Support',
+                      onTap: () {
+                        Get.to(() => const SupportPage());
+                      },
+                    ),
+              (_authController.liveUser.value!.admin == true ||
+                      _authController.liveUser.value!.role == 'consultant')
+                  ? Container()
+                  : const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
