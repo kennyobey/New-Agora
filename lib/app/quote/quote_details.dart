@@ -285,16 +285,19 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               const Gap(5),
                               Column(
                                 children: [
-                                  customDescriptionText(
-                                    _quoteContoller.allQuotes.last.reply! ==
-                                            null
-                                        ? '0'
-                                        : _quoteContoller.allQuotes.last.reply!
-                                            .toString(),
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    colors: AppColor().textColor,
-                                  ),
+                                  Obx(() {
+                                    return customDescriptionText(
+                                      _quoteContoller.allQuotes.last.reply! ==
+                                              null
+                                          ? '0'
+                                          : _quoteContoller
+                                              .allQuotes.last.reply!
+                                              .toString(),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      colors: AppColor().textColor,
+                                    );
+                                  }),
                                   customDescriptionText(
                                     'chats',
                                     fontSize: 12,
@@ -354,6 +357,8 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                 //   await Share.shareFiles([pathurl]);
                                 // },
                                 onTap: () async {
+                                  await _quoteContoller.sharePost(
+                                      _quoteContoller.allQuotes.last.id!);
                                   await Share.share(widget.dailyQuote);
                                 },
                                 child: SvgPicture.asset(

@@ -344,15 +344,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     'assets/svgs/messages.svg',
                   ),
                   const Gap(5),
-                  customDescriptionText(
-                    _quoteContoller.allQuotes.isNotEmpty &&
-                            _quoteContoller.allQuotes.last.reply != null
-                        ? _quoteContoller.allQuotes.last.reply!.toString()
-                        : "0",
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    colors: AppColor().textColor,
-                  ),
+                  Obx(() {
+                    return customDescriptionText(
+                      _quoteContoller.allQuotes.isNotEmpty &&
+                              _quoteContoller.allQuotes.last.reply != null
+                          ? _quoteContoller.allQuotes.last.reply!.toString()
+                          : "0",
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      colors: AppColor().textColor,
+                    );
+                  }),
                   const Gap(10),
                   SvgPicture.asset(
                     'assets/svgs/share.svg',
