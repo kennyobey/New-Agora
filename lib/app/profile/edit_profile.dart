@@ -32,10 +32,12 @@ class _EditProfileState extends State<EditProfile> {
 
   PickedFile? file;
 
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _nextKinController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _fullnameController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _nextKinPhoneController = TextEditingController();
 
   final gender = [
     'Male',
@@ -254,105 +256,17 @@ class _EditProfileState extends State<EditProfile> {
                       textEditingController: _fullnameController,
                     ),
                     const Gap(15),
-                    isEditClicked == true
-                        ? SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(bottom: 5),
-                                  child: customDescriptionText(
-                                    'Select Gender',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    colors: AppColor().textColor,
-                                  ),
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      width: 1,
-                                      color: AppColor().lightTextColor,
-                                    ),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: selectedGender,
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        size: 24,
-                                        color: AppColor().primaryColor,
-                                      ),
-                                      hint: customDescriptionText(
-                                        _authController
-                                                    .liveUser.value!.gender ==
-                                                null
-                                            ? 'Gender'
-                                            : _authController
-                                                .liveUser.value!.gender!,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                      isDense: true,
-                                      items:
-                                          gender.map(buildGenderItem).toList(),
-                                      onChanged: (value) {
-                                        setState(() => selectedGender = value);
-                                      },
-                                      onTap: () {},
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              customDescriptionText(
-                                'Gender',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                colors: AppColor().textColor,
-                              ),
-                              const Gap(5),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 15,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColor().whiteColor,
-                                  border: Border.all(
-                                    width: 1,
-                                    color:
-                                        AppColor().blackColor.withOpacity(0.2),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Gap(10),
-                                    customDescriptionText(
-                                      _authController.liveUser.value!.gender ==
-                                              null
-                                          ? 'Gender'
-                                          : _authController
-                                              .liveUser.value!.gender!,
-                                      colors: AppColor().lightTextColor,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                    CustomTextField(
+                      label: 'Phone Number',
+                      hint: _authController.liveUser.value!.phoneNumber == null
+                          ? 'Enter phone number'
+                          : _authController.liveUser.value!.phoneNumber!,
+                      keyType: TextInputType.phone,
+                      validatorText: '** Field cannot be empty',
+                      color: AppColor().lightTextColor,
+                      enabled: isEditClicked ? true : false,
+                      textEditingController: _fullnameController,
+                    ),
                     const Gap(15),
                     CustomTextField(
                       label: 'City',
@@ -377,6 +291,30 @@ class _EditProfileState extends State<EditProfile> {
                       enabled: isEditClicked ? true : false,
                       textEditingController: _addressController,
                     ),
+                    const Gap(15),
+                    CustomTextField(
+                      label: 'Next Of Kin',
+                      hint: _authController.liveUser.value!.nextOfKin == null
+                          ? 'Enter kin\'n fullname'
+                          : _authController.liveUser.value!.nextOfKin!,
+                      keyType: TextInputType.name,
+                      validatorText: '** Field cannot be empty',
+                      color: AppColor().lightTextColor,
+                      enabled: isEditClicked ? true : false,
+                      textEditingController: _fullnameController,
+                    ),
+                    const Gap(15),
+                    CustomTextField(
+                      label: 'Next Of Phone',
+                      hint: _authController.liveUser.value!.nexKinPhone == null
+                          ? 'Enter kin\'n phone number'
+                          : _authController.liveUser.value!.nexKinPhone!,
+                      keyType: TextInputType.phone,
+                      validatorText: '** Field cannot be empty',
+                      color: AppColor().lightTextColor,
+                      enabled: isEditClicked ? true : false,
+                      textEditingController: _fullnameController,
+                    ),
                     const Gap(20),
                     isEditClicked
                         ? CustomFillButton(
@@ -396,10 +334,13 @@ class _EditProfileState extends State<EditProfile> {
                                 await _authController.userChanges(
                                   _usernameController.text,
                                   _fullnameController.text,
-                                  selectedGender.toString(),
+                                  _authController
+                                      .signupPhonenumberController.text,
                                   _addressController.text,
                                   _cityController.text,
                                   '',
+                                  _nextKinController.text,
+                                  _nextKinPhoneController.text,
                                 );
                                 setState(() {
                                   isEditClicked = !isEditClicked;

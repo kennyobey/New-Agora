@@ -257,8 +257,16 @@ class AuthControllers extends GetxController {
   }
 
   //Update Profile
-  Future userChanges(String username, String fullName, String gender,
-      String address, String postalCode, String profilePic) async {
+  Future userChanges(
+    String username,
+    String fullName,
+    String phoneNumber,
+    String address,
+    String postalCode,
+    String profilePic,
+    String nextOfKin,
+    String nexKinPhone,
+  ) async {
     try {
       if (kDebugMode) {
         print(
@@ -275,11 +283,13 @@ class AuthControllers extends GetxController {
       final up = {
         'username': username,
         'fullName': fullName,
-        'gender': gender,
+        'phoneNumber': phoneNumber,
         'address': address,
         'postalCode': postalCode,
         'profilePic': profilePic,
         'dailyQuote': userDocQuote,
+        'nextOfKin': nextOfKin,
+        'nexKinPhone': nexKinPhone,
       };
       if (kDebugMode) {
         print("value of changes is $up");
@@ -299,35 +309,20 @@ class AuthControllers extends GetxController {
 
   Future changeConsultant(
     String uid,
-    String username,
-    String fullName,
     String role,
-    String number,
   ) async {
     try {
       if (kDebugMode) {
-        print("user detail update profile $uid ");
+        print("consultant data $uid ");
       }
       final patchData = {
         'uid': uid,
-        'username': username,
-        'fullName': fullName,
         'role': role,
-        'number': number,
       };
       if (kDebugMode) {
-        print("valuw od chages is $patchData");
+        print("value of changes is $patchData");
       }
-      await _userDoc
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update(patchData);
-
-      final newUser =
-          await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
-      liveUser(newUser);
-      if (kDebugMode) {
-        print("new user update is ${newUser.toJson()}");
-      }
+      await _userDoc.doc(uid).update(patchData);
     } on FirebaseAuthException catch (e) {
       return e.message;
     }

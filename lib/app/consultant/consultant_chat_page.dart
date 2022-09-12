@@ -179,7 +179,7 @@ class ConsultChatPageState extends State<ConsultChatPage> {
       if (messageChat.idFrom == currentUserId) {
         // Right (my message)
         return Row(
-          // ignore: sort_child_properties_last
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             messageChat.type == TypeMessage.text
                 // Text
@@ -285,7 +285,6 @@ class ConsultChatPageState extends State<ConsultChatPage> {
                         ),
                       ),
           ],
-          mainAxisAlignment: MainAxisAlignment.end,
         );
       } else {
         // Left (peer message)
@@ -552,10 +551,10 @@ class ConsultChatPageState extends State<ConsultChatPage> {
         height: 180,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
+          children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+              children: [
                 TextButton(
                   onPressed: () => onSendMessage('mimi1', TypeMessage.sticker),
                   child: Image.asset(

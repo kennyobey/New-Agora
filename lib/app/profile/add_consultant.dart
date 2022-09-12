@@ -1,13 +1,15 @@
 // ignore_for_file: prefer_final_fields, must_be_immutable, unnecessary_null_comparison, unused_field
 
+import 'dart:async';
+
 import 'package:agora_care/app/model/user_list_model.dart';
-import 'package:agora_care/core/custom_form_field.dart';
+import 'package:agora_care/core/debouncer.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/widget/bottom_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -23,8 +25,11 @@ class AddConsultant extends StatefulWidget {
 
 class _AddConsultantState extends State<AddConsultant> {
   final formKey = GlobalKey<FormState>();
-  final _psycController = TextEditingController();
   final _authController = Get.find<AuthControllers>();
+
+  final _psycController = TextEditingController();
+  Debouncer searchDebouncer = Debouncer(milliseconds: 300);
+  StreamController<bool> btnClearController = StreamController<bool>();
 
   final ScrollController listScrollController = ScrollController();
 
@@ -106,26 +111,23 @@ class _AddConsultantState extends State<AddConsultant> {
                       colors: AppColor().lightTextColor,
                     ),
                     const Gap(30),
-                    CustomTextField(
-                      label: 'Psycologist Email',
-                      hint: "e.g. someone@gmail.com",
-                      // minLines: 2,
-                      // maxLines: 5,
-                      keyType: TextInputType.emailAddress,
-                      validatorText: '** Field cannot be empty',
-                      color: AppColor().lightTextColor,
-                      textEditingController: _psycController,
-                      fillColor: AppColor().fillColor,
-                    ),
+                    // CustomTextField(
+                    //   label: 'Psycologist Email',
+                    //   hint: "e.g. someone@gmail.com",
+                    //   keyType: TextInputType.emailAddress,
+                    //   validatorText: '** Field cannot be empty',
+                    //   color: AppColor().lightTextColor,
+                    //   textEditingController: _psycController,
+                    //   fillColor: AppColor().fillColor,
+                    // ),
+                    buildSearchBar(),
                     const Gap(20),
                     StreamBuilder<List<UserList>>(
                         stream: _authController.getStreamFireStore(
                           _limit,
                           _textSearch,
                           _role,
-                          // 'consultant',
                         ),
-                        // stream: _authController.readUserList(),
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
@@ -141,40 +143,9 @@ class _AddConsultantState extends State<AddConsultant> {
                                       return Padding(
                                         padding:
                                             const EdgeInsets.only(bottom: 10),
-                                        child: Slidable(
-                                          startActionPane: ActionPane(
-                                            motion: const ScrollMotion(),
-                                            children: [
-                                              SlidableAction(
-                                                onPressed: (context) => {},
-                                                backgroundColor:
-                                                    AppColor().primaryColor2,
-                                                foregroundColor: Colors.white,
-                                                icon: Icons
-                                                    .admin_panel_settings_sharp,
-                                                label: 'Make Consultant',
-                                              ),
-                                            ],
-                                          ),
-                                          endActionPane: ActionPane(
-                                            motion: const ScrollMotion(),
-                                            children: [
-                                              SlidableAction(
-                                                // An action can be bigger than the others.
-                                                flex: 2,
-                                                onPressed: (context) => {},
-                                                backgroundColor:
-                                                    AppColor().primaryColor,
-                                                foregroundColor: Colors.white,
-                                                icon: Icons.more_vert,
-                                                label: 'More',
-                                              ),
-                                            ],
-                                          ),
-                                          child: buildItem(
-                                            context,
-                                            snapshot.data[index],
-                                          ),
+                                        child: buildItem(
+                                          context,
+                                          snapshot.data[index],
                                         ),
                                       );
                                     }),
@@ -187,30 +158,32 @@ class _AddConsultantState extends State<AddConsultant> {
                                 ),
                               );
                             } else {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: AppColor().whiteColor,
-                                  border: Border.all(
-                                    width: 2,
-                                    color: AppColor().primaryColor,
-                                  ),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: CircleAvatar(
-                                    radius: 50,
-                                    backgroundColor: AppColor().whiteColor,
-                                    child: Image.asset(
-                                      "assets/images/placeholder.png",
-                                      height: 50,
-                                      width: 50,
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Gap(50),
+                                  Center(
+                                    child: customDescriptionText(
+                                      'No Username Found',
                                     ),
                                   ),
-                                ),
+                                ],
                               );
                             }
                           } else {
-                            return customDescriptionText('No members yet');
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Gap(50),
+                                Center(
+                                  child: customDescriptionText(
+                                    'No User Yet',
+                                  ),
+                                ),
+                              ],
+                            );
                           }
                         }),
                     // SizedBox(
@@ -263,43 +236,70 @@ class _AddConsultantState extends State<AddConsultant> {
     );
   }
 
-  changePsyRole() async {
-    if (formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      await _authController.changeConsultant(
-        _authController.liveUser.value!.uid!,
-        _authController.liveUser.value!.username!,
-        _authController.liveUser.value!.fullName!,
-        _psycController.text,
-        _authController.liveUser.value!.postalCode!,
-      );
-      _psycController.clear();
-      setState(() {
-        _isLoading = false;
-      });
-      showModalBottomSheet(
-        isScrollControlled: true,
-        backgroundColor: AppColor().whiteColor,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
+  Widget buildSearchBar() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          width: 1,
+          color: AppColor().primaryColor,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 15,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(CupertinoIcons.search, color: AppColor().primaryColor, size: 20),
+          const SizedBox(width: 5),
+          Expanded(
+            child: TextFormField(
+              cursorColor: AppColor().primaryColor2,
+              textInputAction: TextInputAction.search,
+              controller: _psycController,
+              onChanged: (value) {
+                searchDebouncer.run(() {
+                  if (value.isNotEmpty) {
+                    btnClearController.add(true);
+                    setState(() {
+                      _textSearch = value;
+                    });
+                  } else {
+                    btnClearController.add(false);
+                    setState(() {
+                      _textSearch = "";
+                    });
+                  }
+                });
+              },
+              decoration: InputDecoration.collapsed(
+                hintText: 'Search nickname (you have to type exact string)',
+                hintStyle: TextStyle(fontSize: 13, color: AppColor().textColor),
+              ),
+              style: const TextStyle(fontSize: 13),
+            ),
           ),
-        ),
-        context: context,
-        builder: (context) => GlobalDialogue(
-          text1: 'Consultant/Psychologist',
-          text2: 'Psychologist have been added successfully',
-          asset: 'assets/svgs/success.svg',
-          action: () {
-            Get.close(1);
-          },
-        ),
-      );
-    }
+          StreamBuilder<bool>(
+              stream: btnClearController.stream,
+              builder: (context, snapshot) {
+                return snapshot.data == true
+                    ? GestureDetector(
+                        onTap: () {
+                          _psycController.clear();
+                          btnClearController.add(false);
+                          setState(() {
+                            _textSearch = "";
+                          });
+                        },
+                        child: Icon(Icons.clear_rounded,
+                            color: AppColor().textColor, size: 20))
+                    : const SizedBox.shrink();
+              }),
+        ],
+      ),
+    );
   }
 
   void pickColor(BuildContext context) => showDialog(
@@ -408,7 +408,155 @@ class _AddConsultantState extends State<AddConsultant> {
               'Username is ${document.username} and User role is ${document.role}');
         }
         return TextButton(
-          // ignore: sort_child_properties_last
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+              AppColor().primaryColor.withOpacity(0.2),
+            ),
+            shape: MaterialStateProperty.all<OutlinedBorder>(
+              const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
+          ),
+          onPressed: () {
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: customTitleText(
+                      "Change Role",
+                      size: 14,
+                      fontWeight: FontWeight.bold,
+                      colors: AppColor().blackColor,
+                    ),
+                    content: customDescriptionText(
+                      "Are you sure you want to make ${document.username} a consultant",
+                      colors: AppColor().textColor,
+                      fontSize: 12,
+                    ),
+                    actions: [
+                      // IconButton(
+                      //   onPressed: () {
+                      //     Navigator.pop(context);
+                      //   },
+                      //   icon: const Icon(
+                      //     Icons.cancel,
+                      //     color: Colors.red,
+                      //   ),
+                      // ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CustomBorderButton(
+                            buttonText: 'Cancel',
+                            textColor: AppColor().errorColor,
+                            borderColor: AppColor().errorColor,
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            onTap: () {
+                              Get.close(1);
+                            },
+                          ),
+                          CustomFillButton(
+                              buttonText: 'Continue',
+                              textColor: AppColor().whiteColor,
+                              buttonColor: AppColor().primaryColor,
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              onTap: () async {
+                                if (kDebugMode) {
+                                  print('role change pressed');
+                                }
+                                // if (formKey.currentState!.validate()) {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+
+                                await _authController.changeConsultant(
+                                  document.uid!,
+                                  'consultant',
+                                );
+                                _psycController.clear();
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                                Get.close(1);
+                                showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  backgroundColor: AppColor().whiteColor,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(25),
+                                      topRight: Radius.circular(25),
+                                    ),
+                                  ),
+                                  context: context,
+                                  builder: (context) => GlobalDialogue(
+                                    text1: 'Consultant/Psychologist',
+                                    text2:
+                                        'Psychologist have been added successfully',
+                                    asset: 'assets/svgs/success.svg',
+                                    action: () {
+                                      Get.close(1);
+                                    },
+                                  ),
+                                );
+                              }
+                              // },
+                              ),
+                        ],
+                      ),
+                      //Leave Chat
+                      // IconButton(
+                      //   onPressed: () async {
+                      //     if (formKey.currentState!.validate()) {
+                      //       setState(() {
+                      //         _isLoading = true;
+                      //       });
+
+                      //       await _authController.changeConsultant(
+                      //         document.uid!,
+                      //         document.username!,
+                      //         document.fullName!,
+                      //         'consultant',
+                      //         _authController.liveUser.value!.phoneNumber!,
+                      //       );
+                      //       _psycController.clear();
+                      //       setState(() {
+                      //         _isLoading = false;
+                      //       });
+                      //       showModalBottomSheet(
+                      //         isScrollControlled: true,
+                      //         backgroundColor: AppColor().whiteColor,
+                      //         shape: const RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.only(
+                      //             topLeft: Radius.circular(25),
+                      //             topRight: Radius.circular(25),
+                      //           ),
+                      //         ),
+                      //         context: context,
+                      //         builder: (context) => GlobalDialogue(
+                      //           text1: 'Consultant/Psychologist',
+                      //           text2:
+                      //               'Psychologist have been added successfully',
+                      //           asset: 'assets/svgs/success.svg',
+                      //           action: () {
+                      //             Get.close(1);
+                      //           },
+                      //         ),
+                      //       );
+                      //     }
+                      //   },
+                      //   icon: const Icon(
+                      //     Icons.done,
+                      //     color: Colors.green,
+                      //   ),
+                      // ),
+                    ],
+                  );
+                });
+          },
           child: Row(
             children: [
               Material(
@@ -484,19 +632,6 @@ class _AddConsultantState extends State<AddConsultant> {
               ),
             ],
           ),
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-              AppColor().primaryColor.withOpacity(0.2),
-            ),
-            shape: MaterialStateProperty.all<OutlinedBorder>(
-              const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-              ),
-            ),
-          ),
-          onPressed: () {},
         );
       }
     } else {

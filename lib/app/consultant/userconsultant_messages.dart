@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class UserConsultantMessage extends StatefulWidget {
@@ -195,8 +196,17 @@ class UserConsultantMessageState extends State<UserConsultantMessage> {
                           ),
                         );
                       } else {
-                        return Center(
-                          child: customTitleText("No Consultant Available"),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Gap(50),
+                            Center(
+                              child: customDescriptionText(
+                                'No Consultant Available',
+                              ),
+                            ),
+                          ],
                         );
                       }
                     } else {
@@ -230,20 +240,17 @@ class UserConsultantMessageState extends State<UserConsultantMessage> {
         ),
       ),
       padding: const EdgeInsets.symmetric(
-        horizontal: 10,
+        horizontal: 20,
         vertical: 15,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
-            CupertinoIcons.search,
-            color: AppColor().primaryColor,
-            size: 25,
-          ),
+          Icon(CupertinoIcons.search, color: AppColor().primaryColor, size: 20),
           const SizedBox(width: 5),
           Expanded(
             child: TextFormField(
+              cursorColor: AppColor().primaryColor2,
               textInputAction: TextInputAction.search,
               controller: searchBarTec,
               onChanged: (value) {
@@ -262,36 +269,28 @@ class UserConsultantMessageState extends State<UserConsultantMessage> {
                 });
               },
               decoration: InputDecoration.collapsed(
-                hintText: 'Search email (you have to type exact string)',
-                hintStyle: TextStyle(
-                  fontSize: 13,
-                  color: AppColor().primaryColor,
-                ),
+                hintText: 'Search nickname (you have to type exact string)',
+                hintStyle: TextStyle(fontSize: 13, color: AppColor().textColor),
               ),
               style: const TextStyle(fontSize: 13),
             ),
           ),
           StreamBuilder<bool>(
-            stream: btnClearController.stream,
-            builder: (context, snapshot) {
-              return snapshot.data == true
-                  ? GestureDetector(
-                      onTap: () {
-                        searchBarTec.clear();
-                        btnClearController.add(false);
-                        setState(() {
-                          _textSearch = "";
-                        });
-                      },
-                      child: Icon(
-                        Icons.clear_rounded,
-                        color: AppColor().primaryColor2,
-                        size: 20,
-                      ),
-                    )
-                  : const SizedBox.shrink();
-            },
-          ),
+              stream: btnClearController.stream,
+              builder: (context, snapshot) {
+                return snapshot.data == true
+                    ? GestureDetector(
+                        onTap: () {
+                          searchBarTec.clear();
+                          btnClearController.add(false);
+                          setState(() {
+                            _textSearch = "";
+                          });
+                        },
+                        child: Icon(Icons.clear_rounded,
+                            color: AppColor().textColor, size: 20))
+                    : const SizedBox.shrink();
+              }),
         ],
       ),
     );

@@ -321,14 +321,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (snapshot.hasData) {
                               if (snapshot.data != null &&
                                   snapshot.data!.docs.isNotEmpty) {
-                                return customDescriptionText(
-                                  snapshot.data!.docs.last
-                                      .data()!['dailyQuote']
-                                      .toString(),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  textAlign: TextAlign.center,
-                                  colors: AppColor().whiteColor,
+                                return Center(
+                                  child: customDescriptionText(
+                                    snapshot.data!.docs.last
+                                        .data()!['dailyQuote']
+                                        .toString(),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    textAlign: TextAlign.center,
+                                    colors: AppColor().whiteColor,
+                                  ),
                                 );
                               } else {
                                 return customDescriptionText(

@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ConsultantMessage extends StatefulWidget {
@@ -41,6 +42,7 @@ class ConsultantMessageState extends State<ConsultantMessage> {
   final String _role = "user";
   bool isLoading = false;
   late String currentUserId;
+
   Debouncer searchDebouncer = Debouncer(milliseconds: 300);
   StreamController<bool> btnClearController = StreamController<bool>();
   TextEditingController searchBarTec = TextEditingController();
@@ -192,8 +194,17 @@ class ConsultantMessageState extends State<ConsultantMessage> {
                           ),
                         );
                       } else {
-                        return const Center(
-                          child: Text("No users"),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Gap(50),
+                            Center(
+                              child: customDescriptionText(
+                                'No User Available',
+                              ),
+                            ),
+                          ],
                         );
                       }
                     } else {
@@ -241,6 +252,7 @@ class ConsultantMessageState extends State<ConsultantMessage> {
           const SizedBox(width: 5),
           Expanded(
             child: TextFormField(
+              cursorColor: AppColor().primaryColor2,
               textInputAction: TextInputAction.search,
               controller: searchBarTec,
               onChanged: (value) {
@@ -259,7 +271,7 @@ class ConsultantMessageState extends State<ConsultantMessage> {
                 });
               },
               decoration: InputDecoration.collapsed(
-                hintText: 'Search email (you have to type exactly string)',
+                hintText: 'Search email (you have to type exact string)',
                 hintStyle: TextStyle(
                   fontSize: 13,
                   color: AppColor().primaryColor,
