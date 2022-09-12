@@ -165,8 +165,9 @@ class ConsultChatPageState extends State<ConsultChatPage> {
             duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
       }
       // _notifController.showNotification(content);
-      //  _notifController.showSentNotification(
+      // _notifController.showSentNotification(
       //     widget.arguments.peerNickname, content);
+      await _notifController.firebaseMessaging.getInitialMessage();
     } else {
       Fluttertoast.showToast(
           msg: 'Nothing to send', backgroundColor: AppColor().blueColor);
@@ -258,7 +259,7 @@ class ConsultChatPageState extends State<ConsultChatPage> {
                                   ),
                                   clipBehavior: Clip.hardEdge,
                                   child: Image.asset(
-                                    'images/placeholder.jpeg',
+                                    'assets/images/placeholder.png',
                                     width: 200,
                                     height: 200,
                                     fit: BoxFit.cover,
@@ -333,7 +334,7 @@ class ConsultChatPageState extends State<ConsultChatPage> {
                                   height: 35,
                                   fit: BoxFit.cover,
                                 )
-                              : Image.asset('assets/placeholder.png'),
+                              : Image.asset('assets/images/placeholder.png'),
                         )
                       : Container(width: 35),
                   messageChat.type == TypeMessage.text
@@ -408,7 +409,7 @@ class ConsultChatPageState extends State<ConsultChatPage> {
                                       ),
                                       clipBehavior: Clip.hardEdge,
                                       child: Image.asset(
-                                        'images/placeholder.jpeg',
+                                        'assets/images/placeholder.png',
                                         width: 200,
                                         height: 200,
                                         fit: BoxFit.cover,
@@ -426,7 +427,7 @@ class ConsultChatPageState extends State<ConsultChatPage> {
                                   bottom: isLastMessageRight(index) ? 20 : 10,
                                   right: 10),
                               child: Image.asset(
-                                'images/${messageChat.content}.gif',
+                                'assets/images/${messageChat.content}.gif',
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.cover,
@@ -586,7 +587,7 @@ class ConsultChatPageState extends State<ConsultChatPage> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+              children: [
                 TextButton(
                   onPressed: () => onSendMessage('mimi4', TypeMessage.sticker),
                   child: Image.asset(
@@ -618,7 +619,7 @@ class ConsultChatPageState extends State<ConsultChatPage> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+              children: [
                 TextButton(
                   onPressed: () => onSendMessage('mimi7', TypeMessage.sticker),
                   child: Image.asset(

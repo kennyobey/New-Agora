@@ -240,11 +240,15 @@ class QuoteControllers extends GetxController {
       // Create reference and write data to Firebase
       await docUser.add(json);
 
+      await sendHttpNotification(
+          title: 'Agora Care', body: 'Todays Quote Has Been Posted');
+
       await sendFirebaseNotification(
-        _authController.liveUser.value!.uid!,
-        "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
-        'Todays Quote has been posted',
-        quotesCollection.id,
+        avatar:
+            "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
+        message: 'Todays Quote has been posted',
+        id: quotesCollection.id,
+        userId: _authController.liveUser.value!.uid!,
       );
 
       await groupDocumentReference!.update({

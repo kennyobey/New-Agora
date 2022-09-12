@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -23,6 +24,8 @@ OutlineInputBorder appInputOutlineBorder() => OutlineInputBorder(
 CollectionReference userDb = FirebaseFirestore.instance.collection('users');
 CollectionReference notificationsDb =
     FirebaseFirestore.instance.collection('notifications');
+
+final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
 kErrorSnakBar(String error, {String? title}) {
   Get.snackbar(
@@ -58,8 +61,8 @@ kSuccessSnakBar(String msg, {String? title}) {
 
 Future sendHttpNotification(
     {String? token,
-    String? title,
-    String? body,
+    required String? title,
+    required String? body,
     Map<String, dynamic>? data}) async {
   try {
     http.Response response = await http.post(
@@ -70,7 +73,7 @@ Future sendHttpNotification(
             'key=BAQux8nHhR__PdT2OFr5Di_uK6s3Vbk4PNvRPVgNTOL1XVqF4pv_UzJ70vywnP9-bQk-sQVF9-xedek91sElqOE',
       },
       body: jsonEncode({
-        'registration_ids': [token],
+        'registration_ids': [firebaseMessaging.getToken()],
         'data': data,
         'notification': {
           'title': '$title',
@@ -85,15 +88,18 @@ Future sendHttpNotification(
   }
 }
 
-Future sendFirebaseNotification(
-    String avatar, String message, String userId, String type,
-    [String? id]) async {
+Future sendFirebaseNotification({
+  required String avatar,
+  required String message,
+  required String userId,
+  required String id,
+}) async {
   try {
     await notificationsDb.doc().set({
       'user': userId,
       'avatar': avatar,
       'message': message,
-      'id': id ?? '',
+      'id': id,
       'created_at': FieldValue.serverTimestamp(),
       'sender': AuthControllers.to.liveUser.value!.uid,
     });

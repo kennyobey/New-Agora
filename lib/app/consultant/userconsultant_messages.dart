@@ -11,6 +11,7 @@ import 'package:agora_care/core/debouncer.dart';
 import 'package:agora_care/core/utilities.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/fcm_controller.dart';
+import 'package:agora_care/services/notif_controller.dart';
 import 'package:agora_care/widget/loading_view.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,6 +31,7 @@ class UserConsultantMessage extends StatefulWidget {
 
 class UserConsultantMessageState extends State<UserConsultantMessage> {
   final _authController = Get.find<AuthControllers>();
+  final _notifController = Get.find<NotifControllers>();
 
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -315,10 +317,12 @@ class UserConsultantMessageState extends State<UserConsultantMessage> {
                 ),
               ),
             ),
-            onPressed: () {
+            onPressed: () async {
               if (Utilities.isKeyboardShowing()) {
                 Utilities.closeKeyboard(context);
               }
+              await _notifController.firebaseMessaging
+                  .getNotificationSettings();
               Get.to(
                 () => ConsultChatPage(
                   arguments: ConsultChatPageArguments(
