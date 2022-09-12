@@ -114,6 +114,8 @@ class AuthControllers extends GetxController {
         userModel.weeklyLoginTime = now;
 
         _userDoc.doc(user.uid).update({
+          "admin": false,
+          "role": "user",
           "weeks": FieldValue.increment(1),
           "streak": FieldValue.increment(1),
           "weeklyLoginTime": DateTime.now().toIso8601String(),
@@ -169,12 +171,16 @@ class AuthControllers extends GetxController {
       }
       liveUser(userModel);
 
-      if (userModel.admin == true) {
-        Get.offAll(() => AdminNavScreen());
-      } else if (userModel.role == 'consultant') {
-        Get.offAll(() => ConsultantNavScreen());
+      if (user.emailVerified) {
+        if (userModel.admin == true) {
+          Get.offAll(() => AdminNavScreen());
+        } else if (userModel.role == 'consultant') {
+          Get.offAll(() => ConsultantNavScreen());
+        } else {
+          Get.offAll(() => UserNavScreen());
+        }
       } else {
-        Get.offAll(() => UserNavScreen());
+        Get.offAll(() => const VerifyEmailLinkPage());
       }
       if (userModel.lastLoginTime == null ||
           userModel.weeklyLoginTime == null) {
@@ -206,6 +212,19 @@ class AuthControllers extends GetxController {
           }
         }
       }
+    } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return Get.snackbar('Alert', e.message!);
+    }
+  }
+
+  //send email verification
+  Future sendVerificationEmail() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      await user.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         print(e);

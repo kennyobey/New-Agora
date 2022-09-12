@@ -265,7 +265,8 @@ class _EditProfileState extends State<EditProfile> {
                       validatorText: '** Field cannot be empty',
                       color: AppColor().lightTextColor,
                       enabled: isEditClicked ? true : false,
-                      textEditingController: _fullnameController,
+                      textEditingController:
+                          _authController.signupPhonenumberController,
                     ),
                     const Gap(15),
                     CustomTextField(
@@ -301,11 +302,11 @@ class _EditProfileState extends State<EditProfile> {
                       validatorText: '** Field cannot be empty',
                       color: AppColor().lightTextColor,
                       enabled: isEditClicked ? true : false,
-                      textEditingController: _fullnameController,
+                      textEditingController: _nextKinController,
                     ),
                     const Gap(15),
                     CustomTextField(
-                      label: 'Next Of Phone',
+                      label: 'Next Of Kin Phone Number',
                       hint: _authController.liveUser.value!.nexKinPhone == null
                           ? 'Enter kin\'n phone number'
                           : _authController.liveUser.value!.nexKinPhone!,
@@ -313,7 +314,7 @@ class _EditProfileState extends State<EditProfile> {
                       validatorText: '** Field cannot be empty',
                       color: AppColor().lightTextColor,
                       enabled: isEditClicked ? true : false,
-                      textEditingController: _fullnameController,
+                      textEditingController: _nextKinPhoneController,
                     ),
                     const Gap(20),
                     isEditClicked
