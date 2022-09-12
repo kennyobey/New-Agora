@@ -1,6 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable
 
-import 'package:agora_care/app/cells/cell_screen.dart';
+import 'package:agora_care/app/cells/admin_cell_screen.dart';
 import 'package:agora_care/app/profile/admin_profile.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
@@ -33,7 +33,7 @@ class _AdminNavScreenState extends State<AdminNavScreen> {
       const AdminHomeScreen(),
 
       // Cells Screens
-      const CellsScreen(),
+      const AdminCellsScreen(),
       // showGlobalBottomSheet(context),
 
       // Profile Screen
@@ -43,8 +43,11 @@ class _AdminNavScreenState extends State<AdminNavScreen> {
   }
 
   int _selectedIndex = 0;
-  int? newIndex;
-  // }
+  void _selectPage(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,30 +55,11 @@ class _AdminNavScreenState extends State<AdminNavScreen> {
       resizeToAvoidBottomInset: false,
       body: IndexedStack(
         index: _selectedIndex,
-        // index: widget.tabIndex,
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-        onTap: (newIndex) async => {
-          if (newIndex == 1)
-            {
-              await showGlobalBottomSheet(context),
-              setState(() {
-                //
-              })
-            }
-          else
-            {
-              setState(() {
-                setState(() {
-                  widget.tabIndex = newIndex;
-                  _selectedIndex = widget.tabIndex!;
-                  // _selectPage;
-                });
-              })
-            }
-        },
+        onTap: _selectPage,
         backgroundColor: AppColor().whiteColor,
         currentIndex: _selectedIndex,
         elevation: 20,

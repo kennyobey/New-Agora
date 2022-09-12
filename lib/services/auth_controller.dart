@@ -519,18 +519,28 @@ class AuthControllers extends GetxController {
     return getUserByModel(FirebaseAuth.instance.currentUser!.uid).toString();
   }
 
-  Stream<List<UserList>> getStreamFireStore(int limit, String? textSearch) {
+  Stream<List<UserList>> getStreamFireStore(
+      int limit, String? textSearch, String? role) {
     if (textSearch?.isNotEmpty == true) {
       return _userDoc
           .limit(limit)
+          .where("role", isEqualTo: role)
           .where(liveUser.value!.username!, isEqualTo: textSearch)
           .snapshots()
           .map((snapshot) => snapshot.docs
               .map((doc) => UserList.fromJson(doc.data()))
               .toList());
     } else {
-      return _userDoc.limit(limit).snapshots().map((snapshot) =>
-          snapshot.docs.map((doc) => UserList.fromJson(doc.data())).toList());
+      if (kDebugMode) {
+        print("USER-ROLE IS $role");
+      }
+      return _userDoc
+          .limit(limit)
+          .where("role", isEqualTo: role)
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => UserList.fromJson(doc.data()))
+              .toList());
     }
   }
 }

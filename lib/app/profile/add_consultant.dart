@@ -4,6 +4,7 @@ import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/core/custom_form_field.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/widget/bottom_modal.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -30,6 +31,7 @@ class _AddConsultantState extends State<AddConsultant> {
   int _limit = 20;
   int _limitIncrement = 20;
   String _textSearch = "";
+  String _role = "user";
   late String currentUserId;
 
   DateTime createdTime = DateTime.now();
@@ -117,9 +119,13 @@ class _AddConsultantState extends State<AddConsultant> {
                     ),
                     const Gap(20),
                     StreamBuilder<List<UserList>>(
-                        // stream: _authController.getStreamFireStore(
-                        //     _limit, _textSearch),
-                        stream: _authController.readUserList(),
+                        stream: _authController.getStreamFireStore(
+                          _limit,
+                          _textSearch,
+                          _role,
+                          // 'consultant',
+                        ),
+                        // stream: _authController.readUserList(),
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
@@ -130,6 +136,8 @@ class _AddConsultantState extends State<AddConsultant> {
                                     controller: listScrollController,
                                     itemCount: snapshot.data.length,
                                     itemBuilder: (context, index) {
+                                      // UserList userList;
+
                                       return Padding(
                                         padding:
                                             const EdgeInsets.only(bottom: 10),
@@ -395,6 +403,10 @@ class _AddConsultantState extends State<AddConsultant> {
       if (document.uid == currentUserId) {
         return const SizedBox.shrink();
       } else {
+        if (kDebugMode) {
+          print(
+              'Username is ${document.username} and User role is ${document.role}');
+        }
         return TextButton(
           // ignore: sort_child_properties_last
           child: Row(

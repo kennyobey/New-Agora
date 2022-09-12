@@ -257,28 +257,78 @@ class _HomeScreenState extends State<HomeScreen> {
                     right: 70,
                     child: Column(
                       children: [
+                        // StreamBuilder(
+                        //   stream: _quoteContoller.getDailyQuote(),
+                        //   builder: (context, AsyncSnapshot snapshot) {
+                        //     if (snapshot.hasData &&
+                        //         snapshot.connectionState ==
+                        //             ConnectionState.done) {
+                        //       if (snapshot.data != null) {
+                        //         return Center(
+                        //           child: customDescriptionText(
+                        //             snapshot.data!.docs.last
+                        //                 .data()!['dailyQuote']
+                        //                 .toString(),
+                        //             fontSize: 16,
+                        //             fontWeight: FontWeight.w700,
+                        //             textAlign: TextAlign.center,
+                        //             colors: AppColor().whiteColor,
+                        //           ),
+                        //         );
+                        //       } else if (snapshot.hasData == false ||
+                        //           snapshot.data == null) {
+                        //         return SvgPicture.asset(
+                        //           'assets/svgs/fluent_tap-single-48-filled.svg',
+                        //         );
+                        //       } else {
+                        //         return customDescriptionText(
+                        //           'No Quote Today',
+                        //           fontSize: 16,
+                        //           fontWeight: FontWeight.w700,
+                        //           textAlign: TextAlign.center,
+                        //           colors: AppColor().whiteColor,
+                        //         );
+                        //       }
+                        //     } else if (snapshot.hasData &&
+                        //         snapshot.connectionState ==
+                        //             ConnectionState.waiting) {
+                        //       return Center(
+                        //         child: CircularProgressIndicator(
+                        //           color: AppColor().primaryColor,
+                        //         ),
+                        //       );
+                        //     } else {
+                        //       return Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.center,
+                        //         mainAxisAlignment: MainAxisAlignment.center,
+                        //         children: [
+                        //           const Gap(40),
+                        //           customDescriptionText(
+                        //             'No Quote Today',
+                        //             fontSize: 16,
+                        //             fontWeight: FontWeight.w700,
+                        //             textAlign: TextAlign.center,
+                        //             colors: AppColor().whiteColor,
+                        //           ),
+                        //         ],
+                        //       );
+                        //     }
+                        //   },
+                        // ),
                         StreamBuilder(
                           stream: _quoteContoller.getDailyQuote(),
                           builder: (context, AsyncSnapshot snapshot) {
-                            if (snapshot.hasData &&
-                                snapshot.connectionState ==
-                                    ConnectionState.done) {
-                              if (snapshot.data != null) {
-                                return Center(
-                                  child: customDescriptionText(
-                                    snapshot.data!.docs.last
-                                        .data()!['dailyQuote']
-                                        .toString(),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    textAlign: TextAlign.center,
-                                    colors: AppColor().whiteColor,
-                                  ),
-                                );
-                              } else if (snapshot.hasData == false ||
-                                  snapshot.data == null) {
-                                return SvgPicture.asset(
-                                  'assets/svgs/fluent_tap-single-48-filled.svg',
+                            if (snapshot.hasData) {
+                              if (snapshot.data != null &&
+                                  snapshot.data!.docs.isNotEmpty) {
+                                return customDescriptionText(
+                                  snapshot.data!.docs.last
+                                      .data()!['dailyQuote']
+                                      .toString(),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  textAlign: TextAlign.center,
+                                  colors: AppColor().whiteColor,
                                 );
                               } else {
                                 return customDescriptionText(
@@ -289,28 +339,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   colors: AppColor().whiteColor,
                                 );
                               }
-                            } else if (snapshot.hasData &&
-                                snapshot.connectionState ==
-                                    ConnectionState.waiting) {
+                            } else {
                               return Center(
                                 child: CircularProgressIndicator(
-                                  color: AppColor().primaryColor,
+                                  color: AppColor().whiteColor,
                                 ),
-                              );
-                            } else {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Gap(40),
-                                  customDescriptionText(
-                                    'No Quote Today',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    textAlign: TextAlign.center,
-                                    colors: AppColor().whiteColor,
-                                  ),
-                                ],
                               );
                             }
                           },

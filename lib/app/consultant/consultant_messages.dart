@@ -38,6 +38,7 @@ class ConsultantMessageState extends State<ConsultantMessage> {
   int _limit = 20;
   final int _limitIncrement = 20;
   String _textSearch = "";
+  final String _role = "user";
   bool isLoading = false;
   late String currentUserId;
   Debouncer searchDebouncer = Debouncer(milliseconds: 300);
@@ -170,6 +171,7 @@ class ConsultantMessageState extends State<ConsultantMessage> {
                   stream: _authController.getStreamFireStore(
                     _limit,
                     _textSearch,
+                    _role,
                   ),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {

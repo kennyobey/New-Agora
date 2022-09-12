@@ -299,7 +299,9 @@ class _CellInfoState extends State<CellInfo> {
             // ),
             const Gap(30),
             CustomFillButton(
-              buttonText: 'Join Cells',
+              buttonText: _authController.liveUser.value!.admin == true
+                  ? 'View Cells'
+                  : 'Join Cells',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
               isLoading: _isLoading,

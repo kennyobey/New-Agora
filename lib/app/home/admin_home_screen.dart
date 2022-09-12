@@ -201,15 +201,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                         StreamBuilder(
                           stream: _quoteContoller.getDailyQuote(),
                           builder: (context, AsyncSnapshot snapshot) {
-                            if (snapshot.hasData &&
-                                snapshot.connectionState ==
-                                    ConnectionState.done) {
-                              if (snapshot.data != null) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data != null &&
+                                  snapshot.data!.docs.isNotEmpty) {
                                 return customDescriptionText(
                                   snapshot.data!.docs.last
                                       .data()!['dailyQuote']
                                       .toString(),
-                                  // snapshot.hasData.toString(),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   textAlign: TextAlign.center,
@@ -219,35 +217,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                 return SvgPicture.asset(
                                   'assets/svgs/fluent_tap-single-48-filled.svg',
                                 );
-                                // return customDescriptionText(
-                                //   // snapshot.data!.docs.last
-                                //   //     .data()!['dailyQuote']
-                                //   //     .toString(),
-                                //   'checking data',
-                                //   fontSize: 16,
-                                //   fontWeight: FontWeight.w700,
-                                //   textAlign: TextAlign.center,
-                                //   colors: AppColor().whiteColor,
-                                // );
                               }
-                            } else if (snapshot.hasData &&
-                                snapshot.connectionState ==
-                                    ConnectionState.waiting) {
+                            } else {
                               return Center(
                                 child: CircularProgressIndicator(
-                                  color: AppColor().primaryColor,
+                                  color: AppColor().whiteColor,
                                 ),
-                              );
-                            } else {
-                              return customDescriptionText(
-                                snapshot.data!.docs.last
-                                    .data()!['dailyQuote']
-                                    .toString(),
-                                // snapshot.hasData.toString(),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                textAlign: TextAlign.center,
-                                colors: AppColor().whiteColor,
                               );
                             }
                           },
@@ -282,17 +257,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                   'assets/svgs/messages.svg',
                 ),
                 const Gap(5),
-                Obx(() {
-                  return customDescriptionText(
-                    _quoteContoller.allQuotes.isNotEmpty &&
-                            _quoteContoller.allQuotes.last.reply != null
-                        ? _quoteContoller.allQuotes.last.reply!.toString()
-                        : "0",
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    colors: AppColor().textColor,
-                  );
-                }),
+                customDescriptionText(
+                  _quoteContoller.allQuotes.isNotEmpty &&
+                          _quoteContoller.allQuotes.last.reply != null
+                      ? _quoteContoller.allQuotes.last.reply!.toString()
+                      : "0",
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  colors: AppColor().textColor,
+                ),
                 const Gap(10),
                 SvgPicture.asset(
                   'assets/svgs/share.svg',
