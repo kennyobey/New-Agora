@@ -199,33 +199,59 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     child: Column(
                       children: [
                         StreamBuilder(
-                            stream: _quoteContoller.getDailyQuote(),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data != null) {
-                                  return customDescriptionText(
-                                    snapshot.data!.docs.last
-                                        .data()!['dailyQuote']
-                                        .toString(),
-                                    // snapshot.hasData.toString(),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    textAlign: TextAlign.center,
-                                    colors: AppColor().whiteColor,
-                                  );
-                                } else {
-                                  return SvgPicture.asset(
-                                    'assets/svgs/fluent_tap-single-48-filled.svg',
-                                  );
-                                }
-                              } else {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColor().primaryColor,
-                                  ),
+                          stream: _quoteContoller.getDailyQuote(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData &&
+                                snapshot.connectionState ==
+                                    ConnectionState.done) {
+                              if (snapshot.data != null) {
+                                return customDescriptionText(
+                                  snapshot.data!.docs.last
+                                      .data()!['dailyQuote']
+                                      .toString(),
+                                  // snapshot.hasData.toString(),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  textAlign: TextAlign.center,
+                                  colors: AppColor().whiteColor,
                                 );
+                              } else {
+                                return SvgPicture.asset(
+                                  'assets/svgs/fluent_tap-single-48-filled.svg',
+                                );
+                                // return customDescriptionText(
+                                //   // snapshot.data!.docs.last
+                                //   //     .data()!['dailyQuote']
+                                //   //     .toString(),
+                                //   'checking data',
+                                //   fontSize: 16,
+                                //   fontWeight: FontWeight.w700,
+                                //   textAlign: TextAlign.center,
+                                //   colors: AppColor().whiteColor,
+                                // );
                               }
-                            }),
+                            } else if (snapshot.hasData &&
+                                snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColor().primaryColor,
+                                ),
+                              );
+                            } else {
+                              return customDescriptionText(
+                                snapshot.data!.docs.last
+                                    .data()!['dailyQuote']
+                                    .toString(),
+                                // snapshot.hasData.toString(),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                textAlign: TextAlign.center,
+                                colors: AppColor().whiteColor,
+                              );
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -239,23 +265,28 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                   'assets/svgs/eye.svg',
                 ),
                 const Gap(5),
-                customDescriptionText(
-                  _quoteContoller.allQuotes.last.views!.length == null
-                      ? '0'
-                      : _quoteContoller.allQuotes.last.views!.length.toString(),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
+                Obx(() {
+                  return customDescriptionText(
+                    _quoteContoller.allQuotes.isNotEmpty &&
+                            _quoteContoller.allQuotes.last.views != null
+                        ? _quoteContoller.allQuotes.last.views!.length
+                            .toString()
+                        : "0",
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  );
+                }),
                 const Gap(10),
                 SvgPicture.asset(
                   'assets/svgs/messages.svg',
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  _quoteContoller.allQuotes.last.reply!.length == null
-                      ? '0'
-                      : _quoteContoller.allQuotes.last.reply!.length.toString(),
+                  _quoteContoller.allQuotes.isNotEmpty &&
+                          _quoteContoller.allQuotes.last.reply != null
+                      ? _quoteContoller.allQuotes.last.reply!.toString()
+                      : "0",
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,
@@ -265,14 +296,18 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                   'assets/svgs/share.svg',
                 ),
                 const Gap(5),
-                customDescriptionText(
-                  _quoteContoller.allQuotes.last.share!.length == null
-                      ? '0'
-                      : _quoteContoller.allQuotes.last.share!.length.toString(),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
+                Obx(() {
+                  return customDescriptionText(
+                    _quoteContoller.allQuotes.isNotEmpty &&
+                            _quoteContoller.allQuotes.last.share != null
+                        ? _quoteContoller.allQuotes.last.share!.length
+                            .toString()
+                        : "0",
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  );
+                }),
               ],
             ),
             const Gap(5),
@@ -426,7 +461,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                             quote: item.dailyQuote,
                             assetName: imageName[index],
                             views: item.likes!.length.toString(),
-                            messages: item.reply!.length.toString(),
+                            messages: item.reply!.toString(),
                             shares: item.share!.length.toString(),
                           );
                         },

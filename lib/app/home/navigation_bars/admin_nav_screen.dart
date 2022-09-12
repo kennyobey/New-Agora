@@ -1,7 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable
 
 import 'package:agora_care/app/cells/cell_screen.dart';
-import 'package:agora_care/app/profile/profile_screen.dart';
+import 'package:agora_care/app/profile/admin_profile.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/widget/global_bottom_modal.dart';
@@ -37,17 +37,13 @@ class _AdminNavScreenState extends State<AdminNavScreen> {
       // showGlobalBottomSheet(context),
 
       // Profile Screen
-      const ProfileScreen(),
+      const AdminProfileScreen(),
     ];
     super.initState();
   }
 
   int _selectedIndex = 0;
   int? newIndex;
-  // void _selectPage(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
   // }
 
   @override

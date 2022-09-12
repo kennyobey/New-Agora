@@ -290,7 +290,7 @@ class CellControllers extends GetxController {
           list.add(cells);
           if (kDebugMode) {
             print('CELL ID is: ${element.id}');
-            print('cell is:${cells.toJson()} ID is:');
+            print('cell is:${cells.toJson()}');
           }
           gettingUserData();
           _cellStatus(CellStatus.SUCCESS);

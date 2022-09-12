@@ -17,7 +17,8 @@ class QuoteModel {
     this.email,
     this.chats,
     this.views,
-    this.reply,
+    // this.reply,
+    this.reply = 0,
     this.admin,
     this.groupId,
     this.groupName,
@@ -40,7 +41,8 @@ class QuoteModel {
   final List<dynamic>? chats;
   final List<dynamic>? views;
   final List<dynamic>? members;
-  final List<dynamic>? reply;
+  // final List<dynamic>? reply;
+  final int? reply;
   final String? recentMessage;
   final String? recentMessageSender;
   final String? recentMessageTime;
@@ -71,10 +73,10 @@ class QuoteModel {
         chats: json["chats"] == null
             ? null
             : List<dynamic>.from(json["chats"].map((x) => x)),
-        // views: json["views"],
-        reply: json["reply"] == null
-            ? null
-            : List<dynamic>.from(json["reply"].map((x) => x)),
+        reply: json["reply"],
+        // reply: json["reply"] == null
+        //     ? null
+        //     : List<dynamic>.from(json["reply"].map((x) => x)),
         createdAt: json["createdAt"] == null
             ? null
             : DateTime.parse(json["createdAt"]),
@@ -101,9 +103,9 @@ class QuoteModel {
             share == null ? null : List<dynamic>.from(share!.map((x) => x)),
         "chats":
             chats == null ? null : List<dynamic>.from(chats!.map((x) => x)),
-        // "views": views,
-        "reply":
-            reply == null ? null : List<dynamic>.from(reply!.map((x) => x)),
+        "reply": reply,
+        // "reply":
+        //     reply == null ? null : List<dynamic>.from(reply!.map((x) => x)),
         "createdAt": createdAt == null ? null : createdAt!.toIso8601String(),
       };
 }

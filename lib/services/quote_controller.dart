@@ -65,6 +65,7 @@ class QuoteControllers extends GetxController {
               "share": sharePost(quotesCollection.id),
               "likes": likePost(quotesCollection.id),
               "views": viewPost(quotesCollection.id),
+              "reply": viewPost(quotesCollection.id),
             });
             _newMessage.doc(messagesCollection.id).update({
               "like": likeQuotePost(quotesCollection.id, messagesCollection.id),
@@ -191,6 +192,20 @@ class QuoteControllers extends GetxController {
     });
   }
 
+  Future chatList(String quoteId) async {
+    if (kDebugMode) {
+      print("quote id is $quoteId");
+    }
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_newQuote.doc(quoteId), {
+        // "reply": FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
+        "chats": FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
+        "reply": FieldValue.increment(1),
+        // "chats": FieldValue.increment(1),
+      });
+    });
+  }
+
   // Create Quotes
   Future creatQuote({
     required String dailyQuote,
@@ -209,7 +224,8 @@ class QuoteControllers extends GetxController {
         groupId: groupId,
         likes: [],
         share: [],
-        reply: [],
+        reply: 0,
+        // reply: [],
         chats: [],
         views: [],
         members: [],

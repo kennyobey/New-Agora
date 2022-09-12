@@ -2,8 +2,6 @@
 
 import 'package:agora_care/app/consultant/userconsultant_messages.dart';
 import 'package:agora_care/app/profile/add_consultant.dart';
-import 'package:agora_care/app/profile/edit_profile.dart';
-import 'package:agora_care/app/profile/support.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -15,14 +13,14 @@ import 'package:get/get.dart';
 import '../../helper/helper_function.dart';
 import '../../services/auth_controller.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class AdminProfileScreen extends StatefulWidget {
+  const AdminProfileScreen({Key? key}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<AdminProfileScreen> createState() => _AdminProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _AdminProfileScreenState extends State<AdminProfileScreen> {
   String email = "";
   final _authController = Get.find<AuthControllers>();
   String profilePicLink =
@@ -54,6 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SingleChildScrollView(
         child: Container(
           color: AppColor().boxColor,
+          height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
@@ -174,146 +173,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           }
                         }),
-                        // FutureBuilder<UserModel>(
-                        //     future: _authController.getUserByModel(
-                        //         _authController.liveUser.value!.uid!),
-                        //     builder: (BuildContext context, snapshot) {
-                        //       if (snapshot.connectionState ==
-                        //               ConnectionState.done &&
-                        //           snapshot.hasData) {
-                        //         return Container(
-                        //           height: 60,
-                        //           width: 60,
-                        //           decoration: BoxDecoration(
-                        //             borderRadius: BorderRadius.circular(80),
-                        //             image: DecorationImage(
-                        //               image: CachedNetworkImageProvider(
-                        //                 snapshot.data!.profilePic!,
-                        //               ),
-                        //               fit: BoxFit.cover,
-                        //             ),
-                        //           ),
-                        //         );
-                        //       } else if (snapshot.connectionState ==
-                        //           ConnectionState.waiting) {
-                        //         return Center(
-                        //           child: CircularProgressIndicator(
-                        //             color: AppColor().primaryColor,
-                        //           ),
-                        //         );
-                        //       } else {
-                        //         return Container(
-                        //           decoration: BoxDecoration(
-                        //             color: AppColor().whiteColor,
-                        //             border: Border.all(
-                        //               width: 2,
-                        //               color: AppColor().primaryColor,
-                        //             ),
-                        //             shape: BoxShape.circle,
-                        //           ),
-                        //           child: Center(
-                        //             child: CircleAvatar(
-                        //               radius: 50,
-                        //               backgroundColor: AppColor().whiteColor,
-                        //               child: Image.asset(
-                        //                 "assets/images/placeholder.png",
-                        //                 height: 50,
-                        //                 width: 50,
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         );
-                        //       }
-                        //     }),
                       ],
                     ),
-                    (_authController.liveUser.value!.admin == true ||
-                            _authController.liveUser.value!.role ==
-                                'consultant')
-                        ? Container()
-                        : const Gap(15),
-                    (_authController.liveUser.value!.admin == true ||
-                            _authController.liveUser.value!.role ==
-                                'consultant')
-                        ? Container()
-                        : const Divider(
-                            height: 1,
-                            thickness: 1,
-                          ),
-                    (_authController.liveUser.value!.admin == true ||
-                            _authController.liveUser.value!.role ==
-                                'consultant')
-                        ? Container()
-                        : const Gap(15),
-                    (_authController.liveUser.value!.admin == true ||
-                            _authController.liveUser.value!.role ==
-                                'consultant')
-                        ? Container()
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/svgs/streak.svg',
-                              ),
-                              const Gap(5),
-                              Obx(() {
-                                return customDescriptionText(
-                                  // '5',
-                                  _authController.liveUser.value!.streak == null
-                                      ? '0'
-                                      : _authController.liveUser.value!.streak
-                                          .toString(),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  colors: AppColor().textColor,
-                                );
-                              }),
-                              const Gap(5),
-                              customDescriptionText(
-                                'Streak',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                colors: AppColor().lightTextColor,
-                              ),
-                              const Gap(30),
-                              /////
-                              Container(
-                                height: 15,
-                                width: 1.5,
-                                color: AppColor().lightTextColor,
-                              ),
-                              /////
-                              const Gap(30),
-                              SvgPicture.asset(
-                                'assets/svgs/calender.svg',
-                              ),
-                              const Gap(5),
-                              Obx(() {
-                                return customDescriptionText(
-                                  // '20',
-                                  _authController.liveUser.value!.weeks == null
-                                      ? '0'
-                                      : _authController.liveUser.value!.weeks
-                                          .toString(),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  colors: AppColor().textColor,
-                                );
-                              }),
-                              const Gap(5),
-                              customDescriptionText(
-                                'Weeks',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                colors: AppColor().lightTextColor,
-                              ),
-                              const Gap(40),
-                              Icon(
-                                Icons.keyboard_arrow_right,
-                                color: AppColor().blackColor,
-                              ),
-                            ],
-                          ),
                     const Gap(10),
                   ],
                 ),
@@ -325,72 +186,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 fontWeight: FontWeight.w700,
                 colors: AppColor().filledTextField,
               ),
-              _authController.liveUser.value!.admin == true
-                  ? Container()
-                  : const Gap(15),
-
-              // CustomContainer(
-              //   selectedColor: Theme.of(context).primaryColor,
-              //   selected: true,
-              //   trailing: const Icon(
-              //     Icons.group,
-              //     size: 30,
-              //   ),
-              //   titleText: 'Groups',
-              //   onTap: () {
-              //     // Get.to(() => const CellInfo());
-              //   },
-              // ),
-              // const Gap(15),
-              // CustomContainer(
-              //   trailing: SvgPicture.asset(
-              //     'assets/svgs/keyboard_arrow_right.svg',
-              //     height: 14,
-              //   ),
-              //   titleText: 'Quote Page',
-              //   // onTap: () {
-              //   //   Get.to(() => const QuotePage());
-              //   // },
-              // ),
-              // const Gap(15),
-
-              // CustomContainer(
-              //   selectedColor: Theme.of(context).primaryColor,
-              //   selected: true,
-              //   trailing: const Icon(
-              //     Icons.group,
-              //     size: 30,
-              //   ),
-              //   titleText: 'Groups',
-              //   onTap: () {
-              //     Get.to(() => const GroupScreen());
-              //   },
-              // ),
-              // const Gap(15),
-              // CustomContainer(
-              //   trailing: SvgPicture.asset(
-              //     'assets/svgs/keyboard_arrow_right.svg',
-              //     height: 14,
-              //   ),
-              //   titleText: 'Quote Page',
-              //   onTap: () {
-              //     Get.to(() => const QuotePage());
-              //   },
-              // ),
-              // const Gap(15),
-
-              _authController.liveUser.value!.admin == true
-                  ? Container()
-                  : CustomContainer(
-                      trailing: SvgPicture.asset(
-                        'assets/svgs/keyboard_arrow_right.svg',
-                        height: 14,
-                      ),
-                      titleText: 'Edit profile',
-                      onTap: () {
-                        Get.to(() => const EditProfile());
-                      },
-                    ),
               const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
@@ -402,10 +197,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Get.to(() => SettingsPage());
                 },
               ),
-              (_authController.liveUser.value!.admin == true ||
-                      _authController.liveUser.value!.role == 'consultant')
-                  ? Container()
-                  : const Gap(15),
+              const Gap(15),
               Obx(
                 () {
                   if (_authController.liveUser.value!.role == 'consultant') {
@@ -435,27 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }
                 },
               ),
-              (_authController.liveUser.value!.admin == true ||
-                      _authController.liveUser.value!.role == 'consultant')
-                  ? Container()
-                  : const Gap(15),
-              (_authController.liveUser.value!.admin == true ||
-                      _authController.liveUser.value!.role == 'consultant')
-                  ? Container()
-                  : CustomContainer(
-                      trailing: SvgPicture.asset(
-                        'assets/svgs/keyboard_arrow_right.svg',
-                        height: 14,
-                      ),
-                      titleText: 'Support',
-                      onTap: () {
-                        Get.to(() => const SupportPage());
-                      },
-                    ),
-              (_authController.liveUser.value!.admin == true)
-                  ? Container()
-                  : const Gap(15),
-              // const Gap(15),
+              const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',

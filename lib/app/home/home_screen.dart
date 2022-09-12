@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _notifController.registerNotification();
     _notifController.configLocalNotification();
-    _quoteContoller.getQuotes();
+    // _quoteContoller.getQuotes();
   }
 
   // string manipulation
@@ -221,6 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                         _quoteContoller
                             .viewPost(_quoteContoller.allQuotes.last.id!);
+
                         Get.to(
                           () => QuoteDetails(
                             dailyQuote:
@@ -257,42 +258,63 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         StreamBuilder(
-                            stream: _quoteContoller.getDailyQuote(),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data != null) {
-                                  return Center(
-                                    child: customDescriptionText(
-                                      snapshot.data!.docs.last
-                                          .data()!['dailyQuote']
-                                          .toString(),
-                                      // snapshot.hasData.toString(),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().whiteColor,
-                                    ),
-                                  );
-                                } else if (snapshot.data == null) {
-                                  return SvgPicture.asset(
-                                    'assets/svgs/fluent_tap-single-48-filled.svg',
-                                  );
-                                } else {
-                                  return customDescriptionText(
+                          stream: _quoteContoller.getDailyQuote(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData &&
+                                snapshot.connectionState ==
+                                    ConnectionState.done) {
+                              if (snapshot.data != null) {
+                                return Center(
+                                  child: customDescriptionText(
+                                    snapshot.data!.docs.last
+                                        .data()!['dailyQuote']
+                                        .toString(),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    textAlign: TextAlign.center,
+                                    colors: AppColor().whiteColor,
+                                  ),
+                                );
+                              } else if (snapshot.hasData == false ||
+                                  snapshot.data == null) {
+                                return SvgPicture.asset(
+                                  'assets/svgs/fluent_tap-single-48-filled.svg',
+                                );
+                              } else {
+                                return customDescriptionText(
+                                  'No Quote Today',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  textAlign: TextAlign.center,
+                                  colors: AppColor().whiteColor,
+                                );
+                              }
+                            } else if (snapshot.hasData &&
+                                snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColor().primaryColor,
+                                ),
+                              );
+                            } else {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Gap(40),
+                                  customDescriptionText(
                                     'No Quote Today',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     textAlign: TextAlign.center,
                                     colors: AppColor().whiteColor,
-                                  );
-                                }
-                              } else {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                      color: AppColor().primaryColor),
-                                );
-                              }
-                            }),
+                                  ),
+                                ],
+                              );
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -325,8 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   customDescriptionText(
                     _quoteContoller.allQuotes.isNotEmpty &&
                             _quoteContoller.allQuotes.last.reply != null
-                        ? _quoteContoller.allQuotes.last.reply!.length
-                            .toString()
+                        ? _quoteContoller.allQuotes.last.reply!.toString()
                         : "0",
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
@@ -627,9 +648,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    quoteModel.reply!.length == null
+                    quoteModel.reply! == null
                         ? '0'
-                        : quoteModel.reply!.length.toString(),
+                        : quoteModel.reply!.toString(),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().textColor,

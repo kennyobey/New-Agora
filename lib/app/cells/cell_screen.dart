@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:agora_care/app/cells/cell_info.dart';
+import 'package:agora_care/app/home/admin_home_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
@@ -73,7 +74,9 @@ class _CellsScreenState extends State<CellsScreen> {
     // gettingUserData();
     _screens = [
       //Home Screen
-      const HomeScreen(),
+      _authController.liveUser.value!.admin == true
+          ? const AdminHomeScreen()
+          : const HomeScreen(),
 
       // Cells Screens
       const CellsScreen(),

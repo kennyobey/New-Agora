@@ -104,6 +104,7 @@ class _EmailPageState extends State<EmailPage> {
                       textEditingController: _emailController,
                       label: 'Email Address',
                       hint: 'Enter email address',
+                      validatorText: '** Field cannot be empty',
                       keyType: TextInputType.emailAddress,
                       // validate: (val) {
                       //   if (val == null || val.isEmpty || val.isEmail) {

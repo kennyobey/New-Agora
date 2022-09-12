@@ -497,13 +497,16 @@ class AuthControllers extends GetxController {
       .map((snapshot) =>
           snapshot.docs.map((doc) => UserList.fromJson(doc.data())).toList());
 
+  //Delete User Account
   Future deleteUserAccount(String userId) async {
     try {
-      final user = _userDoc.doc(userId).delete().then(
+      final user = FirebaseAuth.instance.currentUser;
+      final users = _userDoc.doc(userId).delete().then(
             (value) => Get.offAll(
               () => const EmailPage(),
             ),
           );
+      await user?.delete();
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         print(e);

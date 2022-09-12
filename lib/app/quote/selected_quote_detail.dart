@@ -254,12 +254,10 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                               Column(
                                 children: [
                                   customDescriptionText(
-                                    _quoteContoller
-                                                .allQuotes.last.chats!.length ==
+                                    _quoteContoller.allQuotes.last.reply! ==
                                             null
                                         ? '0'
-                                        : _quoteContoller
-                                            .allQuotes.last.chats!.length
+                                        : _quoteContoller.allQuotes.last.reply!
                                             .toString(),
                                     fontSize: 20,
                                     fontWeight: FontWeight.w700,
@@ -497,6 +495,9 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
       };
 
       DatabaseService().sendComment(widget.groupId, chatMessageMap);
+      _quoteContoller.chatList(
+        widget.quoteId,
+      );
       setState(() {
         commentController.clear();
       });
