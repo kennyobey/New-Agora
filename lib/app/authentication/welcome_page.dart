@@ -196,6 +196,7 @@ class _WelComePageState extends State<WelComePage> {
                             setState(() {
                               _isLoading = false;
                             });
+                            _authController.signOut();
                             Get.to(() => const LoginPage());
                           }
                         }),

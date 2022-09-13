@@ -265,59 +265,8 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                           ],
                         );
                       });
-                  // print("The email is ${email}");
-                  // AuthController.instance.signOut();
-
-                  // Get.to(() => const AccountStatement());
                 },
               ),
-              const Gap(20),
-              _authController.liveUser.value!.admin == true
-                  ? Container()
-                  : CustomBorderButton(
-                      borderColor: AppColor().errorColor,
-                      buttonText: 'Delete Account',
-                      textSize: 14,
-                      textColor: AppColor().errorColor,
-                      onTap: () async {
-                        showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: customDescriptionText(
-                                  "Delete Account",
-                                  fontWeight: FontWeight.bold,
-                                  colors: AppColor().primaryColor,
-                                ),
-                                content: customDescriptionText(
-                                    "Are you sure you want to delete your account?"),
-                                actions: [
-                                  IconButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    icon: const Icon(
-                                      Icons.cancel,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  //Leave Chat
-                                  IconButton(
-                                    onPressed: () async {
-                                      await _authController.deleteUserAccount(
-                                          _authController.liveUser.value!.uid!);
-                                    },
-                                    icon: const Icon(
-                                      Icons.done,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                    )
             ],
           ),
         ),

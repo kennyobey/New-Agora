@@ -47,6 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Stream? groups;
   bool isJoined = false;
 
+  DateTime greetTime = DateTime.now().toLocal();
+
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,
     AppColor().blueColor,
@@ -95,6 +97,17 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  String greeting() {
+    final greetTime = DateTime.now().hour;
+    if (greetTime < 12) {
+      return 'Morning';
+    }
+    if (greetTime < 17) {
+      return 'Afternoon';
+    }
+    return 'Evening';
+  }
+
   @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
@@ -127,12 +140,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.w700,
                           colors: AppColor().filledTextField,
                         )
-                      : customTitleText(
-                          'Good afternoon, ${_authController.liveUser.value!.fullName}',
-                          size: 20,
-                          spacing: -0.1,
-                          fontWeight: FontWeight.w700,
-                          colors: AppColor().filledTextField,
+                      : Row(
+                          children: [
+                            customTitleText(
+                              'Good ${greeting()},',
+                              size: 20,
+                              spacing: -0.1,
+                              fontWeight: FontWeight.w700,
+                              colors: AppColor().filledTextField,
+                            ),
+                            const Gap(5),
+                            customTitleText(
+                              '${_authController.liveUser.value!.fullName}',
+                              size: 20,
+                              spacing: -0.1,
+                              fontWeight: FontWeight.w700,
+                              colors: AppColor().filledTextField,
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              textOverflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         );
                 }),
               ),
