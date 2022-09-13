@@ -23,7 +23,6 @@ class _CreateCellState extends State<CreateCell> {
   final _authController = Get.find<AuthControllers>();
   final _cellController = Get.find<CellControllers>();
 
-  final _chipController = TextEditingController();
   final _cellDescription = TextEditingController();
   final _cellNameController = TextEditingController();
 

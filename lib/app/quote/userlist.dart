@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:agora_care/app/consultant/consultant_chat_page.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -11,17 +10,12 @@ import 'package:agora_care/core/debouncer.dart';
 import 'package:agora_care/core/utilities.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/fcm_controller.dart';
-import 'package:agora_care/services/notif_controller.dart';
 import 'package:agora_care/widget/loading_view.dart';
-import 'package:firebase_admin/firebase_admin.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -35,7 +29,6 @@ class AllUserList extends StatefulWidget {
 
 class AllUserListState extends State<AllUserList> {
   final _authController = Get.find<AuthControllers>();
-  final _notifController = Get.find<NotifControllers>();
 
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -75,12 +68,9 @@ class AllUserListState extends State<AllUserList> {
     btnClearController.close();
   }
 
-  var credential = Credentials.applicationDefault();
-
-  Future<void> deleteUser(String uid) async {
-    await _authController.deleteUserAccount(uid);
-   
-  }
+  // Future<void> deleteUser(String uid) async {
+  //   await _authController.deleteUserAccount(uid);
+  // }
 
   void registerNotification() {
     firebaseMessaging.requestPermission();
@@ -168,7 +158,7 @@ class AllUserListState extends State<AllUserList> {
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
         title: customTitleText(
-          'Available User(s)',
+          'Available Users\'',
           colors: AppColor().primaryColor,
         ),
         centerTitle: true,
@@ -357,7 +347,8 @@ class AllUserListState extends State<AllUserList> {
                         //Leave Chat
                         IconButton(
                           onPressed: () async {
-                            await deleteUser(document.uid!);
+                            await _authController
+                                .deleteUserAccount(document.uid!);
                           },
                           icon: const Icon(
                             Icons.done,

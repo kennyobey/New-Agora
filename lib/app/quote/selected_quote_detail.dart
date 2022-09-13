@@ -1,10 +1,11 @@
 // ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously, iterable_contains_unrelated_type
 
 import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:agora_care/app/home/userlist.dart';
 import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/app/model/quote_model.dart';
+import 'package:agora_care/app/quote/userlist.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -56,11 +57,29 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
 
   String admin = "";
   final commentController = TextEditingController();
+  final ScrollController listScrollController = ScrollController();
 
   final _authController = Get.find<AuthControllers>();
   final _quoteContoller = Get.find<QuoteControllers>();
 
+  List<QueryDocumentSnapshot> listMessage = [];
+
+  _scrollListener() {
+    if (!listScrollController.hasClients) return;
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
+        !listScrollController.position.outOfRange &&
+        _limit <= listMessage.length) {
+      setState(() {
+        _limit += _limitIncrement;
+      });
+    }
+  }
+
   bool isLiked = false;
+  int _limit = 20;
+  final int _limitIncrement = 20;
+
   int reply = 0;
   List<dynamic> like = [];
   List<dynamic> share = [];
@@ -90,6 +109,8 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
   @override
   void initState() {
     getChatandAdmin();
+    listScrollController.addListener(_scrollListener);
+
     _quoteContoller.streamtDailyQuote();
     reply = int.parse(widget.reply);
     share = widget.share;
@@ -295,6 +316,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                               vertical: 20, horizontal: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               customTitleText(
                                 'Discussions',
@@ -302,16 +324,19 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                                 fontWeight: FontWeight.w700,
                                 colors: AppColor().primaryColor,
                               ),
-                              Spacer(),
+                              const Spacer(),
                               _authController.liveUser.value!.admin == true
                                   ? InkWell(
-                                      onTap: (() {
+                                      onTap: () {
                                         Get.to(() => const AllUserList());
-                                      }),
+                                      },
                                       child: customTitleText(
                                         "View Users",
-                                        size: 16,
-                                      ))
+                                        size: 14,
+                                        colors: AppColor().errorColor,
+                                        // decoration: TextDecoration.underline,
+                                      ),
+                                    )
                                   : InkWell(
                                       // onTap: () async {
                                       //   await _quoteContoller.sharePost(
@@ -369,9 +394,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: chatMComments(),
-                        ),
+                        chatComments(),
                         Container(
                           padding: const EdgeInsets.all(5),
                           alignment: Alignment.bottomCenter,
@@ -480,28 +503,49 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
     );
   }
 
-  chatMComments() {
-    return StreamBuilder(
-      stream: chat,
-      builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return QuoteCommentTile(
-                    time: snapshot.data.docs[index]['time'],
-                    message: snapshot.data.docs[index]['message'],
-                    sender: snapshot.data.docs[index]['sender'],
-                    messageid: snapshot.data.docs[index].id,
-                    like: snapshot.data.docs[index]['like'],
-                    sentByMe:
-                        widget.userName == snapshot.data.docs[index]['sender'],
-                    groupId: widget.quoteId,
+  Widget chatComments() {
+    return Flexible(
+      child: widget.groupId.isNotEmpty
+          ? StreamBuilder<QuerySnapshot>(
+              stream: chat,
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  listMessage = snapshot.data!.docs;
+                  if (listMessage.isNotEmpty) {
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(10),
+                      itemBuilder: (context, index) => QuoteCommentTile(
+                        time: snapshot.data!.docs[index]['time'],
+                        message: snapshot.data!.docs[index]['message'],
+                        sender: snapshot.data!.docs[index]['sender'],
+                        sentByMe: widget.userName ==
+                            snapshot.data!.docs[index]['sender'],
+                        groupId: _quoteContoller.allQuotes.last.id!,
+                        like: const [],
+                        messageid: snapshot.data!.docs[index].id,
+                      ),
+                      itemCount: snapshot.data?.docs.length,
+                      reverse: true,
+                      controller: listScrollController,
+                    );
+                  } else {
+                    return const Center(child: Text("No message here yet..."));
+                  }
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColor().primaryColor,
+                    ),
                   );
-                },
-              )
-            : Container();
-      },
+                }
+              },
+            )
+          : Center(
+              child: CircularProgressIndicator(
+                color: AppColor().primaryColor,
+              ),
+            ),
     );
   }
 
@@ -514,6 +558,10 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
         like: [],
         comment: [],
       );
+      if (listScrollController.hasClients) {
+        listScrollController.animateTo(0,
+            duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      }
 
       DatabaseService().sendComment(widget.groupId, chatMessageMap.toJson());
       _quoteContoller.chatList(

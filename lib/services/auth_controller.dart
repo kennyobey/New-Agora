@@ -175,7 +175,7 @@ class AuthControllers extends GetxController {
       }
       liveUser(userModel);
 
-      if (user.emailVerified == !isEmailVerified) {
+      if (user.emailVerified == isEmailVerified) {
         if (userModel.admin == true) {
           Get.offAll(() => AdminNavScreen());
         } else if (userModel.role == 'consultant') {
@@ -476,7 +476,9 @@ class AuthControllers extends GetxController {
   Future<UserModel> getUserByModel(String id) async {
     // print(object)
     final result = await _userDoc.doc(id).get();
-    print("user json ${result.data()}");
+    if (kDebugMode) {
+      print("user json ${result.data()}");
+    }
     final user = UserModel.fromJson(result.data()!);
 
     return user;
@@ -522,14 +524,15 @@ class AuthControllers extends GetxController {
     try {
       final user = FirebaseAuth.instance.currentUser;
 
-      await auth.signOut();
-      await user?.delete();
       liveUser(null);
-      final users = _userDoc.doc(userId).delete().then(
-            (value) => Get.offAll(() => const LoginPage()),
-          );
       await HelperFunction.saveUserLoggedInStatus(false);
       await HelperFunction.saveUserEmailSF("");
+      await auth.signOut();
+      await user?.delete();
+      final users = _userDoc.doc(userId).delete();
+      // .then(
+      //       (value) => Get.offAll(() => const LoginPage()),
+      //     );
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         print(e);

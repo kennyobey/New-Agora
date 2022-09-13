@@ -2,7 +2,6 @@ import 'package:agora_care/app/home/navigation_bars/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
-import 'package:agora_care/services/cell_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +34,6 @@ class GroupInfo extends StatefulWidget {
 
 class _GroupInfoState extends State<GroupInfo> {
   final _authController = Get.find<AuthControllers>();
-  final _cellController = Get.find<CellControllers>();
   Stream? members;
   int? memberslen;
   @override

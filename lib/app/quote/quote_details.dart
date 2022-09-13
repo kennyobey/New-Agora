@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously
+// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously, prefer_is_empty
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -46,13 +46,19 @@ class QuoteDetails extends StatefulWidget {
 class _QuoteDetailsState extends State<QuoteDetails> {
   var scr = GlobalKey();
   final commentController = TextEditingController();
+  final ScrollController listScrollController = ScrollController();
+
   Stream<QuerySnapshot>? chat;
   String admin = "";
+
+  List<QueryDocumentSnapshot> listMessage = [];
 
   final _authController = Get.find<AuthControllers>();
   final _quoteContoller = Get.find<QuoteControllers>();
 
   bool isLiked = false;
+  int _limit = 20;
+  final int _limitIncrement = 20;
 
   Future getPdf(Uint8List screenShot, time, tempPath) async {
     pw.Document pdf = pw.Document();
@@ -80,7 +86,8 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   @override
   void initState() {
     getChatandAdmin();
-    // chat = _quoteContoller.getGroupMembers(widget.groupId);
+    listScrollController.addListener(_scrollListener);
+
     super.initState();
   }
 
@@ -95,6 +102,18 @@ class _QuoteDetailsState extends State<QuoteDetails> {
         admin = val;
       });
     });
+  }
+
+  _scrollListener() {
+    if (!listScrollController.hasClients) return;
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
+        !listScrollController.position.outOfRange &&
+        _limit <= listMessage.length) {
+      setState(() {
+        _limit += _limitIncrement;
+      });
+    }
   }
 
   @override
@@ -401,9 +420,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: chatMComments(),
-                        ),
+                        chatComments(),
                         Container(
                           padding: const EdgeInsets.all(5),
                           alignment: Alignment.bottomCenter,
@@ -512,28 +529,78 @@ class _QuoteDetailsState extends State<QuoteDetails> {
     );
   }
 
-  chatMComments() {
-    return StreamBuilder(
-      stream: chat,
-      builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return QuoteCommentTile(
-                    time: snapshot.data.docs[index]['time'],
-                    message: snapshot.data.docs[index]['message'],
-                    sender: snapshot.data.docs[index]['sender'],
-                    sentByMe:
-                        widget.userName == snapshot.data.docs[index]['sender'],
-                    groupId: _quoteContoller.allQuotes.last.id!,
-                    like: const [],
-                    messageid: snapshot.data.docs[index].id,
+  // chatMComments() {
+  //   return Flexible(
+  //     child: widget.groupId.isNotEmpty
+  //         ? StreamBuilder<QuerySnapshot>(
+  //             stream: chat,
+  //             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //                if (snapshot.hasData) {
+  //                       listMessage = snapshot.data!.docs;
+  //                       if (listMessage.length > 0) {
+  //              return ListView.builder(
+  //                   controller: listScrollController,
+  //                   itemCount: snapshot.data!.docs.length,
+  //                   itemBuilder: (context, index) =>QuoteCommentTile(
+  //                           time: snapshot.data!.docs[index]['time'],
+  //                           message: snapshot.data!.docs[index]['message'],
+  //                           sender: snapshot.data!.docs[index]['sender'],
+  //                           sentByMe: widget.userName ==
+  //                               snapshot.data!.docs[index]['sender'],
+  //                           groupId: _quoteContoller.allQuotes.last.id!,
+  //                           like: const [],
+  //                           messageid: snapshot.data!.docs[index].id,
+  //                       ));
+  //                       } else {
+  //                         return const Center(
+  //                             child: Text("No message here yet..."));
+  //                       });
+
+  // }
+
+  Widget chatComments() {
+    return Flexible(
+      child: widget.groupId.isNotEmpty
+          ? StreamBuilder<QuerySnapshot>(
+              stream: chat,
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  listMessage = snapshot.data!.docs;
+                  if (listMessage.length > 0) {
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(10),
+                      itemBuilder: (context, index) => QuoteCommentTile(
+                        time: snapshot.data!.docs[index]['time'],
+                        message: snapshot.data!.docs[index]['message'],
+                        sender: snapshot.data!.docs[index]['sender'],
+                        sentByMe: widget.userName ==
+                            snapshot.data!.docs[index]['sender'],
+                        groupId: _quoteContoller.allQuotes.last.id!,
+                        like: const [],
+                        messageid: snapshot.data!.docs[index].id,
+                      ),
+                      itemCount: snapshot.data?.docs.length,
+                      reverse: false,
+                      controller: listScrollController,
+                    );
+                  } else {
+                    return const Center(child: Text("No message here yet..."));
+                  }
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColor().primaryColor,
+                    ),
                   );
-                },
-              )
-            : Container();
-      },
+                }
+              },
+            )
+          : Center(
+              child: CircularProgressIndicator(
+                color: AppColor().primaryColor,
+              ),
+            ),
     );
   }
 
@@ -546,6 +613,10 @@ class _QuoteDetailsState extends State<QuoteDetails> {
         like: [],
         comment: [],
       );
+      if (listScrollController.hasClients) {
+        listScrollController.animateTo(0,
+            duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      }
 
       DatabaseService().sendComment(widget.groupId, chatMessageMap.toJson());
       _quoteContoller.chatList(
