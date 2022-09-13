@@ -171,8 +171,6 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                       snapshot.data!.docs.last
                                           .data()!['dailyQuote']
                                           .toString(),
-
-                                      // snapshot.hasData.toString(),
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
                                       textAlign: TextAlign.center,
@@ -339,56 +337,67 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                 colors: AppColor().primaryColor,
                               ),
                               const Spacer(),
-                              InkWell(
-                                // onTap: () async {
-                                //   await _quoteContoller.sharePost(
-                                //       _quoteContoller.allQuotes.last.id!);
-                                //   RenderRepaintBoundary boundary =
-                                //       scr.currentContext!.findRenderObject()
-                                //           as RenderRepaintBoundary;
-                                //   var image = await boundary.toImage();
-                                //   var byteData = await image.toByteData(
-                                //       format: ImageByteFormat.png);
-                                //   var pngBytes = byteData!.buffer.asUint8List();
-                                //   String tempPath =
-                                //       (await getTemporaryDirectory()).path;
-                                //   var dates =
-                                //       DateTime.now().toLocal().toString();
-                                //   await getPdf(pngBytes, dates, tempPath);
-                                //   var pathurl = '$tempPath/$dates.pdf';
-                                //   await Share.shareFiles([pathurl]);
-                                // },
-                                onTap: () async {
-                                  await _quoteContoller.sharePost(
-                                      _quoteContoller.allQuotes.last.id!);
-                                  await Share.share(widget.dailyQuote);
-                                },
-                                child: SvgPicture.asset(
-                                  'assets/svgs/share.svg',
-                                  height: 24,
-                                ),
-                              ),
-                              const Gap(10),
-                              InkWell(
-                                onTap: () async {
-                                  setState(() {
-                                    isLiked = !isLiked;
-                                  });
-                                  isLiked
-                                      ? _quoteContoller.likePost(
-                                          _quoteContoller.allQuotes.last.id!)
-                                      : _quoteContoller.unLikePost(
-                                          _quoteContoller.allQuotes.last.id!);
-                                },
-                                child: isLiked
-                                    ? Icon(
-                                        CupertinoIcons.heart_fill,
-                                        color: AppColor().errorColor,
-                                      )
-                                    : SvgPicture.asset(
-                                        'assets/svgs/heart.svg',
+                              _authController.liveUser.value!.role ==
+                                      'consultant'
+                                  ? Container()
+                                  : InkWell(
+                                      // onTap: () async {
+                                      //   await _quoteContoller.sharePost(
+                                      //       _quoteContoller.allQuotes.last.id!);
+                                      //   RenderRepaintBoundary boundary =
+                                      //       scr.currentContext!.findRenderObject()
+                                      //           as RenderRepaintBoundary;
+                                      //   var image = await boundary.toImage();
+                                      //   var byteData = await image.toByteData(
+                                      //       format: ImageByteFormat.png);
+                                      //   var pngBytes = byteData!.buffer.asUint8List();
+                                      //   String tempPath =
+                                      //       (await getTemporaryDirectory()).path;
+                                      //   var dates =
+                                      //       DateTime.now().toLocal().toString();
+                                      //   await getPdf(pngBytes, dates, tempPath);
+                                      //   var pathurl = '$tempPath/$dates.pdf';
+                                      //   await Share.shareFiles([pathurl]);
+                                      // },
+                                      onTap: () async {
+                                        await _quoteContoller.sharePost(
+                                            _quoteContoller.allQuotes.last.id!);
+                                        await Share.share(widget.dailyQuote);
+                                      },
+                                      child: SvgPicture.asset(
+                                        'assets/svgs/share.svg',
+                                        height: 24,
                                       ),
-                              ),
+                                    ),
+                              _authController.liveUser.value!.role ==
+                                      'consultant'
+                                  ? Container()
+                                  : const Gap(10),
+                              _authController.liveUser.value!.role ==
+                                      'consultant'
+                                  ? Container()
+                                  : InkWell(
+                                      onTap: () async {
+                                        setState(() {
+                                          isLiked = !isLiked;
+                                        });
+                                        isLiked
+                                            ? _quoteContoller.likePost(
+                                                _quoteContoller
+                                                    .allQuotes.last.id!)
+                                            : _quoteContoller.unLikePost(
+                                                _quoteContoller
+                                                    .allQuotes.last.id!);
+                                      },
+                                      child: isLiked
+                                          ? Icon(
+                                              CupertinoIcons.heart_fill,
+                                              color: AppColor().errorColor,
+                                            )
+                                          : SvgPicture.asset(
+                                              'assets/svgs/heart.svg',
+                                            ),
+                                    ),
                             ],
                           ),
                         ),

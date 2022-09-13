@@ -69,12 +69,10 @@ class _GroupInfoState extends State<GroupInfo> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD:lib/app/group_screen/group_info.dart
-=======
     if (kDebugMode) {
       print("memeber length is for info ${widget.member}");
     }
->>>>>>> new_cell:lib/app/cells/group_info.dart
+
     if (kDebugMode) {
       print('members numbers is $memberslen');
     }

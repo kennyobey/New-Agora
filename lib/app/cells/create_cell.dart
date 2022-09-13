@@ -95,7 +95,7 @@ class _CreateCellState extends State<CreateCell> {
                 createTagOnSubmit: true,
                 textColor: Colors.white,
                 iconColor: Colors.white,
-                inputController: _chipController,
+                // inputController: _chipController,
                 keyboardType: TextInputType.text,
                 chipPosition: ChipPosition.above,
                 chipColor: AppColor().primaryColor2,

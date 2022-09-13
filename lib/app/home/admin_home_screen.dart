@@ -3,8 +3,10 @@
 import 'dart:math';
 
 import 'package:agora_care/app/cells/create_cell.dart';
+import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/quote/post_qoute.dart';
+import 'package:agora_care/app/quote/selected_quote_detail.dart';
 import 'package:agora_care/core/constant/cells.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -432,13 +434,18 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                         itemCount: _quoteContoller.allQuotes.length,
                         itemBuilder: (BuildContext context, int index) {
                           final item = _quoteContoller.allQuotes[index];
+                          final random = Random();
                           return recentQuotes(
-                            quote: item.dailyQuote,
-                            assetName: imageName[index],
-                            views: item.likes!.length.toString(),
-                            messages: item.reply!.toString(),
-                            shares: item.share!.length.toString(),
+                            colors: colorList[random.nextInt(colorList.length)],
+                            quoteModel: item,
                           );
+                          // return recentQuotes(
+                          //   quote: item.dailyQuote,
+                          //   assetName: imageName[index],
+                          //   views: item.likes!.length.toString(),
+                          //   messages: item.reply!.toString(),
+                          //   shares: item.share!.length.toString(),
+                          // );
                         },
                       );
                     }),
@@ -510,38 +517,153 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
         ),
       );
 
-  GestureDetector recommendedCells({
+  Padding recommendedCells({
     Color? colors,
     String? title,
     String? assetName,
   }) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        width: MediaQuery.of(context).size.width * 0.35,
+        height: MediaQuery.of(context).size.height * 0.2,
+        decoration: BoxDecoration(
+          color: colors,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              assetName!,
+              height: 30,
+              color: AppColor().whiteColor,
+            ),
+            const Gap(10),
+            customTitleText(
+              title!,
+              textAlign: TextAlign.left,
+              colors: AppColor().whiteColor,
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  GestureDetector recentQuotes({
+    QuoteModel? quoteModel,
+    Color? colors,
+    String? userImage,
+    // final List<dynamic>? likes,
+    // final List<dynamic>? share,
+    // final String? reply,
+  }) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        if (kDebugMode) {
+          print('selected quote id is ${_quoteContoller.allQuotes.last.id!}');
+          print('Joining Quote Chat');
+        }
+
+        _quoteContoller.joinedOrNot(
+          _authController.liveUser.value!.username!,
+          quoteModel!.groupId!,
+          quoteModel.dailyQuote!,
+        );
+
+        // View Quote Count
+        _quoteContoller.viewPost(quoteModel.id!);
+
+        Get.to(
+          () => SelectedQuoteDetails(
+            quoteId: quoteModel.id!,
+            groupId: quoteModel.groupId!,
+            quoteText: quoteModel.dailyQuote!,
+            likes: quoteModel.likes!,
+            share: quoteModel.share!,
+            reply: quoteModel.reply.toString(),
+            // likes: likes!,
+            // share: share!,
+            // reply: reply!,
+            userName: _authController.liveUser.value!.username!,
+            userImage: _authController.liveUser.value!.profilePic!,
+          ),
+        );
+      },
       child: Padding(
         padding: const EdgeInsets.only(right: 10),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          width: MediaQuery.of(context).size.width * 0.35,
-          height: MediaQuery.of(context).size.height * 0.2,
-          decoration: BoxDecoration(
-            color: colors,
-            borderRadius: BorderRadius.circular(10),
-          ),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.height * 0.25,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                assetName!,
-                height: 30,
-                color: AppColor().whiteColor,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                height: MediaQuery.of(context).size.height * 0.2,
+                decoration: BoxDecoration(
+                  color: colors,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: customTitleText(
+                    quoteModel!.dailyQuote!,
+                    size: 16,
+                    textAlign: TextAlign.center,
+                    colors: AppColor().whiteColor,
+                    textOverflow: TextOverflow.clip,
+                  ),
+                ),
               ),
               const Gap(10),
-              customTitleText(
-                title!,
-                textAlign: TextAlign.left,
-                colors: AppColor().whiteColor,
-                size: 16,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Gap(5),
+                  SvgPicture.asset(
+                    'assets/svgs/eye.svg',
+                  ),
+                  const Gap(5),
+                  customDescriptionText(
+                    quoteModel.views!.length == null
+                        ? '0'
+                        : quoteModel.views!.length.toString(),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  ),
+                  const Gap(10),
+                  SvgPicture.asset(
+                    'assets/svgs/messages.svg',
+                  ),
+                  const Gap(5),
+                  customDescriptionText(
+                    quoteModel.reply! == null
+                        ? '0'
+                        : quoteModel.reply!.toString(),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  ),
+                  const Gap(10),
+                  SvgPicture.asset(
+                    'assets/svgs/share.svg',
+                  ),
+                  const Gap(5),
+                  customDescriptionText(
+                    quoteModel.share!.length == null
+                        ? '0'
+                        : quoteModel.share!.length.toString(),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  ),
+                ],
               ),
             ],
           ),
@@ -550,84 +672,84 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
     );
   }
 
-  Padding recentQuotes({
-    String? quote,
-    String? views,
-    String? shares,
-    String? messages,
-    String? assetName,
-  }) {
-    final random = Random();
-    return Padding(
-      padding: const EdgeInsets.only(
-        right: 10,
-        bottom: 10,
-      ),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.25,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              height: MediaQuery.of(context).size.height * 0.18,
-              decoration: BoxDecoration(
-                color: colorList[random.nextInt(colorList.length)],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: customTitleText(
-                  quote!,
-                  size: 16,
-                  textAlign: TextAlign.center,
-                  colors: AppColor().whiteColor,
-                  textOverflow: TextOverflow.clip,
-                ),
-              ),
-            ),
-            const Gap(10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Gap(5),
-                SvgPicture.asset(
-                  'assets/svgs/eye.svg',
-                ),
-                const Gap(5),
-                customDescriptionText(
-                  "$views",
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
-                const Gap(10),
-                SvgPicture.asset(
-                  'assets/svgs/messages.svg',
-                ),
-                const Gap(5),
-                customDescriptionText(
-                  "$messages",
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
-                const Gap(10),
-                SvgPicture.asset(
-                  'assets/svgs/share.svg',
-                ),
-                const Gap(5),
-                customDescriptionText(
-                  "$shares",
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Padding recentQuotes({
+  //   String? quote,
+  //   String? views,
+  //   String? shares,
+  //   String? messages,
+  //   String? assetName,
+  // }) {
+  //   final random = Random();
+  //   return Padding(
+  //     padding: const EdgeInsets.only(
+  //       right: 10,
+  //       bottom: 10,
+  //     ),
+  //     child: SizedBox(
+  //       height: MediaQuery.of(context).size.height * 0.25,
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           Container(
+  //             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+  //             height: MediaQuery.of(context).size.height * 0.18,
+  //             decoration: BoxDecoration(
+  //               color: colorList[random.nextInt(colorList.length)],
+  //               borderRadius: BorderRadius.circular(10),
+  //             ),
+  //             child: Center(
+  //               child: customTitleText(
+  //                 quote!,
+  //                 size: 16,
+  //                 textAlign: TextAlign.center,
+  //                 colors: AppColor().whiteColor,
+  //                 textOverflow: TextOverflow.clip,
+  //               ),
+  //             ),
+  //           ),
+  //           const Gap(10),
+  //           Row(
+  //             mainAxisAlignment: MainAxisAlignment.start,
+  //             children: [
+  //               const Gap(5),
+  //               SvgPicture.asset(
+  //                 'assets/svgs/eye.svg',
+  //               ),
+  //               const Gap(5),
+  //               customDescriptionText(
+  //                 "$views",
+  //                 fontSize: 10,
+  //                 fontWeight: FontWeight.w600,
+  //                 colors: AppColor().textColor,
+  //               ),
+  //               const Gap(10),
+  //               SvgPicture.asset(
+  //                 'assets/svgs/messages.svg',
+  //               ),
+  //               const Gap(5),
+  //               customDescriptionText(
+  //                 "$messages",
+  //                 fontSize: 10,
+  //                 fontWeight: FontWeight.w600,
+  //                 colors: AppColor().textColor,
+  //               ),
+  //               const Gap(10),
+  //               SvgPicture.asset(
+  //                 'assets/svgs/share.svg',
+  //               ),
+  //               const Gap(5),
+  //               customDescriptionText(
+  //                 "$shares",
+  //                 fontSize: 10,
+  //                 fontWeight: FontWeight.w600,
+  //                 colors: AppColor().textColor,
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }
