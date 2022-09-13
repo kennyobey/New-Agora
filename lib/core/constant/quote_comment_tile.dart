@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../customWidgets.dart';
 
@@ -18,6 +19,7 @@ class QuoteCommentTile extends StatefulWidget {
   final String messageid;
   final String sender;
   final String groupId;
+  final String? time;
   final List<dynamic> like;
   final bool sentByMe;
 
@@ -28,6 +30,7 @@ class QuoteCommentTile extends StatefulWidget {
     required this.sender,
     required this.groupId,
     required this.like,
+    required this.time,
     required this.sentByMe,
   }) : super(key: key);
 
@@ -161,7 +164,10 @@ class _QuoteCommentTileState extends State<QuoteCommentTile> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   customDescriptionText(
-                    '19hrs',
+                    widget.time == null
+                        ? '19hrs'
+                        : DateFormat.jm()
+                            .format(DateTime.parse(widget.time!.toString())),
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     colors: AppColor().lightbackgroundColor,

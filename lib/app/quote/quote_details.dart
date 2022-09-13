@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -44,7 +45,7 @@ class QuoteDetails extends StatefulWidget {
 
 class _QuoteDetailsState extends State<QuoteDetails> {
   var scr = GlobalKey();
-  final messageController = TextEditingController();
+  final commentController = TextEditingController();
   Stream<QuerySnapshot>? chat;
   String admin = "";
 
@@ -193,7 +194,8 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                 } else {
                                   return Center(
                                     child: CircularProgressIndicator(
-                                        color: AppColor().primaryColor),
+                                      color: AppColor().primaryColor,
+                                    ),
                                   );
                                 }
                               }),
@@ -408,7 +410,9 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                           null ||
                                       _authController
                                               .liveUser.value!.profilePic ==
-                                          '')
+                                          '' ||
+                                      _authController
+                                          .liveUser.value!.profilePic!.isEmpty)
                                   ? Image.asset(
                                       'assets/images/placeholder.png',
                                       height: 50,
@@ -447,7 +451,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                       children: [
                                         Expanded(
                                           child: TextFormField(
-                                            controller: messageController,
+                                            controller: commentController,
                                             textInputAction:
                                                 TextInputAction.send,
                                             style: TextStyle(
@@ -508,13 +512,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return QuoteCommentTile(
+                    time: snapshot.data.docs[index]['time'],
                     message: snapshot.data.docs[index]['message'],
                     sender: snapshot.data.docs[index]['sender'],
                     sentByMe:
                         widget.userName == snapshot.data.docs[index]['sender'],
-                    groupId: '',
+                    groupId: _quoteContoller.allQuotes.last.id!,
                     like: const [],
-                    messageid: '',
+                    messageid: snapshot.data.docs[index].id,
                   );
                 },
               )
@@ -524,19 +529,22 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   }
 
   sendComment() {
-    if (messageController.text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": messageController.text,
-        "sender": widget.userName,
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
+    if (commentController.text.isNotEmpty) {
+      final chatMessageMap = CommentModel(
+        message: commentController.text,
+        sender: widget.userName,
+        time: DateTime.now(),
+        like: [],
+        comment: [],
+      );
 
-      DatabaseService().sendComment(widget.groupId, chatMessageMap);
+      DatabaseService().sendComment(widget.groupId, chatMessageMap.toJson());
       _quoteContoller.chatList(
         _quoteContoller.allQuotes.last.id!,
+        //
       );
       setState(() {
-        messageController.clear();
+        commentController.clear();
       });
     }
   }

@@ -26,6 +26,7 @@ import 'database_service.dart';
 class AuthControllers extends GetxController {
   static AuthControllers to = Get.find();
   final bool isLoading = false;
+  bool isEmailVerified = false;
 
   final signupPhonenumberController = TextEditingController();
 
@@ -171,7 +172,7 @@ class AuthControllers extends GetxController {
       }
       liveUser(userModel);
 
-      if (user.emailVerified) {
+      if (user.emailVerified == isEmailVerified) {
         if (userModel.admin == true) {
           Get.offAll(() => AdminNavScreen());
         } else if (userModel.role == 'consultant') {

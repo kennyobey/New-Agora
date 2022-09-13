@@ -61,13 +61,6 @@ class _CellsScreenState extends State<CellsScreen> {
     AppColor().primaryColor,
   ];
 
-  final List<String> imageName = <String>[
-    'assets/images/image1.png',
-    'assets/images/image2.png',
-    'assets/images/image1.png',
-    'assets/images/image2.png',
-  ];
-
   @override
   void initState() {
     super.initState();

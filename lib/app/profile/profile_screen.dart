@@ -138,6 +138,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 .liveUser.value!.fullName!,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.5,
+                                        textOverflow: TextOverflow.ellipsis,
                                         colors: AppColor().filledTextField,
                                       );
                                     }

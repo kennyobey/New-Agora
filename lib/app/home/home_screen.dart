@@ -52,13 +52,14 @@ class _HomeScreenState extends State<HomeScreen> {
     AppColor().blueColor,
     AppColor().backgroundColor,
     AppColor().primaryColor,
-  ];
-
-  final List<String> imageName = <String>[
-    'assets/images/image1.png',
-    'assets/images/image2.png',
-    'assets/images/image1.png',
-    'assets/images/image2.png',
+    AppColor().pinkColor,
+    AppColor().blueColor,
+    AppColor().backgroundColor,
+    AppColor().primaryColor,
+    AppColor().pinkColor,
+    AppColor().blueColor,
+    AppColor().backgroundColor,
+    AppColor().primaryColor,
   ];
 
   @override
@@ -203,44 +204,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               const Gap(20),
-              Stack(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (kDebugMode) {
-                          print('Clicking quote');
-                          print(
-                              'quote id is ${_quoteContoller.allQuotes.last.id!}');
-                        }
-                        _quoteContoller.joinedOrNot(
-                          _authController.liveUser.value!.username!,
-                          _quoteContoller.allQuotes.last.groupId!,
-                          _quoteContoller.allQuotes.last.dailyQuote!,
-                        );
-                        _quoteContoller
-                            .viewPost(_quoteContoller.allQuotes.last.id!);
+              GestureDetector(
+                onTap: () {
+                  if (kDebugMode) {
+                    print('Clicking quote');
+                    print('quote id is ${_quoteContoller.allQuotes.last.id!}');
+                  }
+                  _quoteContoller.joinedOrNot(
+                    _authController.liveUser.value!.username!,
+                    _quoteContoller.allQuotes.last.groupId!,
+                    _quoteContoller.allQuotes.last.dailyQuote!,
+                  );
+                  _quoteContoller.viewPost(_quoteContoller.allQuotes.last.id!);
 
-                        Get.to(
-                          () => QuoteDetails(
-                            dailyQuote:
-                                _quoteContoller.allQuotes.last.dailyQuote!,
-                            groupId: _quoteContoller.allQuotes.last.groupId!,
-                            groupName:
-                                _quoteContoller.allQuotes.last.dailyQuote!,
-                            userName: _authController.liveUser.value!.username!,
-                            userImage:
-                                _authController.liveUser.value!.profilePic!,
-                            assetName: _authController
-                                        .liveUser.value!.profilePic ==
-                                    null
-                                ? 'assets/images/placeholder.png'
-                                : _authController.liveUser.value!.profilePic!,
-                          ),
-                          // transition: Transition.downToUp,
-                        );
-                      },
+                  Get.to(
+                    () => QuoteDetails(
+                      dailyQuote: _quoteContoller.allQuotes.last.dailyQuote!,
+                      groupId: _quoteContoller.allQuotes.last.groupId!,
+                      groupName: _quoteContoller.allQuotes.last.dailyQuote!,
+                      userName: _authController.liveUser.value!.username!,
+                      userImage: _authController.liveUser.value!.profilePic!,
+                      assetName:
+                          _authController.liveUser.value!.profilePic == null
+                              ? 'assets/images/placeholder.png'
+                              : _authController.liveUser.value!.profilePic!,
+                    ),
+                    // transition: Transition.downToUp,
+                  );
+                },
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
                       child: Hero(
                         tag: "img",
                         child: SvgPicture.asset(
@@ -250,110 +245,52 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    top: 30,
-                    left: 70,
-                    right: 70,
-                    child: Column(
-                      children: [
-                        // StreamBuilder(
-                        //   stream: _quoteContoller.getDailyQuote(),
-                        //   builder: (context, AsyncSnapshot snapshot) {
-                        //     if (snapshot.hasData &&
-                        //         snapshot.connectionState ==
-                        //             ConnectionState.done) {
-                        //       if (snapshot.data != null) {
-                        //         return Center(
-                        //           child: customDescriptionText(
-                        //             snapshot.data!.docs.last
-                        //                 .data()!['dailyQuote']
-                        //                 .toString(),
-                        //             fontSize: 16,
-                        //             fontWeight: FontWeight.w700,
-                        //             textAlign: TextAlign.center,
-                        //             colors: AppColor().whiteColor,
-                        //           ),
-                        //         );
-                        //       } else if (snapshot.hasData == false ||
-                        //           snapshot.data == null) {
-                        //         return SvgPicture.asset(
-                        //           'assets/svgs/fluent_tap-single-48-filled.svg',
-                        //         );
-                        //       } else {
-                        //         return customDescriptionText(
-                        //           'No Quote Today',
-                        //           fontSize: 16,
-                        //           fontWeight: FontWeight.w700,
-                        //           textAlign: TextAlign.center,
-                        //           colors: AppColor().whiteColor,
-                        //         );
-                        //       }
-                        //     } else if (snapshot.hasData &&
-                        //         snapshot.connectionState ==
-                        //             ConnectionState.waiting) {
-                        //       return Center(
-                        //         child: CircularProgressIndicator(
-                        //           color: AppColor().primaryColor,
-                        //         ),
-                        //       );
-                        //     } else {
-                        //       return Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.center,
-                        //         mainAxisAlignment: MainAxisAlignment.center,
-                        //         children: [
-                        //           const Gap(40),
-                        //           customDescriptionText(
-                        //             'No Quote Today',
-                        //             fontSize: 16,
-                        //             fontWeight: FontWeight.w700,
-                        //             textAlign: TextAlign.center,
-                        //             colors: AppColor().whiteColor,
-                        //           ),
-                        //         ],
-                        //       );
-                        //     }
-                        //   },
-                        // ),
-                        StreamBuilder(
-                          stream: _quoteContoller.getDailyQuote(),
-                          builder: (context, AsyncSnapshot snapshot) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data != null &&
-                                  snapshot.data!.docs.isNotEmpty) {
-                                return Center(
-                                  child: customDescriptionText(
-                                    snapshot.data!.docs.last
-                                        .data()!['dailyQuote']
-                                        .toString(),
+                    Positioned(
+                      top: 30,
+                      left: 70,
+                      right: 70,
+                      child: Column(
+                        children: [
+                          StreamBuilder(
+                            stream: _quoteContoller.getDailyQuote(),
+                            builder: (context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data != null &&
+                                    snapshot.data!.docs.isNotEmpty) {
+                                  return Center(
+                                    child: customDescriptionText(
+                                      snapshot.data!.docs.last
+                                          .data()!['dailyQuote']
+                                          .toString(),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      textAlign: TextAlign.center,
+                                      colors: AppColor().whiteColor,
+                                    ),
+                                  );
+                                } else {
+                                  return customDescriptionText(
+                                    'No Quote Today',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     textAlign: TextAlign.center,
                                     colors: AppColor().whiteColor,
+                                  );
+                                }
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColor().whiteColor,
                                   ),
                                 );
-                              } else {
-                                return customDescriptionText(
-                                  'No Quote Today',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  textAlign: TextAlign.center,
-                                  colors: AppColor().whiteColor,
-                                );
                               }
-                            } else {
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColor().whiteColor,
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      ],
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -455,13 +392,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         //   print(
                         //       "memeber lenght for cell is ${item.members!.length}");
                         // }
+                        final random = Random();
                         return recommendedCells(
                           tags: item.tags,
                           admin: item.admin,
                           time: item.createdAt,
                           groupId: item.groupId,
                           memberId: item.members,
-                          colors: colorList[index],
+                          colors: colorList[random.nextInt(colorList.length)],
                           groupName: item.groupName,
                           description: item.description,
                           assetName: 'assets/svgs/bank.svg',
@@ -499,22 +437,75 @@ class _HomeScreenState extends State<HomeScreen> {
                       scrollDirection: Axis.horizontal,
                       reverse: false,
                       shrinkWrap: true,
-                      itemCount: _quoteContoller.allQuotes.length > 4
-                          ? 4
+                      itemCount: _quoteContoller.allQuotes.length > 6
+                          ? 6
                           : _quoteContoller.allQuotes.length,
                       itemBuilder: (BuildContext context, int index) {
                         final item = _quoteContoller.allQuotes[index];
+                        final random = Random();
                         // if (kDebugMode) {
                         //   print('Like is now ${item.likes!.length}');
                         // }
                         return recentQuotes(
-                          assetName: imageName[index],
+                          colors: colorList[random.nextInt(colorList.length)],
                           quoteModel: item,
                         );
                       },
                     ));
                 // }
               }),
+              const Gap(20),
+              // StreamBuilder<List<QuoteModel>>(
+              //   stream: _quoteContoller.streamtDailyQuote(),
+              //   builder: (BuildContext context, AsyncSnapshot snapshot) {
+              //     if (snapshot.hasData) {
+              //       if ((snapshot.data!.length ?? 0) > 0) {
+              //         final random = Random();
+              //         return SizedBox(
+              //           height: MediaQuery.of(context).size.height * 0.25,
+              //           child: ListView.builder(
+              //               padding: EdgeInsets.zero,
+              //               itemCount: snapshot.data!.length,
+              //               scrollDirection: Axis.horizontal,
+              //               itemBuilder: (context, index) {
+              //                 final item = snapshot.data![index];
+              //                 return Padding(
+              //                   padding: const EdgeInsets.only(bottom: 10),
+              //                   child: recentQuotes(
+              //                     colors: colorList[
+              //                         random.nextInt(colorList.length)],
+              //                     quoteModel: item,
+              //                     // quoteModel: snapshot.data![index],
+              //                     // likes: snapshot.data![index]['likes'],
+              //                     // share: snapshot.data![index]['share'],
+              //                     // reply: snapshot.data![index]['reply'],
+              //                   ),
+              //                 );
+              //               }),
+              //         );
+              //       } else {
+              //         return Column(
+              //           crossAxisAlignment: CrossAxisAlignment.center,
+              //           mainAxisAlignment: MainAxisAlignment.center,
+              //           children: [
+              //             const Gap(50),
+              //             Center(
+              //               child: customDescriptionText(
+              //                 'No Consultant Available',
+              //               ),
+              //             ),
+              //           ],
+              //         );
+              //       }
+              //     } else {
+              //       return Center(
+              //         child: CircularProgressIndicator(
+              //           color: AppColor().primaryColor,
+              //         ),
+              //       );
+              //     }
+              //   },
+              // ),
             ],
           ),
         ),
@@ -606,10 +597,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   GestureDetector recentQuotes({
     QuoteModel? quoteModel,
-    String? assetName,
+    Color? colors,
     String? userImage,
+    // final List<dynamic>? likes,
+    // final List<dynamic>? share,
+    // final String? reply,
   }) {
-    final random = Random();
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
@@ -631,6 +624,12 @@ class _HomeScreenState extends State<HomeScreen> {
             quoteId: quoteModel.id!,
             groupId: quoteModel.groupId!,
             quoteText: quoteModel.dailyQuote!,
+            likes: quoteModel.likes!,
+            share: quoteModel.share!,
+            reply: quoteModel.reply.toString(),
+            // likes: likes!,
+            // share: share!,
+            // reply: reply!,
             userName: _authController.liveUser.value!.username!,
             userImage: _authController.liveUser.value!.profilePic!,
           ),
@@ -649,7 +648,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 height: MediaQuery.of(context).size.height * 0.2,
                 decoration: BoxDecoration(
-                  color: colorList[random.nextInt(colorList.length)],
+                  color: colors,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(

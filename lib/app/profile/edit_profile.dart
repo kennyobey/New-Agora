@@ -129,6 +129,16 @@ class _EditProfileState extends State<EditProfile> {
                   children: [
                     Stack(
                       children: [
+                        Positioned(
+                            top: 20,
+                            left: 20,
+                            child: IconButton(
+                              onPressed: () => Get.back(),
+                              icon: Icon(
+                                Icons.arrow_back_ios,
+                                color: AppColor().primaryColor,
+                              ),
+                            )),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
