@@ -352,7 +352,7 @@ class _VerifyEmailLinkPageState extends State<VerifyEmailLinkPage> {
             ),
             const Gap(10),
             customDescriptionText(
-              'Please enter the code sent to the email',
+              'Please check your email Inbox or Junk/Spam folder and click likn sent to you',
               fontSize: 14,
               fontWeight: FontWeight.w400,
               colors: AppColor().lightTextColor,
@@ -394,7 +394,7 @@ class _VerifyEmailLinkPageState extends State<VerifyEmailLinkPage> {
             const Expanded(child: SizedBox()),
             CustomFillButton(
               isLoading: _isLoading,
-              buttonText: isEmailVerified ? 'Send code' : 'Proceed',
+              buttonText: isEmailVerified ? 'Proceed' : 'Send code',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
               onTap: () {

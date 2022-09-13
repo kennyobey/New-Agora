@@ -38,6 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // } else {
       //   _save('0');
       if (FirebaseAuth.instance.currentUser != null) {
+        print("user id is ${FirebaseAuth.instance.currentUser!.uid}");
         // if () {
         // Center(
         //   child: CircularProgressIndicator(
