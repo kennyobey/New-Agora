@@ -2,6 +2,7 @@ import 'package:agora_care/app/home/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/cell_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class GroupInfo extends StatefulWidget {
 
 class _GroupInfoState extends State<GroupInfo> {
   final _authController = Get.find<AuthControllers>();
-  // final _cellController = Get.find<CellControllers>();
+  final _cellController = Get.find<CellControllers>();
   Stream? members;
   int? memberslen;
   @override
@@ -47,7 +48,7 @@ class _GroupInfoState extends State<GroupInfo> {
   getMembers() async {
     if (kDebugMode) {
       print('members is ${widget.groupId}');
-      //print('members is number is ${widget.groupId.length}');
+      print('members is number is ${widget.groupId.length}');
     }
     DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getGroupMembers(widget.groupId)
@@ -68,12 +69,12 @@ class _GroupInfoState extends State<GroupInfo> {
 
   @override
   Widget build(BuildContext context) {
-    print("memeber length is for info ${widget.member}");
     if (kDebugMode) {
       print('members numbers is $memberslen');
     }
     if (kDebugMode) {
       print("memeber name is ${widget.userName}");
+      print("memeber length is for info ${widget.member?.length}");
     }
     membersLenght();
     return Scaffold(
