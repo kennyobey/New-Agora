@@ -3,7 +3,6 @@
 import 'dart:io';
 
 import 'package:agora_care/app/authentication/%20verify_email_page.dart';
-import 'package:agora_care/app/authentication/email_page.dart';
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/authentication/welcome_page.dart';
 import 'package:agora_care/app/home/navigation_bars/admin_nav_screen.dart';
@@ -54,6 +53,7 @@ class AuthControllers extends GetxController {
   void onInit() async {
     super.onInit();
     final now = DateTime.now();
+    // FirebaseAuth.instance.signOut();
     if (FirebaseAuth.instance.currentUser != null) {
       final newUser =
           await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
@@ -474,7 +474,9 @@ class AuthControllers extends GetxController {
 
   // Get Users Data by Id
   Future<UserModel> getUserByModel(String id) async {
+    // print(object)
     final result = await _userDoc.doc(id).get();
+    print("user json ${result.data()}");
     final user = UserModel.fromJson(result.data()!);
 
     return user;
@@ -519,14 +521,13 @@ class AuthControllers extends GetxController {
   Future deleteUserAccount(String userId) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
+
+      await auth.signOut();
       await user?.delete();
       liveUser(null);
       final users = _userDoc.doc(userId).delete().then(
-            (value) => Get.offAll(
-              () => const EmailPage(),
-            ),
+            (value) => Get.offAll(() => const LoginPage()),
           );
-      await auth.signOut();
       await HelperFunction.saveUserLoggedInStatus(false);
       await HelperFunction.saveUserEmailSF("");
     } on FirebaseAuthException catch (e) {
