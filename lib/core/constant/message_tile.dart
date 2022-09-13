@@ -1,7 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -9,12 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../customWidgets.dart';
 
 class MessageTile extends StatefulWidget {
   final String message;
-  final String time;
+  final String? time;
   final String messageid;
   final String sender;
   final String groupId;
@@ -27,7 +27,7 @@ class MessageTile extends StatefulWidget {
     required this.message,
     required this.sender,
     required this.groupId,
-    required this.time,
+    this.time,
     required this.like,
     required this.sentByMe,
   }) : super(key: key);
@@ -37,7 +37,7 @@ class MessageTile extends StatefulWidget {
 }
 
 class _MessageTileState extends State<MessageTile> {
-  final _authController = Get.find<AuthControllers>();
+  // final _authController = Get.find<AuthControllers>();
   final _cellController = Get.find<CellControllers>();
   bool isLiked = false;
   Stream<QuerySnapshot>? chats;
@@ -125,9 +125,9 @@ class _MessageTileState extends State<MessageTile> {
                               widget.groupId, widget.messageid)
                           : _cellController.unLikePost(
                               widget.groupId, widget.messageid);
-                      if (kDebugMode) {
-                        print('Like State Changed');
-                      }
+                      setState(() {
+                        isLiked = isLiked;
+                      });
                     },
                     child: isLiked
                         ? SvgPicture.asset(
@@ -155,7 +155,12 @@ class _MessageTileState extends State<MessageTile> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   customDescriptionText(
-                    '19hrs',
+                    widget.time == null
+                        ? '19hrs'
+                        : DateFormat.jm()
+                            .format(DateTime.parse(widget.time!.toString())),
+                    //  : DateFormat('MMM.dd.yyyy | EEEE')
+                    // .format(DateTime.parse(widget.time!.toString())),
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     colors: AppColor().lightbackgroundColor,

@@ -1,6 +1,6 @@
 // ignore_for_file: override_on_non_overriding_member, use_build_context_synchronously, unused_local_variable, unused_field
 
-import 'package:agora_care/app/authentication/phone_num_page.dart';
+import 'package:agora_care/app/authentication/%20verify_email_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
@@ -104,6 +104,7 @@ class _EmailPageState extends State<EmailPage> {
                       textEditingController: _emailController,
                       label: 'Email Address',
                       hint: 'Enter email address',
+                      validatorText: '** Field cannot be empty',
                       keyType: TextInputType.emailAddress,
                       // validate: (val) {
                       //   if (val == null || val.isEmpty || val.isEmail) {
@@ -200,8 +201,11 @@ class _EmailPageState extends State<EmailPage> {
             if (kDebugMode) {
               print(user);
             }
-            Get.to(() => const PhonePage());
-            // Get.to(() => const VerifyEmailPage());
+            // Get.to(() => const PhonePage());
+            Get.to(
+              () => const VerifyEmailLinkPage(),
+              arguments: _emailController.text,
+            );
 
             if (kDebugMode) {
               print(UserCredential);

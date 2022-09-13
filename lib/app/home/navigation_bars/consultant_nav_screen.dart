@@ -1,26 +1,24 @@
-// ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable
+// ignore_for_file: library_private_types_in_public_api, unused_field, unnecessary_null_comparison, must_be_immutable, prefer_if_null_operators
 
-import 'package:agora_care/app/cells/cell_screen.dart';
+import 'package:agora_care/app/consultant/consultant_messages.dart';
+import 'package:agora_care/app/home/consultant_home_screen.dart';
 import 'package:agora_care/app/profile/profile_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
-import 'package:agora_care/widget/global_bottom_modal.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import 'admin_home_screen.dart';
-
-class AdminUserNavScreen extends StatefulWidget {
+class ConsultantNavScreen extends StatefulWidget {
   int? tabIndex;
-  AdminUserNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
+  ConsultantNavScreen({Key? key, this.tabIndex = 0}) : super(key: key);
 
   @override
-  _AdminUserNavScreenState createState() => _AdminUserNavScreenState();
+  _ConsultantNavScreenState createState() => _ConsultantNavScreenState();
 }
 
-class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
+class _ConsultantNavScreenState extends State<ConsultantNavScreen> {
   final _authController = Get.find<AuthControllers>();
   late List<Widget> _screens;
 
@@ -28,13 +26,14 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
 
   @override
   void initState() {
+    // checkAdmin();
+
     _screens = [
       //Home Screen
-      const AdminHomeScreen(),
+      const ConsultantHome(),
 
-      // Cells Screens
-      const CellsScreen(),
-      // showGlobalBottomSheet(context),
+      // Consultant Messassage Screens
+      const ConsultantMessage(),
 
       // Profile Screen
       const ProfileScreen(),
@@ -43,12 +42,11 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
   }
 
   int _selectedIndex = 0;
-  int? newIndex;
-  // void _selectPage(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
+  void _selectPage(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,30 +54,11 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
       resizeToAvoidBottomInset: false,
       body: IndexedStack(
         index: _selectedIndex,
-        // index: widget.tabIndex,
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-        onTap: (newIndex) async => {
-          if (newIndex == 1)
-            {
-              await showGlobalBottomSheet(context),
-              setState(() {
-                //
-              })
-            }
-          else
-            {
-              setState(() {
-                setState(() {
-                  widget.tabIndex = newIndex;
-                  _selectedIndex = widget.tabIndex!;
-                  // _selectPage;
-                });
-              })
-            }
-        },
+        onTap: _selectPage,
         backgroundColor: AppColor().whiteColor,
         currentIndex: _selectedIndex,
         elevation: 20,
@@ -103,14 +82,23 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
           ),
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).bottomAppBarColor,
-            icon: SvgPicture.asset('assets/svgs/people.svg'),
             label: '',
-            tooltip: 'Cells',
+            tooltip: 'Messages',
+            icon: Icon(
+              CupertinoIcons.mail,
+              color: AppColor().primaryColor,
+            ),
             activeIcon: Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                SvgPicture.asset('assets/svgs/people_filled.svg'),
-                SvgPicture.asset('assets/svgs/people.svg'),
+                Icon(
+                  CupertinoIcons.mail_solid,
+                  color: AppColor().primaryColor,
+                ),
+                Icon(
+                  CupertinoIcons.mail_solid,
+                  color: AppColor().primaryColor,
+                ),
               ],
             ),
           ),
@@ -128,33 +116,6 @@ class _AdminUserNavScreenState extends State<AdminUserNavScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  showGlobalBottomSheet(context) async {
-    return await showModalBottomSheet(
-      isScrollControlled: true,
-      backgroundColor: AppColor().whiteColor,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      context: context,
-      builder: (context) => GlobalBottomDialogue(
-        back: () {
-          if (kDebugMode) {
-            print('back pressed');
-          }
-          Get.close(1);
-        },
-        next: () async {
-          // await Get.to(() => AdminUserNavScreen(tabIndex: 1));
-          await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => AdminUserNavScreen(tabIndex: 2)));
-          if (kDebugMode) {
-            print('next pressed');
-          }
-        },
       ),
     );
   }

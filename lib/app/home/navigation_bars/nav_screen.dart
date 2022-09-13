@@ -5,12 +5,13 @@ import 'package:agora_care/app/profile/profile_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/widget/global_bottom_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import 'home_screen.dart';
+import '../home_screen.dart';
 
 class UserNavScreen extends StatefulWidget {
   int? tabIndex;
@@ -129,19 +130,42 @@ class _UserNavScreenState extends State<UserNavScreen> {
               ],
             ),
           ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).bottomAppBarColor,
-            label: '',
-            tooltip: 'Users',
-            icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
-            activeIcon: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
-                SvgPicture.asset('assets/svgs/user-tag.svg'),
-              ],
-            ),
-          ),
+          _authController.liveUser.value!.role != 'consultant'
+              ? BottomNavigationBarItem(
+                  backgroundColor: Theme.of(context).bottomAppBarColor,
+                  label: '',
+                  tooltip: 'Users',
+                  icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
+                  activeIcon: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
+                      SvgPicture.asset('assets/svgs/user-tag.svg'),
+                    ],
+                  ),
+                )
+              : BottomNavigationBarItem(
+                  backgroundColor: Theme.of(context).bottomAppBarColor,
+                  label: '',
+                  tooltip: 'Messages',
+                  icon: Icon(
+                    CupertinoIcons.mail,
+                    color: AppColor().primaryColor,
+                  ),
+                  activeIcon: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      Icon(
+                        CupertinoIcons.mail_solid,
+                        color: AppColor().primaryColor,
+                      ),
+                      Icon(
+                        CupertinoIcons.mail_solid,
+                        color: AppColor().primaryColor,
+                      ),
+                    ],
+                  ),
+                ),
         ],
       ),
     );

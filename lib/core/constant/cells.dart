@@ -1,4 +1,4 @@
-import 'package:agora_care/app/group_screen/chat_page.dart';
+import 'package:agora_care/app/cells/chat_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +12,7 @@ class Cells extends StatelessWidget {
     Key? key,
     required this.groupId,
     required this.members,
+    required this.memberId,
     required this.time,
     required this.groupName,
     required this.assetName,
@@ -24,6 +25,7 @@ class Cells extends StatelessWidget {
   final String? groupName;
   final String? assetName;
   final String? userName;
+  final List<String>? memberId;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,7 @@ class Cells extends StatelessWidget {
             groupName: groupName!,
             userName: userName!,
             assetName: assetName!,
+            member: memberId,
           ),
         );
       },
@@ -54,7 +57,7 @@ class Cells extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               customDescriptionText(
-                groupName!.toUpperCase(),
+                groupName!,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 colors: AppColor().lightTextColor,
@@ -73,14 +76,14 @@ class Cells extends StatelessWidget {
                       ),
                       const Gap(10),
                       customDescriptionText(
-                        "$members members",
+                        memberId != null ? "${memberId!.length} members" : "0",
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         colors: AppColor().lightTextColor,
                       ),
                     ],
                   ),
-                  const Gap(40),
+                  const Gap(150),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -98,65 +101,6 @@ class Cells extends StatelessWidget {
           ),
         ],
       ),
-      // child: Row(
-      //     crossAxisAlignment: CrossAxisAlignment.center,
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: [
-      //       SvgPicture.asset(
-      //         'assets/svgs/bankofspain.svg',
-      //         height: 50,
-      //         width: 50,
-      //       ),
-      //       const Gap(15),
-      //       Row(
-      //         children: [
-      //           Column(
-      //             mainAxisAlignment: MainAxisAlignment.center,
-      //             crossAxisAlignment: CrossAxisAlignment.start,
-      //             children: [
-      //               customDescriptionText(
-      //                 groupName!,
-      //                 fontSize: 14,
-      //                 fontWeight: FontWeight.w600,
-      //                 colors: AppColor().lightTextColor,
-      //               ),
-      //               const SizedBox(
-      //                 height: 5,
-      //               ),
-      //               Row(
-      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                 crossAxisAlignment: CrossAxisAlignment.end,
-      //                 children: [
-      //                   Row(
-      //                     children: [
-      //                       Icon(
-      //                         Icons.people_alt_outlined,
-      //                         color: AppColor().lightTextColor,
-      //                         size: 14,
-      //                       ),
-      //                       const Gap(10),
-      //                       customDescriptionText(
-      //                         "$members members",
-      //                         fontSize: 10,
-      //                         fontWeight: FontWeight.w600,
-      //                         colors: AppColor().lightTextColor,
-      //                       ),
-      //                     ],
-      //                   ),
-      //                   const Gap(30),
-      //                   customDescriptionText(
-      //                     time,
-      //                     fontSize: 10,
-      //                     fontWeight: FontWeight.w600,
-      //                     colors: AppColor().lightTextColor,
-      //                   ),
-      //                 ],
-      //               ),
-      //             ],
-      //           ),
-      //         ],
-      //       ),
-      //     ]),
     );
   }
 }

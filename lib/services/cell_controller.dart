@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison, unused_field
 
-import 'package:agora_care/app/group_screen/message.dart';
 import 'package:agora_care/app/model/cells_model.dart';
+import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
@@ -98,6 +98,18 @@ class CellControllers extends GetxController {
     });
   }
 
+  Future memberRemove(String groupId) async {
+    if (kDebugMode) {
+      print("member id is $groupId");
+    }
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_cellsDoc.doc(groupId), {
+        "members":
+            FieldValue.arrayRemove([_authController.liveUser.value!.uid!]),
+      });
+    });
+  }
+
   Future likePost(String cellId, String messageId) async {
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction
@@ -190,6 +202,7 @@ class CellControllers extends GetxController {
     required String description,
     required String groupName,
     required String groupIcon,
+    required List<String> tags,
   }) async {
     try {
       final cellDocs = FirebaseFirestore.instance.collection("cells");
@@ -201,6 +214,7 @@ class CellControllers extends GetxController {
         description: description,
         email: email,
         members: [],
+        tags: tags,
         admin: admin,
         recentMessage: '',
         recentMessageSender: '',
@@ -231,7 +245,10 @@ class CellControllers extends GetxController {
 
   // function -> bool
   Future<bool> isUserJoined(
-      String groupName, String groupId, String userName) async {
+    String groupName,
+    String groupId,
+    String userName,
+  ) async {
     DocumentReference userDocumentReference = userCollection.doc(uid!.uid);
     DocumentSnapshot documentSnapshot = await userDocumentReference.get();
 
@@ -273,7 +290,7 @@ class CellControllers extends GetxController {
           list.add(cells);
           if (kDebugMode) {
             print('CELL ID is: ${element.id}');
-            print('cell is:${cells.toJson()} ID is:');
+            print('cell is:${cells.toJson()}');
           }
           gettingUserData();
           _cellStatus(CellStatus.SUCCESS);

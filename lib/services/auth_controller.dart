@@ -3,9 +3,11 @@
 import 'dart:io';
 
 import 'package:agora_care/app/authentication/%20verify_email_page.dart';
+import 'package:agora_care/app/authentication/email_page.dart';
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/app/authentication/welcome_page.dart';
-import 'package:agora_care/app/home/admin_nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/admin_nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/consultant_nav_screen.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constants.dart';
@@ -17,13 +19,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
-import '../app/home/nav_screen.dart';
+import '../app/home/navigation_bars/nav_screen.dart';
 import '../helper/helper_function.dart';
 import 'database_service.dart';
 
 class AuthControllers extends GetxController {
   static AuthControllers to = Get.find();
   final bool isLoading = false;
+  bool isEmailVerified = false;
 
   final signupPhonenumberController = TextEditingController();
 
@@ -60,7 +63,7 @@ class AuthControllers extends GetxController {
       liveUser(newUser);
 
       if (newUser.lastLoginTime!.difference(now).inDays >= 1 &&
-          newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
+          newUser.weeklyLoginTime!.difference(now).inDays >= 7) {
         _userDoc.doc(FirebaseAuth.instance.currentUser!.uid).update({
           "weeks": FieldValue.increment(1),
           "streak": FieldValue.increment(1),
@@ -76,6 +79,16 @@ class AuthControllers extends GetxController {
         }
       }
     }
+  }
+
+  //
+  Future<void> updateDataFirestore(
+      String path, Map<String, String> dataNeedUpdate) async {
+    // String? token = await FirebaseMessaging.instance.getToken();
+    // await userDb.doc(FirebaseAuth.instance.currentUser!.uid).update(
+    //   {'fcm_token': token},
+    // );
+    return _userDoc.doc(path).update(dataNeedUpdate);
   }
 
   //Register
@@ -102,6 +115,8 @@ class AuthControllers extends GetxController {
         userModel.weeklyLoginTime = now;
 
         _userDoc.doc(user.uid).update({
+          "admin": false,
+          "role": "user",
           "weeks": FieldValue.increment(1),
           "streak": FieldValue.increment(1),
           "weeklyLoginTime": DateTime.now().toIso8601String(),
@@ -111,8 +126,10 @@ class AuthControllers extends GetxController {
         liveUser(newUser);
       } else {
         if (userModel.lastLoginTime!.difference(now).inDays >= 1 &&
-            userModel.weeklyLoginTime!.difference(now).inDays >= 1) {
+            userModel.weeklyLoginTime!.difference(now).inDays >= 7) {
           _userDoc.doc(user.uid).update({
+            "admin": false,
+            "role": "user",
             "weeks": FieldValue.increment(1),
             "streak": FieldValue.increment(1),
             "weeklyLoginTime": DateTime.now().toIso8601String(),
@@ -125,9 +142,6 @@ class AuthControllers extends GetxController {
           }
         }
       }
-      // if (userModel.admin == true) {
-      //   Get.to(() => AdminUserNavScreen());
-      // } else {
       Get.to(() => const WelComePage());
       // }
     } on FirebaseAuthException catch (e) {
@@ -158,10 +172,16 @@ class AuthControllers extends GetxController {
       }
       liveUser(userModel);
 
-      if (userModel.admin!) {
-        Get.to(() => AdminUserNavScreen());
+      if (user.emailVerified == isEmailVerified) {
+        if (userModel.admin == true) {
+          Get.offAll(() => AdminNavScreen());
+        } else if (userModel.role == 'consultant') {
+          Get.offAll(() => ConsultantNavScreen());
+        } else {
+          Get.offAll(() => UserNavScreen());
+        }
       } else {
-        Get.to(() => UserNavScreen());
+        Get.offAll(() => const VerifyEmailLinkPage());
       }
       if (userModel.lastLoginTime == null ||
           userModel.weeklyLoginTime == null) {
@@ -179,7 +199,7 @@ class AuthControllers extends GetxController {
         liveUser(newUser);
       } else {
         if (userModel.lastLoginTime!.difference(now).inDays >= 1 &&
-            userModel.weeklyLoginTime!.difference(now).inDays >= 1) {
+            userModel.weeklyLoginTime!.difference(now).inDays >= 7) {
           _userDoc.doc(user.uid).update({
             "weeks": FieldValue.increment(1),
             "streak": FieldValue.increment(1),
@@ -193,6 +213,19 @@ class AuthControllers extends GetxController {
           }
         }
       }
+    } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return Get.snackbar('Alert', e.message!);
+    }
+  }
+
+  //send email verification
+  Future sendVerificationEmail() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      await user.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         print(e);
@@ -244,8 +277,16 @@ class AuthControllers extends GetxController {
   }
 
   //Update Profile
-  Future userChanges(String username, String fullName, String gender,
-      String address, String postalCode, String profilePic) async {
+  Future userChanges(
+    String username,
+    String fullName,
+    String phoneNumber,
+    String address,
+    String postalCode,
+    String profilePic,
+    String nextOfKin,
+    String nexKinPhone,
+  ) async {
     try {
       if (kDebugMode) {
         print(
@@ -259,19 +300,19 @@ class AuthControllers extends GetxController {
           return;
         }
       }
-      // if (kDebugMode) {}
-      // userDocQuote.get().toString();
       final up = {
         'username': username,
         'fullName': fullName,
-        'gender': gender,
+        'phoneNumber': phoneNumber,
         'address': address,
         'postalCode': postalCode,
         'profilePic': profilePic,
         'dailyQuote': userDocQuote,
+        'nextOfKin': nextOfKin,
+        'nexKinPhone': nexKinPhone,
       };
       if (kDebugMode) {
-        print("valuw od chages is $up");
+        print("value of changes is $up");
       }
       await _userDoc.doc(FirebaseAuth.instance.currentUser!.uid).update(up);
 
@@ -281,6 +322,27 @@ class AuthControllers extends GetxController {
       if (kDebugMode) {
         print("new user update is ${newUser.toJson()}");
       }
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    }
+  }
+
+  Future changeConsultant(
+    String uid,
+    String role,
+  ) async {
+    try {
+      if (kDebugMode) {
+        print("consultant data $uid ");
+      }
+      final patchData = {
+        'uid': uid,
+        'role': role,
+      };
+      if (kDebugMode) {
+        print("value of changes is $patchData");
+      }
+      await _userDoc.doc(uid).update(patchData);
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
@@ -444,9 +506,56 @@ class AuthControllers extends GetxController {
   }
 
   // Get Users List
-  Stream<List<UserList>> readtUserList() => FirebaseFirestore.instance
+  Stream<List<UserList>> readUserList() => FirebaseFirestore.instance
       .collection('users')
       .snapshots()
       .map((snapshot) =>
           snapshot.docs.map((doc) => UserList.fromJson(doc.data())).toList());
+
+  //Delete User Account
+  Future deleteUserAccount(String userId) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final users = _userDoc.doc(userId).delete().then(
+            (value) => Get.offAll(
+              () => const EmailPage(),
+            ),
+          );
+      await user?.delete();
+    } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return e.message;
+    }
+  }
+
+  String? getUserFirebaseId() {
+    return getUserByModel(FirebaseAuth.instance.currentUser!.uid).toString();
+  }
+
+  Stream<List<UserList>> getStreamFireStore(
+      int limit, String? textSearch, String? role) {
+    if (textSearch?.isNotEmpty == true) {
+      return _userDoc
+          .limit(limit)
+          .where("role", isEqualTo: role)
+          .where(liveUser.value!.username!, isEqualTo: textSearch)
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => UserList.fromJson(doc.data()))
+              .toList());
+    } else {
+      if (kDebugMode) {
+        print("USER-ROLE IS $role");
+      }
+      return _userDoc
+          .limit(limit)
+          .where("role", isEqualTo: role)
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => UserList.fromJson(doc.data()))
+              .toList());
+    }
+  }
 }

@@ -25,6 +25,8 @@ class QuoteControllers extends GetxController {
   Rx<UserModel> liveUser = UserModel().obs;
   UserModel get users => liveUser.value;
 
+  Rx<QuoteModel?> selectedQuote = Rx(null);
+
   final Rx<List<QuoteModel>> _quoteList = Rx([]);
   List<QuoteModel> get allQuotes => _quoteList.value;
 
@@ -44,14 +46,26 @@ class QuoteControllers extends GetxController {
       .collection("quotes")
       .doc()
       .collection('messages');
+  Stream<DocumentSnapshot<Map<String, dynamic>>> listenToQuote(String id) {
+    return _newQuote.doc(id).snapshots();
+  }
 
   @override
   void onInit() async {
     super.onInit();
+    selectedQuote.listen((p0) {
+//    if(p0!=null){
+
+// _newQuote.doc(p0.id).snapshots().l
+
+//    }
+    });
+
     _authController.liveUser.listen((p0) async {
       if (p0 != null) {
         getQuotes();
         getDailyQuote();
+        streamtDailyQuote();
 
         final now = DateTime.now();
         if (FirebaseAuth.instance.currentUser != null) {
@@ -65,6 +79,7 @@ class QuoteControllers extends GetxController {
               "share": sharePost(quotesCollection.id),
               "likes": likePost(quotesCollection.id),
               "views": viewPost(quotesCollection.id),
+              "reply": viewPost(quotesCollection.id),
             });
             _newMessage.doc(messagesCollection.id).update({
               "like": likeQuotePost(quotesCollection.id, messagesCollection.id),
@@ -100,12 +115,6 @@ class QuoteControllers extends GetxController {
       update();
     });
   }
-
-  // Stream<List<QuoteModel>> getDailyQuote() => FirebaseFirestore.instance
-  //     .collection('quotes')
-  //     .snapshots()
-  //     .map((snapshot) =>
-  //         snapshot.docs.map((doc) => QuoteModel.fromJson(doc.data())).toList());
 
   Future likeQuotePost(String quoteId, String messageId) async {
     FirebaseFirestore.instance.runTransaction((transaction) async {
@@ -145,15 +154,47 @@ class QuoteControllers extends GetxController {
           list.add(quote);
           if (kDebugMode) {
             print('ID is: ${element.id}');
-            print('quote is:${quote.toJson()}');
+            print('quote is: ${quote.toJson()}');
           }
           _quoteStatus(QuoteStatus.SUCCESS);
         }
-        _quoteList(list);
+        List<QuoteModel> reversedList = List.from(list.reversed);
+
+        _quoteList([]);
+
+        _quoteList(reversedList);
       });
     } catch (ex) {
       //
     }
+  }
+
+  Stream<List<QuoteModel>> streamtDailyQuote() {
+    // try {
+    quotesCollection.orderBy("createdAt").snapshots().listen((event) {
+      List<QuoteModel> list = [];
+      for (var element in event.docs) {
+        final quote = QuoteModel.fromJson(element.data()!, element.id);
+        list.add(quote);
+        if (kDebugMode) {
+          print('STREAM ID is: ${element.id}');
+          print(' stream quote is: ${quote.toJson()}');
+        }
+        _quoteStatus(QuoteStatus.SUCCESS);
+      }
+      List<QuoteModel> reversedList = List.from(list.reversed);
+
+      _quoteList([]);
+
+      _quoteList(reversedList);
+    });
+    // } catch (ex) {
+    //   //
+    // }
+    return quotesCollection.orderBy("createdAt").snapshots().map((snapshot) =>
+        snapshot.docs
+            .map((doc) => QuoteModel.fromJson(doc.data(), doc.id))
+            .toList());
   }
 
   Future sharePost(String quoteId) async {
@@ -191,6 +232,18 @@ class QuoteControllers extends GetxController {
     });
   }
 
+  Future chatList(String quoteId) async {
+    if (kDebugMode) {
+      print("quote id is $quoteId");
+    }
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_newQuote.doc(quoteId), {
+        "chats": FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
+        "reply": FieldValue.increment(1),
+      });
+    });
+  }
+
   // Create Quotes
   Future creatQuote({
     required String dailyQuote,
@@ -209,7 +262,8 @@ class QuoteControllers extends GetxController {
         groupId: groupId,
         likes: [],
         share: [],
-        reply: [],
+        reply: 0,
+        // reply: [],
         chats: [],
         views: [],
         members: [],
@@ -224,11 +278,15 @@ class QuoteControllers extends GetxController {
       // Create reference and write data to Firebase
       await docUser.add(json);
 
+      await sendHttpNotification(
+          title: 'Agora Care', body: 'Todays Quote Has Been Posted');
+
       await sendFirebaseNotification(
-        _authController.liveUser.value!.uid!,
-        "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
-        'Todays Quote has been posted',
-        quotesCollection.id,
+        avatar:
+            "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
+        message: 'Todays Quote has been posted',
+        id: quotesCollection.id,
+        userId: _authController.liveUser.value!.uid!,
       );
 
       await groupDocumentReference!.update({

@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:agora_care/app/model/user_model.dart';
+import 'package:agora_care/app/consultant/userconsultant_messages.dart';
+import 'package:agora_care/app/profile/add_consultant.dart';
 import 'package:agora_care/app/profile/edit_profile.dart';
 import 'package:agora_care/app/profile/support.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/core/custom_form_field.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -45,6 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor().boxColor,
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
         elevation: 0,
@@ -88,16 +89,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Obx(() {
-                              return customDescriptionText(
-                                _authController.liveUser.value!.fullName == null
-                                    ? 'Your Name'
-                                    : _authController.liveUser.value!.fullName!,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                colors: AppColor().filledTextField,
-                              );
-                            }),
+                            _authController.liveUser.value!.admin == true
+                                ? Obx(() {
+                                    return customDescriptionText(
+                                      _authController.liveUser.value!.role ==
+                                              null
+                                          ? 'Admin'
+                                          : _authController
+                                              .liveUser.value!.role!,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      colors: AppColor().filledTextField,
+                                    );
+                                  })
+                                : Obx(() {
+                                    if (_authController.liveUser.value!.role ==
+                                        'consultant') {
+                                      return customDescriptionText(
+                                        _authController.liveUser.value!.role ==
+                                                null
+                                            ? 'Your Role'
+                                            : _authController
+                                                .liveUser.value!.role!,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        colors: AppColor().filledTextField,
+                                      );
+                                    } else if (_authController
+                                            .liveUser.value!.admin ==
+                                        true) {
+                                      return customDescriptionText(
+                                        _authController.liveUser.value!.role ==
+                                                null
+                                            ? 'Your Role'
+                                            : _authController
+                                                .liveUser.value!.role!,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        colors: AppColor().filledTextField,
+                                      );
+                                    } else {
+                                      return customDescriptionText(
+                                        _authController
+                                                    .liveUser.value!.fullName ==
+                                                null
+                                            ? 'Your Name'
+                                            : _authController
+                                                .liveUser.value!.fullName!,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.5,
+                                        textOverflow: TextOverflow.ellipsis,
+                                        colors: AppColor().filledTextField,
+                                      );
+                                    }
+                                  }),
                             const Gap(5),
                             customDescriptionText(
                               _authController.liveUser.value == null &&
@@ -112,150 +160,164 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                         const Gap(5),
-                        // Obx(() {
-                        //   if (_authController.liveUser.value!.profilePic ==
-                        //           null ||
-                        //       _authController.liveUser.value!.profilePic == "") {
-                        //     return Image.asset(
-                        //       "assets/images/chatPic.png",
-                        //       height: 50,
-                        //       width: 50,
-                        //     );
-                        //   } else {
-                        //     return Image.network(
-                        //       _authController.liveUser.value!.profilePic!,
-                        //       // profilePicLink,
-                        //       height: 50,
-                        //       width: 50,
-                        //     );
-                        //   }
-                        // }),
-                        FutureBuilder<UserModel>(
-                            future: _authController.getUserByModel(
-                                _authController.liveUser.value!.uid!),
-                            builder: (BuildContext context, snapshot) {
-                              if (snapshot.connectionState ==
-                                      ConnectionState.done &&
-                                  snapshot.hasData) {
-                                return Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(80),
-                                    image: DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                        snapshot.data!.profilePic!,
-                                        // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mbF_vybC_Hlh8kW0mWpDp-RQ1P1f2qiKRO9jPX5UUFB8_nsYTFldK-ZT61FldtpK2k0&usqp=CAU',
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              } else if (snapshot.connectionState ==
-                                      ConnectionState.waiting ||
-                                  !snapshot.hasData) {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColor().primaryColor,
-                                  ),
-                                );
-                              } else {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColor().whiteColor,
-                                    border: Border.all(
-                                      width: 2,
-                                      color: AppColor().primaryColor,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: CircleAvatar(
-                                      radius: 50,
-                                      backgroundColor: AppColor().whiteColor,
-                                      child: Image.network(
-                                        "assets/images/placeholder.png",
-                                        height: 50,
-                                        width: 50,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                            }),
+                        Obx(() {
+                          if (_authController.liveUser.value!.profilePic ==
+                                  null ||
+                              _authController.liveUser.value!.profilePic ==
+                                  "") {
+                            return Image.asset(
+                              "assets/images/placeholder.png",
+                              height: 50,
+                              width: 50,
+                            );
+                          } else {
+                            return Image.network(
+                              _authController.liveUser.value!.profilePic!,
+                              height: 50,
+                              width: 50,
+                            );
+                          }
+                        }),
+                        // FutureBuilder<UserModel>(
+                        //     future: _authController.getUserByModel(
+                        //         _authController.liveUser.value!.uid!),
+                        //     builder: (BuildContext context, snapshot) {
+                        //       if (snapshot.connectionState ==
+                        //               ConnectionState.done &&
+                        //           snapshot.hasData) {
+                        //         return Container(
+                        //           height: 60,
+                        //           width: 60,
+                        //           decoration: BoxDecoration(
+                        //             borderRadius: BorderRadius.circular(80),
+                        //             image: DecorationImage(
+                        //               image: CachedNetworkImageProvider(
+                        //                 snapshot.data!.profilePic!,
+                        //               ),
+                        //               fit: BoxFit.cover,
+                        //             ),
+                        //           ),
+                        //         );
+                        //       } else if (snapshot.connectionState ==
+                        //           ConnectionState.waiting) {
+                        //         return Center(
+                        //           child: CircularProgressIndicator(
+                        //             color: AppColor().primaryColor,
+                        //           ),
+                        //         );
+                        //       } else {
+                        //         return Container(
+                        //           decoration: BoxDecoration(
+                        //             color: AppColor().whiteColor,
+                        //             border: Border.all(
+                        //               width: 2,
+                        //               color: AppColor().primaryColor,
+                        //             ),
+                        //             shape: BoxShape.circle,
+                        //           ),
+                        //           child: Center(
+                        //             child: CircleAvatar(
+                        //               radius: 50,
+                        //               backgroundColor: AppColor().whiteColor,
+                        //               child: Image.asset(
+                        //                 "assets/images/placeholder.png",
+                        //                 height: 50,
+                        //                 width: 50,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         );
+                        //       }
+                        //     }),
                       ],
                     ),
-                    const Gap(15),
-                    const Divider(
-                      height: 1,
-                      thickness: 1,
-                    ),
-                    const Gap(15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/svgs/streak.svg',
-                        ),
-                        const Gap(5),
-                        Obx(() {
-                          return customDescriptionText(
-                            // '5',
-                            _authController.liveUser.value!.streak == null
-                                ? '0'
-                                : _authController.liveUser.value!.streak
-                                    .toString(),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            colors: AppColor().textColor,
-                          );
-                        }),
-                        const Gap(5),
-                        customDescriptionText(
-                          'Streak',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          colors: AppColor().lightTextColor,
-                        ),
-                        const Gap(30),
-                        /////
-                        Container(
-                          height: 15,
-                          width: 1.5,
-                          color: AppColor().lightTextColor,
-                        ),
-                        /////
-                        const Gap(30),
-                        SvgPicture.asset(
-                          'assets/svgs/calender.svg',
-                        ),
-                        const Gap(5),
-                        Obx(() {
-                          return customDescriptionText(
-                            // '20',
-                            _authController.liveUser.value!.weeks == null
-                                ? '0'
-                                : _authController.liveUser.value!.weeks
-                                    .toString(),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            colors: AppColor().textColor,
-                          );
-                        }),
-                        const Gap(5),
-                        customDescriptionText(
-                          'Weeks',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          colors: AppColor().lightTextColor,
-                        ),
-                        const Gap(40),
-                        Icon(
-                          Icons.keyboard_arrow_right,
-                          color: AppColor().blackColor,
-                        ),
-                      ],
-                    ),
+                    (_authController.liveUser.value!.admin == true ||
+                            _authController.liveUser.value!.role ==
+                                'consultant')
+                        ? Container()
+                        : const Gap(15),
+                    (_authController.liveUser.value!.admin == true ||
+                            _authController.liveUser.value!.role ==
+                                'consultant')
+                        ? Container()
+                        : const Divider(
+                            height: 1,
+                            thickness: 1,
+                          ),
+                    (_authController.liveUser.value!.admin == true ||
+                            _authController.liveUser.value!.role ==
+                                'consultant')
+                        ? Container()
+                        : const Gap(15),
+                    (_authController.liveUser.value!.admin == true ||
+                            _authController.liveUser.value!.role ==
+                                'consultant')
+                        ? Container()
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svgs/streak.svg',
+                              ),
+                              const Gap(5),
+                              Obx(() {
+                                return customDescriptionText(
+                                  // '5',
+                                  _authController.liveUser.value!.streak == null
+                                      ? '0'
+                                      : _authController.liveUser.value!.streak
+                                          .toString(),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  colors: AppColor().textColor,
+                                );
+                              }),
+                              const Gap(5),
+                              customDescriptionText(
+                                'Streak',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                colors: AppColor().lightTextColor,
+                              ),
+                              const Gap(30),
+                              /////
+                              Container(
+                                height: 15,
+                                width: 1.5,
+                                color: AppColor().lightTextColor,
+                              ),
+                              /////
+                              const Gap(30),
+                              SvgPicture.asset(
+                                'assets/svgs/calender.svg',
+                              ),
+                              const Gap(5),
+                              Obx(() {
+                                return customDescriptionText(
+                                  // '20',
+                                  _authController.liveUser.value!.weeks == null
+                                      ? '0'
+                                      : _authController.liveUser.value!.weeks
+                                          .toString(),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  colors: AppColor().textColor,
+                                );
+                              }),
+                              const Gap(5),
+                              customDescriptionText(
+                                'Weeks',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                colors: AppColor().lightTextColor,
+                              ),
+                              const Gap(40),
+                              Icon(
+                                Icons.keyboard_arrow_right,
+                                color: AppColor().blackColor,
+                              ),
+                            ],
+                          ),
                     const Gap(10),
                   ],
                 ),
@@ -267,7 +329,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 fontWeight: FontWeight.w700,
                 colors: AppColor().filledTextField,
               ),
-              const Gap(15),
+              _authController.liveUser.value!.admin == true
+                  ? Container()
+                  : const Gap(15),
 
               // CustomContainer(
               //   selectedColor: Theme.of(context).primaryColor,
@@ -319,16 +383,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // ),
               // const Gap(15),
 
-              CustomContainer(
-                trailing: SvgPicture.asset(
-                  'assets/svgs/keyboard_arrow_right.svg',
-                  height: 14,
-                ),
-                titleText: 'Edit profile',
-                onTap: () {
-                  Get.to(() => const EditProfile());
-                },
-              ),
+              _authController.liveUser.value!.admin == true
+                  ? Container()
+                  : CustomContainer(
+                      trailing: SvgPicture.asset(
+                        'assets/svgs/keyboard_arrow_right.svg',
+                        height: 14,
+                      ),
+                      titleText: 'Edit profile',
+                      onTap: () {
+                        Get.to(() => const EditProfile());
+                      },
+                    ),
               const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
@@ -337,32 +403,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 titleText: 'Settings',
                 onTap: () {
-                  // Get.to(() => AnimationApp());
+                  // Get.to(() => SettingsPage());
                 },
               ),
-              const Gap(15),
-              CustomContainer(
-                trailing: SvgPicture.asset(
-                  'assets/svgs/keyboard_arrow_right.svg',
-                  height: 14,
-                ),
-                titleText: 'Consult a psychologist',
-                // onTap: () {
-                //   Get.to(() => const PhonePage());
-                // },
-              ),
-              const Gap(15),
-              CustomContainer(
-                trailing: SvgPicture.asset(
-                  'assets/svgs/keyboard_arrow_right.svg',
-                  height: 14,
-                ),
-                titleText: 'Support',
-                onTap: () {
-                  Get.to(() => const SupportPage());
+              (_authController.liveUser.value!.admin == true ||
+                      _authController.liveUser.value!.role == 'consultant')
+                  ? Container()
+                  : const Gap(15),
+              Obx(
+                () {
+                  if (_authController.liveUser.value!.role == 'consultant') {
+                    return Container();
+                  } else if (_authController.liveUser.value!.admin == true) {
+                    return CustomContainer(
+                      trailing: SvgPicture.asset(
+                        'assets/svgs/keyboard_arrow_right.svg',
+                        height: 14,
+                      ),
+                      titleText: 'Add Consultant',
+                      onTap: () {
+                        Get.to(() => const AddConsultant());
+                      },
+                    );
+                  } else {
+                    return CustomContainer(
+                      trailing: SvgPicture.asset(
+                        'assets/svgs/keyboard_arrow_right.svg',
+                        height: 14,
+                      ),
+                      titleText: 'Consult a psychologist',
+                      onTap: () {
+                        Get.to(() => const UserConsultantMessage());
+                      },
+                    );
+                  }
                 },
               ),
-              const Gap(15),
+              (_authController.liveUser.value!.admin == true ||
+                      _authController.liveUser.value!.role == 'consultant')
+                  ? Container()
+                  : const Gap(15),
+              (_authController.liveUser.value!.admin == true ||
+                      _authController.liveUser.value!.role == 'consultant')
+                  ? Container()
+                  : CustomContainer(
+                      trailing: SvgPicture.asset(
+                        'assets/svgs/keyboard_arrow_right.svg',
+                        height: 14,
+                      ),
+                      titleText: 'Support',
+                      onTap: () {
+                        Get.to(() => const SupportPage());
+                      },
+                    ),
+              (_authController.liveUser.value!.admin == true)
+                  ? Container()
+                  : const Gap(15),
+              // const Gap(15),
               CustomContainer(
                 trailing: SvgPicture.asset(
                   'assets/svgs/keyboard_arrow_right.svg',
@@ -407,12 +504,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               const Gap(20),
-              CustomBorderButton(
-                borderColor: AppColor().errorColor,
-                buttonText: 'Delete Account',
-                textSize: 14,
-                textColor: AppColor().errorColor,
-              )
+              _authController.liveUser.value!.admin == true
+                  ? Container()
+                  : CustomBorderButton(
+                      borderColor: AppColor().errorColor,
+                      buttonText: 'Delete Account',
+                      textSize: 14,
+                      textColor: AppColor().errorColor,
+                      onTap: () async {
+                        showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: customDescriptionText(
+                                  "Delete Account",
+                                  fontWeight: FontWeight.bold,
+                                  colors: AppColor().primaryColor,
+                                ),
+                                content: customDescriptionText(
+                                    "Are you sure you want to delete your account?"),
+                                actions: [
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(
+                                      Icons.cancel,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  //Leave Chat
+                                  IconButton(
+                                    onPressed: () async {
+                                      await _authController.deleteUserAccount(
+                                          _authController.liveUser.value!.uid!);
+                                    },
+                                    icon: const Icon(
+                                      Icons.done,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    )
             ],
           ),
         ),

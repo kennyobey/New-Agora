@@ -1,8 +1,8 @@
-// ignore_for_file: unused_field
+// ignore_for_file: unused_field, unnecessary_null_comparison
 
 import 'dart:math';
 
-import 'package:agora_care/app/group_screen/chat_page.dart';
+import 'package:agora_care/app/cells/chat_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/helper/helper_function.dart';
@@ -15,16 +15,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class CellInfo extends StatefulWidget {
-  const CellInfo({Key? key}) : super(key: key);
+  final DateTime time;
+  final String admin;
+  final String groupId;
+  final String userName;
+  final String groupName;
+  final String assetName;
+  final List<String> tags;
+  final String description;
+  final List<String> memberList;
+  const CellInfo({
+    Key? key,
+    required this.tags,
+    required this.time,
+    required this.admin,
+    required this.groupId,
+    required this.groupName,
+    required this.userName,
+    required this.assetName,
+    required this.memberList,
+    required this.description,
+  }) : super(key: key);
 
   @override
   State<CellInfo> createState() => _CellInfoState();
 }
 
 class _CellInfoState extends State<CellInfo> {
-  final _cellContoller = Get.find<CellControllers>();
+  final _cellController = Get.find<CellControllers>();
   final _authController = Get.find<AuthControllers>();
   String userName = "";
   String email = "";
@@ -91,8 +112,16 @@ class _CellInfoState extends State<CellInfo> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Gap(20),
+            IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => Get.back(),
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: AppColor().blackColor,
+              ),
+            ),
             const Gap(80),
-
             Center(
               child: Column(
                 children: [
@@ -100,7 +129,7 @@ class _CellInfoState extends State<CellInfo> {
                     'assets/svgs/circularbank.svg',
                   ),
                   customTitleText(
-                    'Chephas cells',
+                    widget.groupName,
                     size: 32,
                     spacing: -0.1,
                     fontWeight: FontWeight.w700,
@@ -109,7 +138,6 @@ class _CellInfoState extends State<CellInfo> {
                 ],
               ),
             ),
-
             const Gap(30),
             customDescriptionText(
               'About',
@@ -118,7 +146,7 @@ class _CellInfoState extends State<CellInfo> {
               colors: AppColor().filledTextField,
             ),
             customDescriptionText(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Et magna egestas senectus tellus est, mauris. Consequat eget non sapien a fermentum, pellentesque erat.',
+              widget.description,
               fontSize: 14,
               fontWeight: FontWeight.w400,
               colors: AppColor().filledTextField,
@@ -134,20 +162,23 @@ class _CellInfoState extends State<CellInfo> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 customDescriptionText(
-                  '14,000',
+                  widget.memberList != null
+                      ? '${widget.memberList.length}'
+                      : '0 member',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   colors: AppColor().filledTextField,
                 ),
                 customDescriptionText(
-                  'Last activity: Jan 4, 2022',
+                  widget.time == null
+                      ? 'Not available'
+                      : 'Last activity: ${DateFormat('MMM dd yyy').format(DateTime.parse(widget.time.toString()))}',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   colors: AppColor().lastActivity,
                 ),
               ],
             ),
-
             const Gap(30),
             customDescriptionText(
               'Tags',
@@ -156,59 +187,141 @@ class _CellInfoState extends State<CellInfo> {
               colors: AppColor().filledTextField,
             ),
             const Gap(10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 35,
-                  width: 70,
-                  decoration: BoxDecoration(color: AppColor().tagButton),
-                  alignment: Alignment.center,
-                  child: customDescriptionText(
-                    'Health',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    colors: AppColor().filledTextField,
-                    textAlign: TextAlign.center,
+            Obx(() {
+              if (_cellController.cellStatus == CellStatus.LOADING) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: AppColor().primaryColor,
                   ),
-                ),
-                const Gap(10),
-                Container(
-                  height: 35,
-                  width: 70,
-                  decoration: BoxDecoration(color: AppColor().tagButton),
-                  alignment: Alignment.center,
-                  child: customDescriptionText(
-                    'Sex',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    colors: AppColor().filledTextField,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const Gap(10),
-                Container(
-                  height: 35,
-                  width: 70,
-                  decoration: BoxDecoration(color: AppColor().tagButton),
-                  alignment: Alignment.center,
-                  child: customDescriptionText(
-                    'Sexual',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    colors: AppColor().filledTextField,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
+                );
+              } else if (_cellController.cellStatus != CellStatus.LOADING) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.04,
+                  child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.horizontal,
+                      itemCount:
+                          widget.tags.length > 4 ? 4 : widget.tags.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = widget.tags[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: AppColor().tagButton,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            alignment: Alignment.center,
+                            child: customDescriptionText(
+                              item,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              colors: AppColor().filledTextField,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }),
+                );
+              } else {
+                return customDescriptionText('No Tage  Available');
+              }
+            }),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.start,
+            //   children: [
+            //     Container(
+            //       height: 35,
+            //       width: 70,
+            //       decoration: BoxDecoration(color: AppColor().tagButton),
+            //       alignment: Alignment.center,
+            //       child: customDescriptionText(
+            //         (widget.tags.length == null || widget.tags.length == '')
+            //             ? ''
+            //             : widget.tags.first,
+            //         fontSize: 14,
+            //         fontWeight: FontWeight.w400,
+            //         colors: AppColor().filledTextField,
+            //         textAlign: TextAlign.center,
+            //       ),
+            //     ),
+            //     const Gap(10),
+            // Container(
+            //   height: 35,
+            //   width: 70,
+            //   decoration: BoxDecoration(color: AppColor().tagButton),
+            //   alignment: Alignment.center,
+            //   child: customDescriptionText(
+            //     (widget.tags.length == null || widget.tags.length == '')
+            //         ? ''
+            //         : widget.tags[1],
+            //     fontSize: 14,
+            //     fontWeight: FontWeight.w400,
+            //     colors: AppColor().filledTextField,
+            //     textAlign: TextAlign.center,
+            //   ),
+            // ),
+            // const Gap(10),
+            // Container(
+            //   height: 35,
+            //   width: 70,
+            //   decoration: BoxDecoration(color: AppColor().tagButton),
+            //   alignment: Alignment.center,
+            //   child: customDescriptionText(
+            //     (widget.tags.length == null || widget.tags.length == '')
+            //         ? ''
+            //         : widget.tags[2],
+            //     fontSize: 14,
+            //     fontWeight: FontWeight.w400,
+            //     colors: AppColor().filledTextField,
+            //     textAlign: TextAlign.center,
+            //   ),
+            // ),
+            // const Gap(10),
+            // Container(
+            //   height: 35,
+            //   width: 70,
+            //   decoration: BoxDecoration(color: AppColor().tagButton),
+            //   alignment: Alignment.center,
+            //   child: customDescriptionText(
+            //     (widget.tags.length == null || widget.tags.length == '')
+            //         ? ''
+            //         : widget.tags.last,
+            //     fontSize: 14,
+            //     fontWeight: FontWeight.w400,
+            //     colors: AppColor().filledTextField,
+            //     textAlign: TextAlign.center,
+            //   ),
+            // ),
+            //   ],
+            // ),
             const Gap(30),
             CustomFillButton(
-              buttonText: 'Join Cells',
+              buttonText: _authController.liveUser.value!.admin == true
+                  ? 'View Cells'
+                  : 'Join Cells',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
               isLoading: _isLoading,
-              onTap: () async {},
+              onTap: () async {
+                if (kDebugMode) {
+                  print(
+                      '${widget.userName} is Joining ${widget.groupName} Cell');
+                }
+                await _cellController.memberAdd(widget.groupId);
+                Get.to(
+                  () => ChatPage(
+                    admin: widget.admin,
+                    groupId: widget.groupId,
+                    userName: widget.userName,
+                    member: widget.memberList,
+                    groupName: widget.groupName,
+                    assetName: widget.assetName,
+                  ),
+                );
+              },
             ),
             const Gap(30),
             Row(
@@ -226,77 +339,31 @@ class _CellInfoState extends State<CellInfo> {
               ],
             ),
             const Gap(20),
-            // SizedBox(
-            //   height: MediaQuery.of(context).size.height * 0.1,
-            //   child: StreamBuilder(
-            //       stream: groups,
-            //       builder: (context, AsyncSnapshot snapshot) {
-            //         if (snapshot.hasData) {
-            //           if (snapshot.data['groups'] != null) {
-            //             if (snapshot.data['groups'].length != 0) {
-            //               return ListView.builder(
-            //                 padding: EdgeInsets.zero,
-            //                 scrollDirection: Axis.horizontal,
-            //                 // itemCount: colorList.length,
-            //                 itemCount: snapshot.data['groups'].length,
-            //                 itemBuilder: (BuildContext context, int index) {
-            //                   int reverseIndex =
-            //                       snapshot.data['groups'].length - index - 1;
-
-            //                   return recommendedCells(
-            //                     groupId: getId(
-            //                         snapshot.data['groups'][reverseIndex]),
-            //                     colors: colorList[index],
-            //                     groupName: getName(
-            //                         snapshot.data['groups'][reverseIndex]),
-            //                     assetName: 'assets/svgs/bank.svg',
-            //                     userName:
-            //                         _authController.liveUser.value!.username!,
-            //                   );
-            //                 },
-            //               );
-            //             } else {
-            //               return customDescriptionText(
-            //                   'No Available Cell to join');
-            //             }
-            //           } else {
-            //             return customDescriptionText(
-            //                 'No Available Cell to join');
-            //           }
-            //         } else {
-            //           return Center(
-            //             child: CircularProgressIndicator(
-            //                 color: Theme.of(context).primaryColor),
-            //           );
-            //         }
-            //       }),
-            // ),
             Obx(() {
-              if (_cellContoller.cellStatus == CellStatus.LOADING) {
-                return customDescriptionText('No Available  Cell');
+              if (_cellController.cellStatus == CellStatus.LOADING) {
+                return customDescriptionText(
+                  'No Available  Cell',
+                );
               } else {
                 return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.1,
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
-                      // itemCount: imageName.length,
-                      itemCount: _cellContoller.allAvailableCell.length,
+                      itemCount: _cellController.allAvailableCell.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final item = _cellContoller.allAvailableCell[index];
-                        if (kDebugMode) {
-                          print('Cell is now ${item.groupName!.length}');
-                          print("group id for cell is ${item.groupId}");
-                        }
+                        final item = _cellController.allAvailableCell[index];
+                        // if (kDebugMode) {
+                        //   print('Cell is now ${item.groupName!.length}');
+                        //   print("group id for cell is ${item.groupId}");
+                        // }
                         final random = Random();
                         return recommendedCells(
+                          admin: item.admin!,
                           groupId: item.groupId,
                           groupName: item.groupName,
+                          assetName: 'assets/svgs/bank.svg',
                           colors: colorList[random.nextInt(colorList.length)],
-                          assetName:
-                              _authController.liveUser.value!.profilePic == null
-                                  ? 'assets/svgs/bank.svg'
-                                  : _authController.liveUser.value!.profilePic!,
                           userName: _authController.liveUser.value!.username!,
                         );
                       },
@@ -312,6 +379,7 @@ class _CellInfoState extends State<CellInfo> {
 
   GestureDetector recommendedCells({
     Color? colors,
+    String? admin,
     String? groupId,
     String? groupName,
     String? assetName,
@@ -320,14 +388,16 @@ class _CellInfoState extends State<CellInfo> {
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
-          print('$userName is Joining Group');
+          print('${widget.userName} is entering ${widget.groupName} cell');
         }
         Get.to(
           () => ChatPage(
+            admin: admin!,
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
             assetName: assetName!,
+            member: widget.memberList,
           ),
         );
       },
@@ -335,27 +405,59 @@ class _CellInfoState extends State<CellInfo> {
         padding: const EdgeInsets.only(right: 10, bottom: 10),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-          width: MediaQuery.of(context).size.width * 0.35,
+          width: MediaQuery.of(context).size.width * 0.4,
           height: MediaQuery.of(context).size.height * 0.2,
           decoration: BoxDecoration(
-            color: colors,
+            color: AppColor().whiteColor,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Row(
             children: [
-              SvgPicture.asset(
-                assetName!,
-                height: 30,
-                color: AppColor().whiteColor,
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  color: colors,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: SvgPicture.asset(
+                  assetName!,
+                  height: 20,
+                  color: AppColor().whiteColor,
+                ),
               ),
               const Gap(10),
-              customTitleText(
-                groupName!,
-                textAlign: TextAlign.left,
-                colors: AppColor().whiteColor,
-                size: 16,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  customTitleText(
+                    groupName!,
+                    size: 12,
+                    textAlign: TextAlign.left,
+                    colors: AppColor().blackColor,
+                    textOverflow: TextOverflow.clip,
+                  ),
+                  const Gap(5),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/svgs/people.svg',
+                        height: 16,
+                        color: AppColor().textColor,
+                      ),
+                      const Gap(5),
+                      customTitleText(
+                        widget.memberList != null
+                            ? "${widget.memberList.length}"
+                            : "0",
+                        textAlign: TextAlign.left,
+                        size: 12,
+                        colors: AppColor().textColor,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
@@ -367,6 +469,7 @@ class _CellInfoState extends State<CellInfo> {
   GestureDetector otherCells({
     Color? colors,
     String? groupId,
+    String? admin,
     String? groupName,
     String? assetName,
     String? userName,
@@ -375,14 +478,16 @@ class _CellInfoState extends State<CellInfo> {
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
-          print('Joining Group');
+          print('entering ${widget.memberList} Cell');
         }
         Get.to(
           () => ChatPage(
+            admin: admin!,
             groupId: groupId!,
             groupName: groupName!,
             userName: userName!,
             assetName: assetName!,
+            member: widget.memberList,
           ),
         );
       },

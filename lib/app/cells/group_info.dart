@@ -1,4 +1,4 @@
-import 'package:agora_care/app/home/nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/nav_screen.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
@@ -69,6 +69,12 @@ class _GroupInfoState extends State<GroupInfo> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD:lib/app/group_screen/group_info.dart
+=======
+    if (kDebugMode) {
+      print("memeber length is for info ${widget.member}");
+    }
+>>>>>>> new_cell:lib/app/cells/group_info.dart
     if (kDebugMode) {
       print('members numbers is $memberslen');
     }
@@ -240,7 +246,7 @@ class _GroupInfoState extends State<GroupInfo> {
                                             getName(widget.adminName),
                                             widget.groupName)
                                         .whenComplete(() {
-                                      Get.to(() => UserNavScreen());
+                                      Get.offAll(() => UserNavScreen());
                                       Get.snackbar("Alert",
                                           'Successfully left the ${widget.groupName}');
                                     });

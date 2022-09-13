@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 import '../../core/widget.dart';
 import '../../helper/helper_function.dart';
 import '../../services/database_service.dart';
-import 'chat_page.dart';
+import '../cells/chat_page.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);

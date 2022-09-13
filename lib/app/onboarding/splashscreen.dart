@@ -2,7 +2,9 @@
 
 import 'dart:async';
 
-import 'package:agora_care/app/home/nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/admin_nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/consultant_nav_screen.dart';
+import 'package:agora_care/app/home/navigation_bars/nav_screen.dart';
 import 'package:agora_care/app/onboarding/onboarding.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
@@ -28,11 +30,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    _timer = Timer(const Duration(milliseconds: 3000), () {
+    _timer = Timer(const Duration(milliseconds: 5000), () async {
       // if (controller.status == Status.IsFirstTime) {
       //   Get.off(() => OnboardAuth(locations, context));
       // } else if (controller.status == Status.Authenticated) {
-      //   Get.off(() => const UserNavScreen());
+      //   Get.offAll(() => const UserNavScreen());
       // } else {
       //   _save('0');
       if (FirebaseAuth.instance.currentUser != null) {
@@ -43,13 +45,30 @@ class _SplashScreenState extends State<SplashScreen> {
         //   ),
         // );
         // } else {
-        // Get.off(() => AdminUserNavScreen())
+        // Get.offAll(() => AdminNavScreen())
         // ;
+        if (controller.liveUser.value == null) {
+          final user = await controller
+              .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
 
-        Get.off(() => UserNavScreen());
-        // }
+          if (user.admin == true) {
+            Get.offAll(() => AdminNavScreen());
+          } else if (user.role == 'consultant') {
+            Get.offAll(() => ConsultantNavScreen());
+          } else {
+            Get.offAll(() => UserNavScreen());
+          }
+        } else {
+          if (controller.liveUser.value!.admin == true) {
+            Get.offAll(() => AdminNavScreen());
+          } else if (controller.liveUser.value!.role == 'consultant') {
+            Get.offAll(() => ConsultantNavScreen());
+          } else {
+            Get.offAll(() => UserNavScreen());
+          }
+        }
       } else {
-        Get.off(() => Onboarding());
+        Get.offAll(() => Onboarding());
       }
 
       //   }
@@ -57,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
   }
 
-  getUserLogggedInStatus() async {
+  getUserLogggedInStatu() async {
     await HelperFunction.getUserLogggedInStatus().then((value) {
       if (value != null) {
         setState(() {

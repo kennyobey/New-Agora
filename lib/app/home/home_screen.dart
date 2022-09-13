@@ -2,8 +2,8 @@
 
 import 'dart:math';
 
+import 'package:agora_care/app/cells/cell_info.dart';
 import 'package:agora_care/app/cells/cell_screen.dart';
-import 'package:agora_care/app/group_screen/chat_page.dart';
 import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/app/quote/quote_details.dart';
 import 'package:agora_care/app/quote/selected_quote_detail.dart';
@@ -13,10 +13,13 @@ import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
 import 'package:agora_care/services/database_service.dart';
+import 'package:agora_care/services/notif_controller.dart';
 import 'package:agora_care/services/quote_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -30,8 +33,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _authController = Get.find<AuthControllers>();
-  final cellContoller = Get.find<CellControllers>();
+  final _notifController = Get.find<NotifControllers>();
+  final cellController = Get.find<CellControllers>();
   final _quoteContoller = Get.find<QuoteControllers>();
+
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   String userName = "";
   String email = "";
@@ -44,20 +52,22 @@ class _HomeScreenState extends State<HomeScreen> {
     AppColor().blueColor,
     AppColor().backgroundColor,
     AppColor().primaryColor,
-  ];
-
-  final List<String> imageName = <String>[
-    'assets/images/image1.png',
-    'assets/images/image2.png',
-    'assets/images/image1.png',
-    'assets/images/image2.png',
+    AppColor().pinkColor,
+    AppColor().blueColor,
+    AppColor().backgroundColor,
+    AppColor().primaryColor,
+    AppColor().pinkColor,
+    AppColor().blueColor,
+    AppColor().backgroundColor,
+    AppColor().primaryColor,
   ];
 
   @override
   void initState() {
     super.initState();
-    // gettingUserData();
-    _quoteContoller.getQuotes();
+    _notifController.registerNotification();
+    _notifController.configLocalNotification();
+    // _quoteContoller.getQuotes();
   }
 
   // string manipulation
@@ -87,10 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // if (kDebugMode) {
-    //   print("testing user is ${_authController.liveUser.value!.toJson()}");
-    //   print("testing user admin is ${_authController.liveUser.value!.admin}");
-    // }
+    if (kDebugMode) {
+      print("testing user is ${_authController.liveUser.value!.toJson()}");
+      print("testing user admin is ${_authController.liveUser.value!.admin}");
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
@@ -109,9 +119,13 @@ class _HomeScreenState extends State<HomeScreen> {
               const Gap(20),
               Center(
                 child: Obx(() {
-                  return (_authController.liveUser.value == null)
-                      ? CircularProgressIndicator(
-                          color: AppColor().filledTextField,
+                  return (_authController.liveUser.value!.fullName == null)
+                      ? customTitleText(
+                          'No Name Yet',
+                          size: 20,
+                          spacing: -0.1,
+                          fontWeight: FontWeight.w700,
+                          colors: AppColor().filledTextField,
                         )
                       : customTitleText(
                           'Good afternoon, ${_authController.liveUser.value!.fullName}',
@@ -190,41 +204,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               const Gap(20),
-              Stack(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (kDebugMode) {
-                          print('Clicking quote');
-                          print(
-                              'quote id is ${_quoteContoller.allQuotes.last.id!}');
-                        }
-                        _quoteContoller.joinedOrNot(
-                          _authController.liveUser.value!.username!,
-                          _quoteContoller.allQuotes.last.groupId!,
-                          _quoteContoller.allQuotes.last.dailyQuote!,
-                        );
-                        _quoteContoller
-                            .viewPost(_quoteContoller.allQuotes.last.id!);
-                        Get.to(
-                          () => QuoteDetails(
-                            groupId: _quoteContoller.allQuotes.last.groupId!,
-                            groupName:
-                                _quoteContoller.allQuotes.last.dailyQuote!,
-                            userName: _authController.liveUser.value!.username!,
-                            userImage:
-                                _authController.liveUser.value!.profilePic!,
-                            assetName: _authController
-                                        .liveUser.value!.profilePic ==
-                                    null
-                                ? 'assets/images/placeholder.png'
-                                : _authController.liveUser.value!.profilePic!,
-                          ),
-                          // transition: Transition.downToUp,
-                        );
-                      },
+              GestureDetector(
+                onTap: () {
+                  if (kDebugMode) {
+                    print('Clicking quote');
+                    print('quote id is ${_quoteContoller.allQuotes.last.id!}');
+                  }
+                  _quoteContoller.joinedOrNot(
+                    _authController.liveUser.value!.username!,
+                    _quoteContoller.allQuotes.last.groupId!,
+                    _quoteContoller.allQuotes.last.dailyQuote!,
+                  );
+                  _quoteContoller.viewPost(_quoteContoller.allQuotes.last.id!);
+
+                  Get.to(
+                    () => QuoteDetails(
+                      dailyQuote: _quoteContoller.allQuotes.last.dailyQuote!,
+                      groupId: _quoteContoller.allQuotes.last.groupId!,
+                      groupName: _quoteContoller.allQuotes.last.dailyQuote!,
+                      userName: _authController.liveUser.value!.username!,
+                      userImage: _authController.liveUser.value!.profilePic!,
+                      assetName:
+                          _authController.liveUser.value!.profilePic == null
+                              ? 'assets/images/placeholder.png'
+                              : _authController.liveUser.value!.profilePic!,
+                    ),
+                    // transition: Transition.downToUp,
+                  );
+                },
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
                       child: Hero(
                         tag: "img",
                         child: SvgPicture.asset(
@@ -234,33 +245,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    top: 30,
-                    left: 70,
-                    right: 70,
-                    child: Column(
-                      children: [
-                        StreamBuilder(
+                    Positioned(
+                      top: 30,
+                      left: 70,
+                      right: 70,
+                      child: Column(
+                        children: [
+                          StreamBuilder(
                             stream: _quoteContoller.getDailyQuote(),
                             builder: (context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
-                                if (snapshot.data != null) {
+                                if (snapshot.data != null &&
+                                    snapshot.data!.docs.isNotEmpty) {
                                   return Center(
                                     child: customDescriptionText(
                                       snapshot.data!.docs.last
                                           .data()!['dailyQuote']
                                           .toString(),
-                                      // snapshot.hasData.toString(),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
                                       textAlign: TextAlign.center,
                                       colors: AppColor().whiteColor,
                                     ),
-                                  );
-                                } else if (snapshot.data == null) {
-                                  return SvgPicture.asset(
-                                    'assets/svgs/fluent_tap-single-48-filled.svg',
                                   );
                                 } else {
                                   return customDescriptionText(
@@ -274,14 +280,17 @@ class _HomeScreenState extends State<HomeScreen> {
                               } else {
                                 return Center(
                                   child: CircularProgressIndicator(
-                                      color: AppColor().primaryColor),
+                                    color: AppColor().whiteColor,
+                                  ),
                                 );
                               }
-                            }),
-                      ],
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -307,16 +316,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     'assets/svgs/messages.svg',
                   ),
                   const Gap(5),
-                  customDescriptionText(
-                    _quoteContoller.allQuotes.isNotEmpty &&
-                            _quoteContoller.allQuotes.last.reply != null
-                        ? _quoteContoller.allQuotes.last.reply!.length
-                            .toString()
-                        : "0",
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    colors: AppColor().textColor,
-                  ),
+                  Obx(() {
+                    return customDescriptionText(
+                      _quoteContoller.allQuotes.isNotEmpty &&
+                              _quoteContoller.allQuotes.last.reply != null
+                          ? _quoteContoller.allQuotes.last.reply!.toString()
+                          : "0",
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      colors: AppColor().textColor,
+                    );
+                  }),
                   const Gap(10),
                   SvgPicture.asset(
                     'assets/svgs/share.svg',
@@ -363,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const Gap(20),
               Obx(() {
-                if (cellContoller.cellStatus == CellStatus.LOADING) {
+                if (cellController.cellStatus == CellStatus.LOADING) {
                   return customDescriptionText('No Available  Cell');
                 } else {
                   return SizedBox(
@@ -371,28 +381,32 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
-                      // itemCount: imageName.length,
-                      itemCount: cellContoller.allAvailableCell.length > 4
+                      itemCount: cellController.allAvailableCell.length > 4
                           ? 4
-                          : cellContoller.allAvailableCell.length,
+                          : cellController.allAvailableCell.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final item = cellContoller.allAvailableCell[index];
-                        if (kDebugMode) {
-                          print('Cell is now ${item.groupName!.length}');
-                          print("group id for cell is ${item.groupId}");
-                          print(
-                              "memeber lenght for cell is ${item.members!.length}");
-                        }
+                        final item = cellController.allAvailableCell[index];
+                        // if (kDebugMode) {
+                        //   print('Cell is now ${item.groupName!.length}');
+                        //   print("group id for cell is ${item.groupId}");
+                        //   print(
+                        //       "memeber lenght for cell is ${item.members!.length}");
+                        // }
+                        final random = Random();
                         return recommendedCells(
-                          groupId: item.groupId,
-                          groupName: item.groupName,
+                          tags: item.tags,
                           admin: item.admin,
-                          colors: colorList[index],
-                          assetName: item.profilePic == null
-                              ? 'assets/svgs/bank.svg'
-                              : item.profilePic!,
-                          userName: _authController.liveUser.value!.username!,
+                          time: item.createdAt,
+                          groupId: item.groupId,
                           memberId: item.members,
+                          colors: colorList[random.nextInt(colorList.length)],
+                          groupName: item.groupName,
+                          description: item.description,
+                          assetName: 'assets/svgs/bank.svg',
+                          userName:
+                              _authController.liveUser.value!.username == null
+                                  ? 'No Username'
+                                  : _authController.liveUser.value!.username!,
                         );
                       },
                     ),
@@ -421,23 +435,77 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
-                      reverse: true,
-                      itemCount: _quoteContoller.allQuotes.length > 4
-                          ? 4
+                      reverse: false,
+                      shrinkWrap: true,
+                      itemCount: _quoteContoller.allQuotes.length > 6
+                          ? 6
                           : _quoteContoller.allQuotes.length,
                       itemBuilder: (BuildContext context, int index) {
                         final item = _quoteContoller.allQuotes[index];
-                        if (kDebugMode) {
-                          print('Like is now ${item.likes!.length}');
-                        }
+                        final random = Random();
+                        // if (kDebugMode) {
+                        //   print('Like is now ${item.likes!.length}');
+                        // }
                         return recentQuotes(
-                          assetName: imageName[index],
+                          colors: colorList[random.nextInt(colorList.length)],
                           quoteModel: item,
                         );
                       },
                     ));
                 // }
               }),
+              const Gap(20),
+              // StreamBuilder<List<QuoteModel>>(
+              //   stream: _quoteContoller.streamtDailyQuote(),
+              //   builder: (BuildContext context, AsyncSnapshot snapshot) {
+              //     if (snapshot.hasData) {
+              //       if ((snapshot.data!.length ?? 0) > 0) {
+              //         final random = Random();
+              //         return SizedBox(
+              //           height: MediaQuery.of(context).size.height * 0.25,
+              //           child: ListView.builder(
+              //               padding: EdgeInsets.zero,
+              //               itemCount: snapshot.data!.length,
+              //               scrollDirection: Axis.horizontal,
+              //               itemBuilder: (context, index) {
+              //                 final item = snapshot.data![index];
+              //                 return Padding(
+              //                   padding: const EdgeInsets.only(bottom: 10),
+              //                   child: recentQuotes(
+              //                     colors: colorList[
+              //                         random.nextInt(colorList.length)],
+              //                     quoteModel: item,
+              //                     // quoteModel: snapshot.data![index],
+              //                     // likes: snapshot.data![index]['likes'],
+              //                     // share: snapshot.data![index]['share'],
+              //                     // reply: snapshot.data![index]['reply'],
+              //                   ),
+              //                 );
+              //               }),
+              //         );
+              //       } else {
+              //         return Column(
+              //           crossAxisAlignment: CrossAxisAlignment.center,
+              //           mainAxisAlignment: MainAxisAlignment.center,
+              //           children: [
+              //             const Gap(50),
+              //             Center(
+              //               child: customDescriptionText(
+              //                 'No Consultant Available',
+              //               ),
+              //             ),
+              //           ],
+              //         );
+              //       }
+              //     } else {
+              //       return Center(
+              //         child: CircularProgressIndicator(
+              //           color: AppColor().primaryColor,
+              //         ),
+              //       );
+              //     }
+              //   },
+              // ),
             ],
           ),
         ),
@@ -447,14 +515,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   GestureDetector recommendedCells({
     Color? colors,
-    String? groupId,
     String? admin,
+    DateTime? time,
+    String? groupId,
+    String? userName,
     String? groupName,
     String? assetName,
-    String? userName,
+    String? description,
+    List<String>? tags,
     List<String>? memberId,
   }) {
-    cellContoller.joinedOrNot(
+    cellController.joinedOrNot(
       userName!,
       groupId!,
       groupName!,
@@ -463,21 +534,33 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () async {
         if (kDebugMode) {
-          print('Joining Group');
+          print('GOING TO CELL INFO');
         }
 
-        cellContoller.memberAdd(groupId);
-
         Get.to(
-          () => ChatPage(
-            groupId: groupId,
-            groupName: groupName,
-            userName: userName,
-            member: memberId!,
+          () => CellInfo(
+            tags: tags!,
+            time: time!,
             admin: admin!,
+            groupId: groupId,
+            userName: userName,
+            groupName: groupName,
             assetName: assetName!,
+            memberList: memberId!,
+            description: description!,
           ),
         );
+
+        // Get.to(
+        //   () => ChatPage(
+        //     groupId: groupId,
+        //     groupName: groupName,
+        //     userName: userName,
+        //     member: memberId!,
+        //     admin: admin!,
+        //     assetName: assetName!,
+        //   ),
+        // );
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),
@@ -514,10 +597,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   GestureDetector recentQuotes({
     QuoteModel? quoteModel,
-    String? assetName,
+    Color? colors,
     String? userImage,
+    // final List<dynamic>? likes,
+    // final List<dynamic>? share,
+    // final String? reply,
   }) {
-    final random = Random();
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
@@ -539,6 +624,12 @@ class _HomeScreenState extends State<HomeScreen> {
             quoteId: quoteModel.id!,
             groupId: quoteModel.groupId!,
             quoteText: quoteModel.dailyQuote!,
+            likes: quoteModel.likes!,
+            share: quoteModel.share!,
+            reply: quoteModel.reply.toString(),
+            // likes: likes!,
+            // share: share!,
+            // reply: reply!,
             userName: _authController.liveUser.value!.username!,
             userImage: _authController.liveUser.value!.profilePic!,
           ),
@@ -557,15 +648,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 height: MediaQuery.of(context).size.height * 0.2,
                 decoration: BoxDecoration(
-                  color: colorList[random.nextInt(colorList.length)],
+                  color: colors,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
                   child: customTitleText(
                     quoteModel!.dailyQuote!,
                     size: 16,
-                    textOverflow: TextOverflow.clip,
+                    textAlign: TextAlign.center,
                     colors: AppColor().whiteColor,
+                    textOverflow: TextOverflow.clip,
                   ),
                 ),
               ),
@@ -592,9 +684,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Gap(5),
                   customDescriptionText(
-                    quoteModel.reply!.length == null
+                    quoteModel.reply! == null
                         ? '0'
-                        : quoteModel.reply!.length.toString(),
+                        : quoteModel.reply!.toString(),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     colors: AppColor().textColor,

@@ -23,10 +23,12 @@ class _WelComePageState extends State<WelComePage> {
   final _authController = Get.find<AuthControllers>();
   late bool _isLoading = false;
 
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _nextKinController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _fullnameController = TextEditingController();
+  final TextEditingController _nextKinPhoneController = TextEditingController();
 
   final gender = [
     'Male',
@@ -36,7 +38,6 @@ class _WelComePageState extends State<WelComePage> {
 
   User? user;
 
-  var nickName = 'Tom';
   var profilePicUrl =
       'https://pixel.nymag.com/imgs/daily/vulture/2017/06/14/14-tom-cruise.w700.h700.jpg';
 
@@ -122,58 +123,14 @@ class _WelComePageState extends State<WelComePage> {
                       textEditingController: _fullnameController,
                     ),
                     const Gap(15),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 5),
-                            child: customDescriptionText(
-                              'Select Gender',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              colors: AppColor().textColor,
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                width: 1,
-                                color: AppColor().lightTextColor,
-                              ),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: selectedGender,
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  size: 24,
-                                  color: AppColor().primaryColor,
-                                ),
-                                hint: customDescriptionText(
-                                  'Gender',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                                isDense: true,
-                                items: gender.map(buildGenderItem).toList(),
-                                onChanged: (value) {
-                                  setState(() => selectedGender = value);
-                                },
-                                onTap: () {},
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    CustomTextField(
+                      label: 'Phone Number',
+                      hint: 'Enter phone number',
+                      keyType: TextInputType.phone,
+                      validatorText: '** Field cannot be empty',
+                      color: AppColor().lightTextColor,
+                      textEditingController:
+                          _authController.signupPhonenumberController,
                     ),
                     const Gap(15),
                     CustomTextField(
@@ -193,7 +150,25 @@ class _WelComePageState extends State<WelComePage> {
                       color: AppColor().lightTextColor,
                       textEditingController: _addressController,
                     ),
-                    const Gap(10),
+                    const Gap(15),
+                    CustomTextField(
+                      label: 'Next Of Kin',
+                      hint: 'Enter kin\'n fullname',
+                      keyType: TextInputType.name,
+                      validatorText: '** Field cannot be empty',
+                      color: AppColor().lightTextColor,
+                      textEditingController: _nextKinController,
+                    ),
+                    const Gap(15),
+                    CustomTextField(
+                      label: 'Next Of Kin Phone Number',
+                      hint: 'Enter kin\'n phone number',
+                      keyType: TextInputType.phone,
+                      validatorText: '** Field cannot be empty',
+                      color: AppColor().lightTextColor,
+                      textEditingController: _nextKinPhoneController,
+                    ),
+                    const Gap(20),
                     CustomFillButton(
                         isLoading: _isLoading,
                         buttonText: 'Get me started',
@@ -211,10 +186,12 @@ class _WelComePageState extends State<WelComePage> {
                             await _authController.userChanges(
                               _usernameController.text,
                               _fullnameController.text,
-                              selectedGender.toString(),
+                              _authController.signupPhonenumberController.text,
                               _addressController.text,
                               _cityController.text,
                               '',
+                              _nextKinController.text,
+                              _nextKinPhoneController.text,
                             );
                             setState(() {
                               _isLoading = false;

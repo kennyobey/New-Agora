@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class AdminHomeScreen extends StatefulWidget {
 class _AdminHomeScreenState extends State<AdminHomeScreen>
     with TickerProviderStateMixin {
   final _authController = Get.find<AuthControllers>();
-  final cellContoller = Get.find<CellControllers>();
+  final cellController = Get.find<CellControllers>();
 
   final _quoteContoller = Get.find<QuoteControllers>();
 
@@ -153,73 +154,22 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
             const Gap(20),
             Center(
               child: Obx(() {
-                return customTitleText(
-                  'Good afternoon, ${_authController.liveUser.value!.role}',
-                  size: 20,
-                  spacing: -0.1,
-                  fontWeight: FontWeight.w700,
-                  colors: AppColor().filledTextField,
-                );
+                return (_authController.liveUser.value!.role == null)
+                    ? customTitleText(
+                        'No role yet',
+                        size: 20,
+                        spacing: -0.1,
+                        fontWeight: FontWeight.w700,
+                        colors: AppColor().filledTextField,
+                      )
+                    : customTitleText(
+                        'Good afternoon, ${_authController.liveUser.value!.role}',
+                        size: 20,
+                        spacing: -0.1,
+                        fontWeight: FontWeight.w700,
+                        colors: AppColor().filledTextField,
+                      );
               }),
-            ),
-            const Gap(10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  'assets/svgs/streak.svg',
-                ),
-                const Gap(5),
-                Obx(() {
-                  return customDescriptionText(
-                    // '5',
-                    _authController.liveUser.value!.streak == null
-                        ? '0'
-                        : _authController.liveUser.value!.streak.toString(),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().textColor,
-                  );
-                }),
-                const Gap(5),
-                customDescriptionText(
-                  'Streak',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  colors: AppColor().lightTextColor,
-                ),
-                const Gap(10),
-                /////
-                Container(
-                  height: 15,
-                  width: 1.5,
-                  color: AppColor().lightTextColor,
-                ),
-                /////
-                const Gap(10),
-                SvgPicture.asset(
-                  'assets/svgs/calender.svg',
-                ),
-                const Gap(5),
-                Obx(() {
-                  return customDescriptionText(
-                    // '20',
-                    _authController.liveUser.value!.weeks == null
-                        ? '0'
-                        : _authController.liveUser.value!.weeks.toString(),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    colors: AppColor().textColor,
-                  );
-                }),
-                const Gap(5),
-                customDescriptionText(
-                  'Weeks',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  colors: AppColor().lightTextColor,
-                ),
-              ],
             ),
             const Gap(20),
             InkWell(
@@ -249,33 +199,34 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                     child: Column(
                       children: [
                         StreamBuilder(
-                            stream: _quoteContoller.getDailyQuote(),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data != null) {
-                                  return customDescriptionText(
-                                    snapshot.data!.docs.last
-                                        .data()!['dailyQuote']
-                                        .toString(),
-                                    // snapshot.hasData.toString(),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    textAlign: TextAlign.center,
-                                    colors: AppColor().whiteColor,
-                                  );
-                                } else {
-                                  return SvgPicture.asset(
-                                    'assets/svgs/fluent_tap-single-48-filled.svg',
-                                  );
-                                }
+                          stream: _quoteContoller.getDailyQuote(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data != null &&
+                                  snapshot.data!.docs.isNotEmpty) {
+                                return customDescriptionText(
+                                  snapshot.data!.docs.last
+                                      .data()!['dailyQuote']
+                                      .toString(),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  textAlign: TextAlign.center,
+                                  colors: AppColor().whiteColor,
+                                );
                               } else {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColor().primaryColor,
-                                  ),
+                                return SvgPicture.asset(
+                                  'assets/svgs/fluent_tap-single-48-filled.svg',
                                 );
                               }
-                            }),
+                            } else {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColor().whiteColor,
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -289,23 +240,28 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                   'assets/svgs/eye.svg',
                 ),
                 const Gap(5),
-                customDescriptionText(
-                  _quoteContoller.allQuotes.last.views!.length == null
-                      ? '0'
-                      : _quoteContoller.allQuotes.last.views!.length.toString(),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
+                Obx(() {
+                  return customDescriptionText(
+                    _quoteContoller.allQuotes.isNotEmpty &&
+                            _quoteContoller.allQuotes.last.views != null
+                        ? _quoteContoller.allQuotes.last.views!.length
+                            .toString()
+                        : "0",
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  );
+                }),
                 const Gap(10),
                 SvgPicture.asset(
                   'assets/svgs/messages.svg',
                 ),
                 const Gap(5),
                 customDescriptionText(
-                  _quoteContoller.allQuotes.last.reply!.length == null
-                      ? '0'
-                      : _quoteContoller.allQuotes.last.reply!.length.toString(),
+                  _quoteContoller.allQuotes.isNotEmpty &&
+                          _quoteContoller.allQuotes.last.reply != null
+                      ? _quoteContoller.allQuotes.last.reply!.toString()
+                      : "0",
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   colors: AppColor().textColor,
@@ -315,14 +271,18 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                   'assets/svgs/share.svg',
                 ),
                 const Gap(5),
-                customDescriptionText(
-                  _quoteContoller.allQuotes.last.share!.length == null
-                      ? '0'
-                      : _quoteContoller.allQuotes.last.share!.length.toString(),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  colors: AppColor().textColor,
-                ),
+                Obx(() {
+                  return customDescriptionText(
+                    _quoteContoller.allQuotes.isNotEmpty &&
+                            _quoteContoller.allQuotes.last.share != null
+                        ? _quoteContoller.allQuotes.last.share!.length
+                            .toString()
+                        : "0",
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    colors: AppColor().textColor,
+                  );
+                }),
               ],
             ),
             const Gap(5),
@@ -378,121 +338,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 body: TabBarView(
                   controller: _tabController,
                   children: [
-                    // SizedBox(
-                    //   height: MediaQuery.of(context).size.height * 0.5,
-                    //   child: StreamBuilder(
-                    //     stream: groups,
-                    //     builder: (context, AsyncSnapshot snapshot) {
-                    //       if (snapshot.hasData) {
-                    //         if (snapshot.data['groups'] != null) {
-                    //           if (snapshot.data['groups'].length != 0) {
-                    //             return ListView.builder(
-                    //               padding: EdgeInsets.zero,
-                    //               scrollDirection: Axis.vertical,
-                    //               itemCount: snapshot.data['groups'].length > 4
-                    //                   ? 4
-                    //                   : snapshot.data['groups'].length,
-                    //               itemBuilder:
-                    //                   (BuildContext context, int index) {
-                    //                 int reverseIndex =
-                    //                     snapshot.data['groups'].length -
-                    //                         index -
-                    //                         1;
-
-                    //                 final member =
-                    //                     _quoteContoller.allQuotes.length;
-
-                    //                 return Container(
-                    //                   margin: const EdgeInsets.only(
-                    //                       left: 0,
-                    //                       right: 0,
-                    //                       top: 10,
-                    //                       bottom: 10),
-                    //                   child: Container(
-                    //                     padding: const EdgeInsets.all(4),
-                    //                     child: Row(
-                    //                       children: [
-                    //                         const SizedBox(
-                    //                           width: 10,
-                    //                         ),
-                    //                         Column(
-                    //                           crossAxisAlignment:
-                    //                               CrossAxisAlignment.start,
-                    //                           mainAxisAlignment:
-                    //                               MainAxisAlignment.spaceEvenly,
-                    //                           children: [
-                    //                             Cells(
-                    //                               members: member == null
-                    //                                   ? 'No members yet'
-                    //                                   : member.toString(),
-                    //                               time:
-                    //                                   "Last activity: 7th May 2022",
-                    //                               // time: snapshot.data[
-                    //                               //                 'groups']
-                    //                               //             ['members'] ==
-                    //                               //         null
-                    //                               //     ? "Last activity: No activites yet"
-                    //                               //     : snapshot
-                    //                               //         .data['groups']
-                    //                               //             ['members'][
-                    //                               //             'recentMessageTime']
-                    //                               //         .toString(),
-                    //                               groupId: getId(
-                    //                                   snapshot.data['groups']
-                    //                                       [reverseIndex]),
-                    //                               groupName: getName(
-                    //                                   snapshot.data['groups']
-                    //                                       [reverseIndex]),
-                    //                               assetName:
-                    //                                   'assets/svgs/bank.svg',
-                    //                               userName: _authController
-                    //                                   .liveUser
-                    //                                   .value!
-                    //                                   .username!,
-                    //                             ),
-                    //                           ],
-                    //                         )
-                    //                       ],
-                    //                     ),
-                    //                   ),
-                    //                 );
-                    //               },
-                    //             );
-                    //           } else {
-                    //             return customDescriptionText(
-                    //               'No Available Cell to join',
-                    //             );
-                    //           }
-                    //         } else {
-                    //           return customDescriptionText(
-                    //             'No Available Cell to join',
-                    //           );
-                    //         }
-                    //       } else {
-                    //         return Center(
-                    //           child: CircularProgressIndicator(
-                    //             color: Theme.of(context).primaryColor,
-                    //           ),
-                    //         );
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
+                    //CELLS LIST
                     Obx(() {
-                      if (cellContoller.cellStatus == CellStatus.LOADING) {
+                      if (cellController.cellStatus == CellStatus.LOADING) {
                         return customDescriptionText('No Available  Cell');
                       } else {
                         return SizedBox(
                           child: ListView.builder(
-                              itemCount: cellContoller.allAvailableCell.length,
+                              itemCount: cellController.allAvailableCell.length,
                               itemBuilder: (BuildContext context, int index) {
                                 final item =
-                                    cellContoller.allAvailableCell[index];
-                                if (kDebugMode) {
-                                  print(
-                                      'Cell is now ${item.groupName!.length}');
-                                  print("group id for cell is ${item.groupId}");
-                                }
+                                    cellController.allAvailableCell[index];
                                 final member = _quoteContoller.allQuotes.length;
                                 return Container(
                                   margin: const EdgeInsets.only(
@@ -514,13 +370,18 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                               members: member == null
                                                   ? 'No members yet'
                                                   : member.toString(),
-                                              time:
-                                                  "Last activity: 7th May 2022",
+                                              // time:
+                                              //     "Last activity: 7th May 2022",
+                                              time: DateFormat('MMM dd yyy')
+                                                  .format(DateTime.parse(item
+                                                      .createdAt
+                                                      .toString())),
                                               groupId: item.groupId,
                                               groupName: item.groupName,
-                                              assetName: 'assets/svgs/bank.svg',
+                                              memberId: item.members,
                                               userName: _authController
                                                   .liveUser.value!.username!,
+                                              assetName: 'assets/svgs/bank.svg',
                                             ),
                                           ],
                                         )
@@ -532,10 +393,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                         );
                       }
                     }),
+                    //MEMBER LIST
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.5,
                       child: StreamBuilder<List<UserList>>(
-                          stream: _authController.readtUserList(),
+                          stream: _authController.readUserList(),
                           builder: (context, snapshot) {
                             if (snapshot.hasError) {
                               return customDescriptionText('Error');
@@ -558,31 +420,27 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                             }
                           }),
                     ),
+                    //QUOTE LIST
                     Obx(() {
-                      return SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.25,
-                          child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        (orientation == Orientation.landscape)
-                                            ? 2
-                                            : 2),
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.vertical,
-                            // itemCount: imageName.length,
-                            itemCount: _quoteContoller.allQuotes.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final item = _quoteContoller.allQuotes[index];
-                              return recentQuotes(
-                                quote: item.dailyQuote,
-                                assetName: imageName[index],
-                                views: item.likes!.length.toString(),
-                                messages: item.reply!.length.toString(),
-                                shares: item.share!.length.toString(),
-                              );
-                            },
-                          ));
+                      return GridView.builder(
+                        padding: EdgeInsets.zero,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                (orientation == Orientation.landscape) ? 2 : 2),
+                        scrollDirection: Axis.vertical,
+                        // itemCount: imageName.length,
+                        itemCount: _quoteContoller.allQuotes.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = _quoteContoller.allQuotes[index];
+                          return recentQuotes(
+                            quote: item.dailyQuote,
+                            assetName: imageName[index],
+                            views: item.likes!.length.toString(),
+                            messages: item.reply!.toString(),
+                            shares: item.share!.length.toString(),
+                          );
+                        },
+                      );
                     }),
                   ],
                 ),
@@ -701,16 +559,19 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
   }) {
     final random = Random();
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.only(
+        right: 10,
+        bottom: 10,
+      ),
       child: SizedBox(
-        //width: MediaQuery.of(context).size.width * 0.5,
         height: MediaQuery.of(context).size.height * 0.25,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.2,
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              height: MediaQuery.of(context).size.height * 0.18,
               decoration: BoxDecoration(
                 color: colorList[random.nextInt(colorList.length)],
                 borderRadius: BorderRadius.circular(10),
@@ -719,7 +580,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                 child: customTitleText(
                   quote!,
                   size: 16,
+                  textAlign: TextAlign.center,
                   colors: AppColor().whiteColor,
+                  textOverflow: TextOverflow.clip,
                 ),
               ),
             ),

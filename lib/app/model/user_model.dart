@@ -14,7 +14,6 @@ class UserModel {
     this.email,
     this.fullName,
     this.username,
-    this.gender,
     this.postalCode,
     this.address,
     this.profilePic,
@@ -25,13 +24,15 @@ class UserModel {
     this.lastLoginTime,
     this.weeklyLoginTime,
     this.updatedAt,
+    this.phoneNumber,
+    this.nextOfKin,
+    this.nexKinPhone,
   });
 
   final String? uid;
   final String? email;
   final String? fullName;
   final String? username;
-  final String? gender;
   final String? postalCode;
   final String? address;
   final String? profilePic;
@@ -43,12 +44,15 @@ class UserModel {
   DateTime? weeklyLoginTime;
   DateTime? updatedAt;
 
+  final String? phoneNumber;
+  final String? nextOfKin;
+  final String? nexKinPhone;
+
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         uid: json["uid"],
         email: json["email"],
         fullName: json["fullName"],
         username: json["username"],
-        gender: json["gender"],
         postalCode: json["postalCode"],
         address: json["address"],
         profilePic: json["profilePic"],
@@ -65,6 +69,9 @@ class UserModel {
         updatedAt: json["updatedAt"] == null
             ? null
             : DateTime.parse(json["updatedAt"]),
+        phoneNumber: json["phoneNumber"],
+        nextOfKin: json["nextOfKin"],
+        nexKinPhone: json["nexKinPhone"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -72,7 +79,6 @@ class UserModel {
         "email": email,
         "fullName": fullName,
         "username": username,
-        "gender": gender,
         "postalCode": postalCode,
         "address": address,
         "profilePic": profilePic,
@@ -85,5 +91,8 @@ class UserModel {
         "weeklyLoginTime":
             weeklyLoginTime == null ? null : weeklyLoginTime!.toIso8601String(),
         "updatedAt": updatedAt == null ? null : updatedAt!.toIso8601String(),
+        "phoneNumber": phoneNumber,
+        "nextOfKin": nextOfKin,
+        "nexKinPhone": nexKinPhone,
       };
 }

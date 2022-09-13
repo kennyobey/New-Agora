@@ -2,8 +2,8 @@
 
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
+import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -15,11 +15,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
@@ -30,6 +28,7 @@ class QuoteDetails extends StatefulWidget {
   final String userName;
   final String userImage;
   final String assetName;
+  final String dailyQuote;
   const QuoteDetails({
     Key? key,
     required this.groupId,
@@ -37,6 +36,7 @@ class QuoteDetails extends StatefulWidget {
     required this.userName,
     required this.userImage,
     required this.assetName,
+    required this.dailyQuote,
   }) : super(key: key);
 
   @override
@@ -45,7 +45,7 @@ class QuoteDetails extends StatefulWidget {
 
 class _QuoteDetailsState extends State<QuoteDetails> {
   var scr = GlobalKey();
-  final messageController = TextEditingController();
+  final commentController = TextEditingController();
   Stream<QuerySnapshot>? chat;
   String admin = "";
 
@@ -194,7 +194,8 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                 } else {
                                   return Center(
                                     child: CircularProgressIndicator(
-                                        color: AppColor().primaryColor),
+                                      color: AppColor().primaryColor,
+                                    ),
                                   );
                                 }
                               }),
@@ -286,18 +287,19 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               const Gap(5),
                               Column(
                                 children: [
-                                  customDescriptionText(
-                                    _quoteContoller
-                                                .allQuotes.last.chats!.length ==
-                                            null
-                                        ? '0'
-                                        : _quoteContoller
-                                            .allQuotes.last.chats!.length
-                                            .toString(),
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    colors: AppColor().textColor,
-                                  ),
+                                  Obx(() {
+                                    return customDescriptionText(
+                                      _quoteContoller.allQuotes.last.reply! ==
+                                              null
+                                          ? '0'
+                                          : _quoteContoller
+                                              .allQuotes.last.reply!
+                                              .toString(),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      colors: AppColor().textColor,
+                                    );
+                                  }),
                                   customDescriptionText(
                                     'chats',
                                     fontSize: 12,
@@ -338,23 +340,28 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               ),
                               const Spacer(),
                               InkWell(
+                                // onTap: () async {
+                                //   await _quoteContoller.sharePost(
+                                //       _quoteContoller.allQuotes.last.id!);
+                                //   RenderRepaintBoundary boundary =
+                                //       scr.currentContext!.findRenderObject()
+                                //           as RenderRepaintBoundary;
+                                //   var image = await boundary.toImage();
+                                //   var byteData = await image.toByteData(
+                                //       format: ImageByteFormat.png);
+                                //   var pngBytes = byteData!.buffer.asUint8List();
+                                //   String tempPath =
+                                //       (await getTemporaryDirectory()).path;
+                                //   var dates =
+                                //       DateTime.now().toLocal().toString();
+                                //   await getPdf(pngBytes, dates, tempPath);
+                                //   var pathurl = '$tempPath/$dates.pdf';
+                                //   await Share.shareFiles([pathurl]);
+                                // },
                                 onTap: () async {
                                   await _quoteContoller.sharePost(
                                       _quoteContoller.allQuotes.last.id!);
-                                  RenderRepaintBoundary boundary =
-                                      scr.currentContext!.findRenderObject()
-                                          as RenderRepaintBoundary;
-                                  var image = await boundary.toImage();
-                                  var byteData = await image.toByteData(
-                                      format: ImageByteFormat.png);
-                                  var pngBytes = byteData!.buffer.asUint8List();
-                                  String tempPath =
-                                      (await getTemporaryDirectory()).path;
-                                  var dates =
-                                      DateTime.now().toLocal().toString();
-                                  await getPdf(pngBytes, dates, tempPath);
-                                  var pathurl = '$tempPath/$dates.pdf';
-                                  await Share.shareFiles([pathurl]);
+                                  await Share.share(widget.dailyQuote);
                                 },
                                 child: SvgPicture.asset(
                                   'assets/svgs/share.svg',
@@ -399,7 +406,13 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _authController.liveUser.value!.profilePic == null
+                              (_authController.liveUser.value!.profilePic ==
+                                          null ||
+                                      _authController
+                                              .liveUser.value!.profilePic ==
+                                          '' ||
+                                      _authController
+                                          .liveUser.value!.profilePic!.isEmpty)
                                   ? Image.asset(
                                       'assets/images/placeholder.png',
                                       height: 50,
@@ -438,7 +451,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                       children: [
                                         Expanded(
                                           child: TextFormField(
-                                            controller: messageController,
+                                            controller: commentController,
                                             textInputAction:
                                                 TextInputAction.send,
                                             style: TextStyle(
@@ -484,367 +497,6 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                 )),
               ],
             ),
-            // DraggableScrollableSheet(
-            //   maxChildSize: 0.85,
-            //   initialChildSize: 0.35,
-            //   minChildSize: 0.2,
-            //   builder:
-            //       (BuildContext context, ScrollController scrollController) {
-            //     return Container(
-            //       height: double.infinity,
-            //       decoration: BoxDecoration(
-            //         color: AppColor().whiteColor,
-            //         borderRadius: const BorderRadius.only(
-            //           topLeft: Radius.circular(20),
-            //           topRight: Radius.circular(20),
-            //         ),
-            //       ),
-            //       child: ListView(
-            //         padding: EdgeInsets.zero,
-            //         controller: scrollController,
-            //         scrollDirection: Axis.vertical,
-            //         children: [
-            //           Padding(
-            //             padding: const EdgeInsets.symmetric(
-            //                 vertical: 20, horizontal: 20),
-            //             child: Row(
-            //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //               children: [
-            //                 customTitleText(
-            //                   'Discussions',
-            //                   size: 18,
-            //                   fontWeight: FontWeight.w700,
-            //                   colors: AppColor().primaryColor,
-            //                 ),
-            //                 const Spacer(),
-            //                 InkWell(
-            //                   onTap: () async {
-            //                     await _quoteContoller.sharePost(
-            //                         _quoteContoller.allQuotes.last.id!);
-            //                     RenderRepaintBoundary boundary =
-            //                         scr.currentContext!.findRenderObject()
-            //                             as RenderRepaintBoundary;
-            //                     var image = await boundary.toImage();
-            //                     var byteData = await image.toByteData(
-            //                         format: ImageByteFormat.png);
-            //                     var pngBytes = byteData!.buffer.asUint8List();
-            //                     String tempPath =
-            //                         (await getTemporaryDirectory()).path;
-            //                     var dates = DateTime.now().toLocal().toString();
-            //                     await getPdf(pngBytes, dates, tempPath);
-            //                     var pathurl = '$tempPath/$dates.pdf';
-            //                     await Share.shareFiles([pathurl]);
-            //                   },
-            //                   child: SvgPicture.asset(
-            //                     'assets/svgs/share.svg',
-            //                     height: 24,
-            //                   ),
-            //                 ),
-            //                 const Gap(10),
-            //                 InkWell(
-            //                   onTap: () async {
-            //                     isLiked
-            //                         ? _quoteContoller.likePost(
-            //                             _quoteContoller.allQuotes.last.id!)
-            //                         : _quoteContoller.unLikePost(
-            //                             _quoteContoller.allQuotes.last.id!);
-
-            //                     setState(() {
-            //                       isLiked = !isLiked;
-            //                     });
-            //                   },
-            //                   child: isLiked
-            //                       ? SvgPicture.asset(
-            //                           'assets/svgs/heart.svg',
-            //                         )
-            //                       : Icon(
-            //                           CupertinoIcons.heart_fill,
-            //                           color: AppColor().errorColor,
-            //                         ),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //           // ...List.generate(
-            //           //   10,
-            //           //   growable: true,
-            //           //   (index) => const Padding(
-            //           //     padding: EdgeInsets.only(bottom: 10),
-            //           //     child: ChatWidget(
-            //           //       groupId: '',
-            //           //       groupName: '',
-            //           //       userName: '',
-            //           //     ),
-            //           //   ),
-            //           // ),
-            //           // Padding(
-            //           //   padding: mediaQueryData.viewInsets,
-            //           //   child: Form(
-            //           //     child: Container(
-            //           //       height: 80,
-            //           //       padding: const EdgeInsets.symmetric(horizontal: 10),
-            //           //       decoration: BoxDecoration(
-            //           //         color: AppColor().whiteColor,
-            //           //         boxShadow: const [
-            //           //           BoxShadow(
-            //           //             color: Colors.black26,
-            //           //             spreadRadius: 0.1,
-            //           //             blurRadius: 5,
-            //           //             offset: Offset(0.0, 0.05),
-            //           //           ),
-            //           //         ],
-            //           //       ),
-            //           //       child: Column(
-            //           //         children: [
-            //           //           Expanded(
-            //           //             child:
-            //           //                 // chat messages here
-            //           //                 chatMessages(),
-            //           //           ),
-            //           //           Row(
-            //           //             children: [
-            //           //               // Image.asset(
-            //           //               //   'assets/images/chatPic.png',
-            //           //               //   height: 50,
-            //           //               // ),
-            //           //               const Gap(10),
-
-            //           //               Expanded(
-            //           //                 child: Container(
-            //           //                   padding: const EdgeInsets.all(5),
-            //           //                   alignment: Alignment.bottomCenter,
-            //           //                   height: 70,
-            //           //                   decoration: BoxDecoration(
-            //           //                     border: Border.all(width: 0.7),
-            //           //                     color: Colors.white,
-            //           //                   ),
-            //           //                   child: Row(
-            //           //                     mainAxisAlignment:
-            //           //                         MainAxisAlignment.spaceBetween,
-            //           //                     children: [
-            //           //                       SvgPicture.asset(
-            //           //                         'assets/svgs/bankofspain.svg',
-            //           //                         height: 50,
-            //           //                         width: 50,
-            //           //                       ),
-            //           //                       const Gap(5),
-            //           //                       Expanded(
-            //           //                         child: Container(
-            //           //                           height: 60,
-            //           //                           decoration: BoxDecoration(
-            //           //                             borderRadius:
-            //           //                                 BorderRadius.circular(40),
-            //           //                             color: AppColor().chatBox,
-            //           //                           ),
-            //           //                           padding:
-            //           //                               const EdgeInsets.symmetric(
-            //           //                                   horizontal: 25,
-            //           //                                   vertical: 0),
-            //           //                           width: MediaQuery.of(context)
-            //           //                               .size
-            //           //                               .width,
-            //           //                           child: Row(
-            //           //                               mainAxisAlignment:
-            //           //                                   MainAxisAlignment
-            //           //                                       .center,
-            //           //                               crossAxisAlignment:
-            //           //                                   CrossAxisAlignment
-            //           //                                       .center,
-            //           //                               children: [
-            //           //                                 Expanded(
-            //           //                                   child: TextFormField(
-            //           //                                     controller:
-            //           //                                         messageController,
-            //           //                                     textInputAction:
-            //           //                                         TextInputAction
-            //           //                                             .send,
-            //           //                                     style: TextStyle(
-            //           //                                       color: AppColor()
-            //           //                                           .backgroundColor,
-            //           //                                     ),
-            //           //                                     decoration:
-            //           //                                         InputDecoration(
-            //           //                                       hintText:
-            //           //                                           "Say something...",
-            //           //                                       hintStyle:
-            //           //                                           TextStyle(
-            //           //                                         fontSize: 14,
-            //           //                                         fontWeight:
-            //           //                                             FontWeight
-            //           //                                                 .w400,
-            //           //                                         color: Colors
-            //           //                                             .grey[700],
-            //           //                                       ),
-            //           //                                       border: InputBorder
-            //           //                                           .none,
-            //           //                                     ),
-            //           //                                     onFieldSubmitted:
-            //           //                                         (value) {
-            //           //                                       sendMessage();
-            //           //                                     },
-            //           //                                   ),
-            //           //                                 ),
-            //           //                                 const SizedBox(
-            //           //                                   width: 12,
-            //           //                                 ),
-            //           //                                 GestureDetector(
-            //           //                                   onTap: () {
-            //           //                                     sendMessage();
-            //           //                                   },
-            //           //                                   child:
-            //           //                                       customDescriptionText(
-            //           //                                     'Post',
-            //           //                                     fontSize: 12,
-            //           //                                     fontWeight:
-            //           //                                         FontWeight.w600,
-            //           //                                     colors: AppColor()
-            //           //                                         .backgroundColor,
-            //           //                                   ),
-            //           //                                   // Container(
-            //           //                                   //   height: 50,
-            //           //                                   //   width: 50,
-            //           //                                   //   decoration: BoxDecoration(
-            //           //                                   //     color: Theme.of(context).primaryColor,
-            //           //                                   //     borderRadius: BorderRadius.circular(30),
-            //           //                                   //   ),
-            //           //                                   //   child: const Center(
-            //           //                                   //       child: Icon(
-            //           //                                   //     Icons.send,
-            //           //                                   //     color: Colors.white,
-            //           //                                   //   )),
-            //           //                                   // ),
-            //           //                                 )
-            //           //                               ]),
-            //           //                         ),
-            //           //                       ),
-            //           //                     ],
-            //           //                   ),
-            //           //                 ),
-            //           //                 // child: SizedBox(
-            //           //                 //   height: 45,
-            //           //                 //   child: TextFormField(
-            //           //                 //     autofocus: false,
-            //           //                 //     controller: messageController,
-            //           //                 //     keyboardType: TextInputType.text,
-            //           //                 //     textInputAction: TextInputAction.done,
-            //           //                 //     decoration: InputDecoration(
-            //           //                 //       isDense: true,
-            //           //                 //       fillColor: const Color(0xffFFFFFF),
-            //           //                 //       focusedBorder: OutlineInputBorder(
-            //           //                 //         borderSide: BorderSide(
-            //           //                 //             color: AppColor().lightTextColor,
-            //           //                 //             width: 1),
-            //           //                 //         borderRadius: const BorderRadius.all(
-            //           //                 //           Radius.circular(20),
-            //           //                 //         ),
-            //           //                 //       ),
-            //           //                 //       enabledBorder: OutlineInputBorder(
-            //           //                 //         borderSide: BorderSide(
-            //           //                 //             color: AppColor().lightTextColor,
-            //           //                 //             width: 1),
-            //           //                 //         borderRadius: const BorderRadius.all(
-            //           //                 //           Radius.circular(20),
-            //           //                 //         ),
-            //           //                 //       ),
-            //           //                 //       border: OutlineInputBorder(
-            //           //                 //         borderSide: BorderSide(
-            //           //                 //             color: AppColor().lightTextColor,
-            //           //                 //             width: 1),
-            //           //                 //         borderRadius: const BorderRadius.all(
-            //           //                 //           Radius.circular(20),
-            //           //                 //         ),
-            //           //                 //       ),
-            //           //                 //       hintText: 'Add a comment...',
-            //           //                 //       suffix: InkWell(
-            //           //                 //         onTap: (() {
-            //           //                 //           print("Message sent");
-            //           //                 //           sendMessage();
-            //           //                 //         }),
-            //           //                 //         child: customDescriptionText(
-            //           //                 //           'Post',
-            //           //                 //           fontSize: 12,
-            //           //                 //           fontWeight: FontWeight.w600,
-            //           //                 //           colors: AppColor().primaryColor,
-            //           //                 //         ),
-            //           //                 //       ),
-            //           //                 //       hintStyle: const TextStyle(
-            //           //                 //         fontFamily: 'HK GROTESK',
-            //           //                 //         fontSize: 14,
-            //           //                 //         fontStyle: FontStyle.normal,
-            //           //                 //         fontWeight: FontWeight.normal,
-            //           //                 //       ),
-            //           //                 //     ),
-            //           //                 //     // onFieldSubmitted: onSubmited,
-            //           //                 //   ),
-            //           //                 // ),
-            //           //               ),
-            //           //             ],
-            //           //           ),
-            //           //         ],
-            //           //       ),
-            //           //     ),
-            //           //   ),
-            //           // ),
-            //           Expanded(child: chatMessages()),
-            //           SizedBox(
-            //             height: 45,
-            //             child: TextFormField(
-            //               autofocus: false,
-            //               controller: messageController,
-            //               keyboardType: TextInputType.text,
-            //               textInputAction: TextInputAction.done,
-            //               decoration: InputDecoration(
-            //                 isDense: true,
-            //                 fillColor: const Color(0xffFFFFFF),
-            //                 focusedBorder: OutlineInputBorder(
-            //                   borderSide: BorderSide(
-            //                       color: AppColor().lightTextColor, width: 1),
-            //                   borderRadius: const BorderRadius.all(
-            //                     Radius.circular(20),
-            //                   ),
-            //                 ),
-            //                 enabledBorder: OutlineInputBorder(
-            //                   borderSide: BorderSide(
-            //                       color: AppColor().lightTextColor, width: 1),
-            //                   borderRadius: const BorderRadius.all(
-            //                     Radius.circular(20),
-            //                   ),
-            //                 ),
-            //                 border: OutlineInputBorder(
-            //                   borderSide: BorderSide(
-            //                       color: AppColor().lightTextColor, width: 1),
-            //                   borderRadius: const BorderRadius.all(
-            //                     Radius.circular(20),
-            //                   ),
-            //                 ),
-            //                 hintText: 'Add a comment...',
-            //                 suffix: InkWell(
-            //                   onTap: (() {
-            //                     print("Message sent");
-            //                     sendMessage();
-            //                   }),
-            //                   child: customDescriptionText(
-            //                     'Post',
-            //                     fontSize: 12,
-            //                     fontWeight: FontWeight.w600,
-            //                     colors: AppColor().primaryColor,
-            //                   ),
-            //                 ),
-            //                 hintStyle: const TextStyle(
-            //                   fontFamily: 'HK GROTESK',
-            //                   fontSize: 14,
-            //                   fontStyle: FontStyle.normal,
-            //                   fontWeight: FontWeight.normal,
-            //                 ),
-            //               ),
-            //               onFieldSubmitted: (value) => sendMessage(),
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     );
-            //   },
-            // ),
           ],
         ),
       ),
@@ -860,13 +512,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return QuoteCommentTile(
+                    time: snapshot.data.docs[index]['time'],
                     message: snapshot.data.docs[index]['message'],
                     sender: snapshot.data.docs[index]['sender'],
                     sentByMe:
                         widget.userName == snapshot.data.docs[index]['sender'],
-                    groupId: '',
+                    groupId: _quoteContoller.allQuotes.last.id!,
                     like: const [],
-                    messageid: '',
+                    messageid: snapshot.data.docs[index].id,
                   );
                 },
               )
@@ -876,16 +529,22 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   }
 
   sendComment() {
-    if (messageController.text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": messageController.text,
-        "sender": widget.userName,
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
+    if (commentController.text.isNotEmpty) {
+      final chatMessageMap = CommentModel(
+        message: commentController.text,
+        sender: widget.userName,
+        time: DateTime.now(),
+        like: [],
+        comment: [],
+      );
 
-      DatabaseService().sendComment(widget.groupId, chatMessageMap);
+      DatabaseService().sendComment(widget.groupId, chatMessageMap.toJson());
+      _quoteContoller.chatList(
+        _quoteContoller.allQuotes.last.id!,
+        //
+      );
       setState(() {
-        messageController.clear();
+        commentController.clear();
       });
     }
   }

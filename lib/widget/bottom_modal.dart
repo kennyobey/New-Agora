@@ -11,6 +11,9 @@ class GlobalDialogue extends StatefulWidget {
   String? text1;
   String? text2;
   String? asset;
+  String? dailogText;
+  Color? dialogColor;
+  Color? dialogBordColor;
   VoidCallback? action;
   GlobalDialogue({
     Key? key,
@@ -18,6 +21,9 @@ class GlobalDialogue extends StatefulWidget {
     required this.text2,
     required this.asset,
     required this.action,
+    this.dailogText,
+    this.dialogColor,
+    this.dialogBordColor,
   }) : super(key: key);
 
   @override
@@ -45,7 +51,7 @@ class _GlobalDialogueState extends State<GlobalDialogue> {
         padding: mediaQueryData.viewInsets,
         child: SingleChildScrollView(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             decoration: BoxDecoration(
               color: AppColor().whiteColor,
               borderRadius: const BorderRadius.only(
@@ -84,14 +90,17 @@ class _GlobalDialogueState extends State<GlobalDialogue> {
                 customDescriptionText(
                   widget.text2!,
                   fontSize: 14,
+                  textAlign: TextAlign.center,
                   fontWeight: FontWeight.w400,
                   colors: AppColor().blackColor,
                 ),
                 const Gap(50),
                 CustomBorderButton(
-                  buttonText: 'Close',
-                  textColor: AppColor().filledTextField.withOpacity(0.7),
-                  borderColor: AppColor().lightbackgroundColor,
+                  buttonText: widget.dailogText ?? 'Close',
+                  textColor: widget.dialogColor ??
+                      AppColor().filledTextField.withOpacity(0.7),
+                  borderColor:
+                      widget.dialogBordColor ?? AppColor().lightbackgroundColor,
                   onTap: widget.action!,
                 ),
                 const Gap(60),
