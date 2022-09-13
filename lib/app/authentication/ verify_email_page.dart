@@ -259,8 +259,8 @@ class VerifyEmailLinkPage extends StatefulWidget {
 }
 
 class _VerifyEmailLinkPageState extends State<VerifyEmailLinkPage> {
-  final _authController = Get.find<AuthControllers>();
-  String? pin;
+  // final _authController = Get.find<AuthControllers>();
+
   final bool _isLoading = false;
   bool isEmailVerified = false;
   bool canResend = false;
@@ -274,7 +274,7 @@ class _VerifyEmailLinkPageState extends State<VerifyEmailLinkPage> {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
 
     if (!isEmailVerified) {
-      _authController.sendVerificationEmail();
+      sendVerificationEmail();
 
       timer = Timer.periodic(
         const Duration(seconds: 4),
@@ -393,14 +393,14 @@ class _VerifyEmailLinkPageState extends State<VerifyEmailLinkPage> {
             ),
             const Expanded(child: SizedBox()),
             CustomFillButton(
-              buttonText: 'Send code',
+              isLoading: _isLoading,
+              buttonText: isEmailVerified ? 'Send code' : 'Proceed',
               textColor: AppColor().button1Color,
               buttonColor: AppColor().primaryColor,
-              isLoading: _isLoading,
               onTap: () {
                 isEmailVerified
                     ? Get.to(() => const WelComePage())
-                    : _authController.sendVerificationEmail();
+                    : sendVerificationEmail();
               },
             ),
             const Gap(50),

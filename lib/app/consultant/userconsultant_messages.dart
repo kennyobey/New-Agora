@@ -157,7 +157,7 @@ class UserConsultantMessageState extends State<UserConsultantMessage> {
       appBar: AppBar(
         backgroundColor: AppColor().whiteColor,
         title: customTitleText(
-          'Ticket List',
+          'Available Consultant',
           colors: AppColor().primaryColor,
         ),
         centerTitle: true,

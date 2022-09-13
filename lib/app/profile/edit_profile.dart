@@ -131,8 +131,8 @@ class _EditProfileState extends State<EditProfile> {
                       children: [
                         Positioned(
                             top: 20,
-                            left: 20,
                             child: IconButton(
+                              padding: EdgeInsets.zero,
                               onPressed: () => Get.back(),
                               icon: Icon(
                                 Icons.arrow_back_ios,

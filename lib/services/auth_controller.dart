@@ -11,6 +11,7 @@ import 'package:agora_care/app/home/navigation_bars/consultant_nav_screen.dart';
 import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constants.dart';
+import 'package:agora_care/helper/helper_function.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -20,7 +21,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
 import '../app/home/navigation_bars/nav_screen.dart';
-import '../helper/helper_function.dart';
 import 'database_service.dart';
 
 class AuthControllers extends GetxController {
@@ -142,8 +142,11 @@ class AuthControllers extends GetxController {
           }
         }
       }
-      Get.to(() => const WelComePage());
-      // }
+      if (user.emailVerified == isEmailVerified) {
+        Get.to(() => const WelComePage());
+      } else {
+        Get.to(() => const VerifyEmailLinkPage());
+      }
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         print(e);
@@ -172,7 +175,7 @@ class AuthControllers extends GetxController {
       }
       liveUser(userModel);
 
-      if (user.emailVerified == isEmailVerified) {
+      if (user.emailVerified == !isEmailVerified) {
         if (userModel.admin == true) {
           Get.offAll(() => AdminNavScreen());
         } else if (userModel.role == 'consultant') {
@@ -469,19 +472,6 @@ class AuthControllers extends GetxController {
     return downloadUrl;
   }
 
-  // Sign Out
-  Future signOut() async {
-    try {
-      liveUser(null);
-      await HelperFunction.saveUserLoggedInStatus(false);
-      await HelperFunction.saveUserEmailSF("");
-      await auth.signOut();
-      Get.offAll(() => const LoginPage());
-    } catch (e) {
-      return null;
-    }
-  }
-
   // Get Users Data by Id
   Future<UserModel> getUserByModel(String id) async {
     final result = await _userDoc.doc(id).get();
@@ -512,16 +502,33 @@ class AuthControllers extends GetxController {
       .map((snapshot) =>
           snapshot.docs.map((doc) => UserList.fromJson(doc.data())).toList());
 
+  // Sign Out
+  Future signOut() async {
+    try {
+      liveUser(null);
+      await HelperFunction.saveUserLoggedInStatus(false);
+      await HelperFunction.saveUserEmailSF("");
+      await auth.signOut();
+      Get.offAll(() => const LoginPage());
+    } catch (e) {
+      return null;
+    }
+  }
+
   //Delete User Account
   Future deleteUserAccount(String userId) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
+      await user?.delete();
+      liveUser(null);
       final users = _userDoc.doc(userId).delete().then(
             (value) => Get.offAll(
               () => const EmailPage(),
             ),
           );
-      await user?.delete();
+      await auth.signOut();
+      await HelperFunction.saveUserLoggedInStatus(false);
+      await HelperFunction.saveUserEmailSF("");
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         print(e);

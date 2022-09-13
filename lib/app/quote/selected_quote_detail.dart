@@ -119,7 +119,6 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
 
   @override
   Widget build(BuildContext context) {
-    print("reply widget is ${widget.reply}");
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -175,7 +174,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                       ),
                     ),
                     Positioned(
-                      top: 150,
+                      top: 120,
                       left: 10,
                       right: 10,
                       child: Column(
@@ -187,7 +186,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                             textAlign: TextAlign.center,
                             colors: AppColor().filledTextField,
                           ),
-                          const Gap(30),
+                          const Gap(20),
                           Divider(
                             thickness: 1,
                             indent: 20,
