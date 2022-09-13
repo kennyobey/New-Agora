@@ -1,8 +1,8 @@
 // ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously, iterable_contains_unrelated_type
 
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:agora_care/app/home/userlist.dart';
 import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -302,56 +302,70 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                                 fontWeight: FontWeight.w700,
                                 colors: AppColor().primaryColor,
                               ),
-                              const Spacer(),
-                              InkWell(
-                                // onTap: () async {
-                                //   await _quoteContoller.sharePost(
-                                //       _quoteContoller.allQuotes.last.id!);
-                                //   RenderRepaintBoundary boundary =
-                                //       scr.currentContext!.findRenderObject()
-                                //           as RenderRepaintBoundary;
-                                //   var image = await boundary.toImage();
-                                //   var byteData = await image.toByteData(
-                                //       format: ImageByteFormat.png);
-                                //   var pngBytes = byteData!.buffer.asUint8List();
-                                //   String tempPath =
-                                //       (await getTemporaryDirectory()).path;
-                                //   var dates =
-                                //       DateTime.now().toLocal().toString();
-                                //   await getPdf(pngBytes, dates, tempPath);
-                                //   var pathurl = '$tempPath/$dates.pdf';
-                                //   await Share.shareFiles([pathurl]);
-                                // },
-                                onTap: () async {
-                                  await _quoteContoller
-                                      .sharePost(widget.quoteId);
-                                  Share.share(widget.quoteText);
-                                },
-                                child: SvgPicture.asset(
-                                  'assets/svgs/share.svg',
-                                  height: 24,
-                                ),
-                              ),
-                              const Gap(10),
-                              InkWell(
-                                onTap: () async {
-                                  setState(() {
-                                    isLiked = !isLiked;
-                                  });
-                                  isLiked
-                                      ? _quoteContoller.likePost(widget.quoteId)
-                                      : _quoteContoller
-                                          .unLikePost(widget.quoteId);
-                                },
-                                child: isLiked
-                                    ? Icon(
-                                        CupertinoIcons.heart_fill,
-                                        color: AppColor().errorColor,
-                                      )
-                                    : SvgPicture.asset(
-                                        'assets/svgs/heart.svg',
+                              Spacer(),
+                              _authController.liveUser.value!.admin == true
+                                  ? InkWell(
+                                      onTap: (() {
+                                        Get.to(() => const AllUserList());
+                                      }),
+                                      child: customTitleText(
+                                        "View Users",
+                                        size: 16,
+                                      ))
+                                  : InkWell(
+                                      // onTap: () async {
+                                      //   await _quoteContoller.sharePost(
+                                      //       _quoteContoller.allQuotes.last.id!);
+                                      //   RenderRepaintBoundary boundary =
+                                      //       scr.currentContext!.findRenderObject()
+                                      //           as RenderRepaintBoundary;
+                                      //   var image = await boundary.toImage();
+                                      //   var byteData = await image.toByteData(
+                                      //       format: ImageByteFormat.png);
+                                      //   var pngBytes = byteData!.buffer.asUint8List();
+                                      //   String tempPath =
+                                      //       (await getTemporaryDirectory()).path;
+                                      //   var dates =
+                                      //       DateTime.now().toLocal().toString();
+                                      //   await getPdf(pngBytes, dates, tempPath);
+                                      //   var pathurl = '$tempPath/$dates.pdf';
+                                      //   await Share.shareFiles([pathurl]);
+                                      // },
+                                      onTap: () async {
+                                        await _quoteContoller
+                                            .sharePost(widget.quoteId);
+                                        Share.share(widget.quoteText);
+                                      },
+                                      child: SvgPicture.asset(
+                                        'assets/svgs/share.svg',
+                                        height: 24,
                                       ),
-                              ),
+                                    ),
+                              _authController.liveUser.value!.admin == true
+                                  ? Container()
+                                  : const Gap(10),
+                              _authController.liveUser.value!.admin == true
+                                  ? Container()
+                                  : InkWell(
+                                      onTap: () async {
+                                        setState(() {
+                                          isLiked = !isLiked;
+                                        });
+                                        isLiked
+                                            ? _quoteContoller
+                                                .likePost(widget.quoteId)
+                                            : _quoteContoller
+                                                .unLikePost(widget.quoteId);
+                                      },
+                                      child: isLiked
+                                          ? Icon(
+                                              CupertinoIcons.heart_fill,
+                                              color: AppColor().errorColor,
+                                            )
+                                          : SvgPicture.asset(
+                                              'assets/svgs/heart.svg',
+                                            ),
+                                    ),
                             ],
                           ),
                         ),
