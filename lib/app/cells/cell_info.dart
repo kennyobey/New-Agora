@@ -247,30 +247,32 @@ class _CellInfoState extends State<CellInfo> {
                   print(
                       '${widget.userName} is Joining ${widget.groupName} Cell with ID ${widget.groupId}');
                 }
-                if (_authController.liveUser.value!.cellsJoined!
-                    .contains(widget.groupId)) {
-                  Get.snackbar('Alert', 'You are already in a cell');
-                } else {
-                  (_authController.liveUser.value!.admin == true ||
-                          _authController.liveUser.value!.role == 'consultant')
-                      ? _cellController.memberCellAdd(widget.groupId)
-                      : null;
-                  (_authController.liveUser.value!.admin != true ||
-                          _authController.liveUser.value!.role != 'consultant')
-                      ? _cellController.memberAdd(widget.groupId)
-                      : null;
-                  Get.to(
-                    () => ChatPage(
-                      admin: widget.admin,
-                      groupId: widget.groupId,
-                      userName: widget.userName,
-                      member: widget.memberList,
-                      groupName: widget.groupName,
-                      assetName: widget.assetName,
-                      cellQuote: widget.cellQuote,
-                    ),
-                  );
-                }
+                // if (_authController.liveUser.value!.cellsJoined!
+                //     .contains(widget.groupId)) {
+                //   Get.snackbar('Alert', 'You are already in a cell');
+                // } else {
+                // (_authController.liveUser.value!.admin == true ||
+                //         _authController.liveUser.value!.role == 'consultant')
+                //     ?
+                _cellController.memberCellAdd(widget.groupId);
+                //     : null;
+                // (_authController.liveUser.value!.admin != true ||
+                //         _authController.liveUser.value!.role != 'consultant')
+                //     ?
+                _cellController.memberAdd(widget.groupId);
+                // : null;
+                Get.to(
+                  () => ChatPage(
+                    admin: widget.admin,
+                    groupId: widget.groupId,
+                    userName: widget.userName,
+                    member: widget.memberList,
+                    groupName: widget.groupName,
+                    assetName: widget.assetName,
+                    cellQuote: widget.cellQuote,
+                  ),
+                );
+                // }
               },
             ),
             const Gap(30),

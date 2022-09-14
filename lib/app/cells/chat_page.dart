@@ -201,8 +201,7 @@ class _ChatPageState extends State<ChatPage> {
                         ],
                       ),
                 // const SizedBox.shrink(),
-                (_authController.liveUser.value!.role == 'consultant' ||
-                        _authController.liveUser.value!.admin == true)
+                (_authController.liveUser.value!.admin == true)
                     ? Container()
                     : buildInput(),
               ],
