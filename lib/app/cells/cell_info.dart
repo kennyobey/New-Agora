@@ -20,6 +20,7 @@ import 'package:intl/intl.dart';
 class CellInfo extends StatefulWidget {
   final DateTime time;
   final String admin;
+  final String cellQuote;
   final String groupId;
   final String userName;
   final String groupName;
@@ -33,6 +34,7 @@ class CellInfo extends StatefulWidget {
     required this.time,
     required this.admin,
     required this.groupId,
+    required this.cellQuote,
     required this.groupName,
     required this.userName,
     required this.assetName,
@@ -233,7 +235,8 @@ class _CellInfoState extends State<CellInfo> {
             }),
             const Gap(30),
             CustomFillButton(
-              buttonText: _authController.liveUser.value!.admin == true
+              buttonText: (_authController.liveUser.value!.admin == true ||
+                      _authController.liveUser.value!.role == 'consultant')
                   ? 'View Cells'
                   : 'Join Cells',
               textColor: AppColor().button1Color,
@@ -248,8 +251,14 @@ class _CellInfoState extends State<CellInfo> {
                     .contains(widget.groupId)) {
                   Get.snackbar('Alert', 'You are already in a cell');
                 } else {
-                  _cellController.memberCellAdd(widget.groupId);
-                  _cellController.memberAdd(widget.groupId);
+                  (_authController.liveUser.value!.admin == true ||
+                          _authController.liveUser.value!.role == 'consultant')
+                      ? _cellController.memberCellAdd(widget.groupId)
+                      : null;
+                  (_authController.liveUser.value!.admin != true ||
+                          _authController.liveUser.value!.role != 'consultant')
+                      ? _cellController.memberAdd(widget.groupId)
+                      : null;
                   Get.to(
                     () => ChatPage(
                       admin: widget.admin,
@@ -258,6 +267,7 @@ class _CellInfoState extends State<CellInfo> {
                       member: widget.memberList,
                       groupName: widget.groupName,
                       assetName: widget.assetName,
+                      cellQuote: widget.cellQuote,
                     ),
                   );
                 }
@@ -303,6 +313,7 @@ class _CellInfoState extends State<CellInfo> {
                           admin: item.admin,
                           time: item.createdAt,
                           groupId: item.groupId,
+                          cellQuote: item.cellQuote,
                           groupName: item.groupName,
                           description: item.description,
                           memberId: item.members,
@@ -329,6 +340,7 @@ class _CellInfoState extends State<CellInfo> {
     String? groupName,
     String? assetName,
     String? userName,
+    String? cellQuote,
     String? description,
     List<String>? tags,
     List<String>? memberId,
@@ -369,6 +381,7 @@ class _CellInfoState extends State<CellInfo> {
                       tags: tags!,
                       time: time!,
                       admin: admin!,
+                      cellQuote: cellQuote!,
                       groupId: groupId!,
                       userName: userName!,
                       groupName: groupName!,
@@ -464,6 +477,7 @@ class _CellInfoState extends State<CellInfo> {
             userName: userName!,
             assetName: assetName!,
             member: widget.memberList,
+            cellQuote: widget.cellQuote,
           ),
         );
       },

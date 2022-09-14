@@ -139,7 +139,7 @@ class _CreateCellState extends State<CreateCell> {
                     setState(() {
                       _isLoading = true;
                     });
-                    _cellController.createGroup(
+                    _cellController.createCell(
                       admin: _authController.liveUser.value!.role!,
                       email: _authController.liveUser.value!.email!,
                       groupIcon: '',

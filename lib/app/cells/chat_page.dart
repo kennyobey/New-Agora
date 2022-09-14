@@ -1,8 +1,8 @@
 // ignore_for_file: unused_field
 
+import 'package:agora_care/app/cells/post_cell_qoute.dart';
 import 'package:agora_care/app/home/navigation_bars/nav_screen.dart';
 import 'package:agora_care/app/model/message_model.dart';
-import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/message_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -17,7 +17,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -30,6 +29,7 @@ class ChatPage extends StatefulWidget {
   final String groupName;
   final String userName;
   final String assetName;
+  final String cellQuote;
   final List<String>? member;
   const ChatPage({
     Key? key,
@@ -39,6 +39,7 @@ class ChatPage extends StatefulWidget {
     required this.userName,
     required this.groupName,
     required this.assetName,
+    required this.cellQuote,
   }) : super(key: key);
 
   @override
@@ -141,6 +142,48 @@ class _ChatPageState extends State<ChatPage> {
           )
         ],
       ),
+      floatingActionButton: _authController.liveUser.value!.admin == true
+          ? Align(
+              alignment: Alignment.bottomRight,
+              child: GestureDetector(
+                onTap: () => Get.to(
+                  () => PostCellQoute(
+                    groupId: widget.groupId,
+                  ),
+                  transition: Transition.downToUp,
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.35,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(20),
+                    ),
+                    color: AppColor().addCellColor,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      const Gap(5),
+                      customDescriptionText(
+                        "Add Quote",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        colors: AppColor().whiteColor,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : Container(),
       body: SafeArea(
         child: Stack(
           children: [
@@ -180,6 +223,8 @@ class _ChatPageState extends State<ChatPage> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.2,
       margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: AppColor().primaryColor,
         borderRadius: BorderRadius.circular(12),
@@ -187,142 +232,220 @@ class _ChatPageState extends State<ChatPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Center(
-            child: FutureBuilder<List<UserModel>>(
-                future: _authController.getUserByModelList(widget.member ?? []),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData &&
-                      snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.data != null && snapshot.data!.isNotEmpty) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          FlutterImageStack(
-                            // backgroundColor: Colors.black,
-                            itemBorderColor: AppColor().whiteColor,
-                            imageList: snapshot.data!
-                                .map(
-                                  (e) =>
-                                      // e.profilePic ??
-                                      "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
-                                )
-                                .toList(),
-                            showTotalCount: true,
-                            totalCount: widget.member == null
-                                ? 0
-                                : widget.member!.length,
-                            itemRadius: 50, // Radius of each images
-                            itemCount: widget.member == null
-                                ? 0
-                                : widget.member!.length > 4
-                                    ? 4
-                                    : widget.member!
-                                        .length, // Maximum number of images to be shown in stack
-                            itemBorderWidth:
-                                2, // Border width around the images
-                          ),
-                          const Gap(15),
-                          customDescriptionText(
-                            "You and ${widget.member!.length} users are in this cell",
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            colors: AppColor().whiteColor,
-                          ),
-                          const Gap(5),
-                          customDescriptionText(
-                            "Leave Cell",
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            colors: AppColor().errorColor,
-                            decoration: TextDecoration.underline,
-                            onTap: () {
-                              // showModalBottomSheet(
-                              //   isScrollControlled: true,
-                              //   backgroundColor: AppColor().whiteColor,
-                              //   shape: const RoundedRectangleBorder(
-                              //     borderRadius: BorderRadius.only(
-                              //       topLeft: Radius.circular(25),
-                              //       topRight: Radius.circular(25),
-                              //     ),
-                              //   ),
-                              //   context: context,
-                              //   builder: (context) => GlobalDialogue(
-                              //     text1: 'You have joined this cell',
-                              //     text2:
-                              //         'Be gentle and choose your words carefully to avoid ban on your account. You can leave the cell at any point in time or report any user or message you deem inappropriate.',
-                              //     asset: 'assets/svgs/success.svg',
-                              //     action: () {
-                              //       Get.close(1);
-                              //     },
-                              //   ),
-                              // );
-                              showModalBottomSheet(
-                                isScrollControlled: true,
-                                backgroundColor: AppColor().whiteColor,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(25),
-                                    topRight: Radius.circular(25),
-                                  ),
-                                ),
-                                context: context,
-                                builder: (context) => GlobalDialogue(
-                                  text1: 'Leave cell?',
-                                  text2:
-                                      'Leaving this cell takes away your access to the cell, conversations and everything. Sure you want to do this?',
-                                  asset: 'assets/svgs/cancel.svg',
-                                  dailogText: 'Yes, I want to leave',
-                                  dialogColor: AppColor().errorColor,
-                                  dialogBordColor: AppColor().errorColor,
-                                  action: () async {
-                                    EasyLoading.show();
-                                    await Future.delayed(
-                                      const Duration(milliseconds: 3000),
-                                    );
-                                    await _cellController
-                                        .memberRemove(widget.groupId);
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Get.offAll(() => UserNavScreen());
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      );
-                    } else {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customDescriptionText(
-                            "No member available",
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            colors: AppColor().whiteColor,
-                          ),
-                          const Gap(20),
-                          customDescriptionText(
-                            'start or join a conversation'.toUpperCase(),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            colors: AppColor().whiteColor.withOpacity(0.3),
-                          )
-                        ],
-                      );
-                    }
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: AppColor().whiteColor,
+          customDescriptionText(
+            widget.cellQuote,
+            fontSize: 14,
+            textAlign: TextAlign.center,
+            fontWeight: FontWeight.w500,
+            colors: AppColor().whiteColor,
+          ),
+          const Gap(10),
+          (_authController.liveUser.value!.admin == true ||
+                  _authController.liveUser.value!.role == 'consultant')
+              ? Container()
+              : customDescriptionText(
+                  "Leave Cell",
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  colors: AppColor().errorColor,
+                  decoration: TextDecoration.underline,
+                  onTap: () {
+                    // showModalBottomSheet(
+                    //   isScrollControlled: true,
+                    //   backgroundColor: AppColor().whiteColor,
+                    //   shape: const RoundedRectangleBorder(
+                    //     borderRadius: BorderRadius.only(
+                    //       topLeft: Radius.circular(25),
+                    //       topRight: Radius.circular(25),
+                    //     ),
+                    //   ),
+                    //   context: context,
+                    //   builder: (context) => GlobalDialogue(
+                    //     text1: 'You have joined this cell',
+                    //     text2:
+                    //         'Be gentle and choose your words carefully to avoid ban on your account. You can leave the cell at any point in time or report any user or message you deem inappropriate.',
+                    //     asset: 'assets/svgs/success.svg',
+                    //     action: () {
+                    //       Get.close(1);
+                    //     },
+                    //   ),
+                    // );
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      backgroundColor: AppColor().whiteColor,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          topRight: Radius.circular(25),
+                        ),
+                      ),
+                      context: context,
+                      builder: (context) => GlobalDialogue(
+                        text1: 'Leave cell?',
+                        text2:
+                            'Leaving this cell takes away your access to the cell, conversations and everything. Sure you want to do this?',
+                        asset: 'assets/svgs/cancel.svg',
+                        dailogText: 'Yes, I want to leave',
+                        dialogColor: AppColor().errorColor,
+                        dialogBordColor: AppColor().errorColor,
+                        action: () async {
+                          EasyLoading.show();
+                          await Future.delayed(
+                            const Duration(milliseconds: 3000),
+                          );
+                          await _cellController.memberRemove(widget.groupId);
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          Get.offAll(() => UserNavScreen());
+                        },
                       ),
                     );
-                  }
-                }),
-          ),
+                  },
+                ),
+          // Center(
+          //   child: FutureBuilder<List<UserModel>>(
+          //       future: _authController.getUserByModelList(widget.member ?? []),
+          //       builder: (context, snapshot) {
+          //         if (snapshot.hasData &&
+          //             snapshot.connectionState == ConnectionState.done) {
+          //           if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+          //             return Column(
+          //               crossAxisAlignment: CrossAxisAlignment.center,
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               children: [
+          //                 // FlutterImageStack(
+          //                 //   // backgroundColor: Colors.black,
+          //                 //   itemBorderColor: AppColor().whiteColor,
+          //                 //   imageList: snapshot.data!
+          //                 //       .map(
+          //                 //         (e) =>
+          //                 //             // e.profilePic ??
+          //                 //             "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
+          //                 //       )
+          //                 //       .toList(),
+          //                 //   showTotalCount: true,
+          //                 //   totalCount: widget.member == null
+          //                 //       ? 0
+          //                 //       : widget.member!.length,
+          //                 //   itemRadius: 50, // Radius of each images
+          //                 //   itemCount: widget.member == null
+          //                 //       ? 0
+          //                 //       : widget.member!.length > 4
+          //                 //           ? 4
+          //                 //           : widget.member!
+          //                 //               .length, // Maximum number of images to be shown in stack
+          //                 //   itemBorderWidth:
+          //                 //       2, // Border width around the images
+          //                 // ),
+          //                 const Gap(15),
+          //                 customDescriptionText(
+          //                   widget.cellQuote,
+          //                   fontSize: 14,
+          //                   fontWeight: FontWeight.w500,
+          //                   colors: AppColor().whiteColor,
+          //                 ),
+          //                 const Gap(15),
+          //                 customDescriptionText(
+          //                   "You and ${widget.member!.length} users are in this cell",
+          //                   fontSize: 14,
+          //                   fontWeight: FontWeight.w500,
+          //                   colors: AppColor().whiteColor,
+          //                 ),
+          //                 const Gap(5),
+          //                 customDescriptionText(
+          //                   "Leave Cell",
+          //                   fontSize: 14,
+          //                   fontWeight: FontWeight.bold,
+          //                   colors: AppColor().errorColor,
+          //                   decoration: TextDecoration.underline,
+          //                   onTap: () {
+          //                     // showModalBottomSheet(
+          //                     //   isScrollControlled: true,
+          //                     //   backgroundColor: AppColor().whiteColor,
+          //                     //   shape: const RoundedRectangleBorder(
+          //                     //     borderRadius: BorderRadius.only(
+          //                     //       topLeft: Radius.circular(25),
+          //                     //       topRight: Radius.circular(25),
+          //                     //     ),
+          //                     //   ),
+          //                     //   context: context,
+          //                     //   builder: (context) => GlobalDialogue(
+          //                     //     text1: 'You have joined this cell',
+          //                     //     text2:
+          //                     //         'Be gentle and choose your words carefully to avoid ban on your account. You can leave the cell at any point in time or report any user or message you deem inappropriate.',
+          //                     //     asset: 'assets/svgs/success.svg',
+          //                     //     action: () {
+          //                     //       Get.close(1);
+          //                     //     },
+          //                     //   ),
+          //                     // );
+          //                     showModalBottomSheet(
+          //                       isScrollControlled: true,
+          //                       backgroundColor: AppColor().whiteColor,
+          //                       shape: const RoundedRectangleBorder(
+          //                         borderRadius: BorderRadius.only(
+          //                           topLeft: Radius.circular(25),
+          //                           topRight: Radius.circular(25),
+          //                         ),
+          //                       ),
+          //                       context: context,
+          //                       builder: (context) => GlobalDialogue(
+          //                         text1: 'Leave cell?',
+          //                         text2:
+          //                             'Leaving this cell takes away your access to the cell, conversations and everything. Sure you want to do this?',
+          //                         asset: 'assets/svgs/cancel.svg',
+          //                         dailogText: 'Yes, I want to leave',
+          //                         dialogColor: AppColor().errorColor,
+          //                         dialogBordColor: AppColor().errorColor,
+          //                         action: () async {
+          //                           EasyLoading.show();
+          //                           await Future.delayed(
+          //                             const Duration(milliseconds: 3000),
+          //                           );
+          //                           await _cellController
+          //                               .memberRemove(widget.groupId);
+          //                           setState(() {
+          //                             _isLoading = false;
+          //                           });
+          //                           Get.offAll(() => UserNavScreen());
+          //                         },
+          //                       ),
+          //                     );
+          //                   },
+          //                 ),
+          //               ],
+          //             );
+          //           } else {
+          //             return Column(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               crossAxisAlignment: CrossAxisAlignment.center,
+          //               children: [
+          //                 customDescriptionText(
+          //                   "No member available",
+          //                   fontSize: 14,
+          //                   fontWeight: FontWeight.w500,
+          //                   colors: AppColor().whiteColor,
+          //                 ),
+          //                 const Gap(20),
+          //                 customDescriptionText(
+          //                   'start or join a conversation'.toUpperCase(),
+          //                   fontSize: 12,
+          //                   fontWeight: FontWeight.w700,
+          //                   colors: AppColor().whiteColor.withOpacity(0.3),
+          //                 )
+          //               ],
+          //             );
+          //           }
+          //         } else {
+          //           return Center(
+          //             child: CircularProgressIndicator(
+          //               color: AppColor().whiteColor,
+          //             ),
+          //           );
+          //         }
+          //       }),
+          // ),
         ],
       ),
     );

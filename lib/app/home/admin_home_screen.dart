@@ -406,11 +406,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
                                             Cells(
+                                              cellQuote: item.cellQuote!,
                                               members: member == null
                                                   ? 'No members yet'
                                                   : member.toString(),
-                                              // time:
-                                              //     "Last activity: 7th May 2022",
                                               time: DateFormat('MMM dd yyy')
                                                   .format(DateTime.parse(item
                                                       .createdAt

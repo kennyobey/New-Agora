@@ -248,6 +248,7 @@ class _ConsultantHomeState extends State<ConsultantHome>
                 ],
               ),
             ),
+            const Gap(10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -384,6 +385,7 @@ class _ConsultantHomeState extends State<ConsultantHome>
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
                                             Cells(
+                                              cellQuote: item.cellQuote!,
                                               members: member == null
                                                   ? 'No members yet'
                                                   : member.toString(),

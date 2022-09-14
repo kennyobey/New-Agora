@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:agora_care/core/constant/colors.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -37,7 +38,7 @@ class MessageTile extends StatefulWidget {
 }
 
 class _MessageTileState extends State<MessageTile> {
-  // final _authController = Get.find<AuthControllers>();
+  final _authController = Get.find<AuthControllers>();
   final _cellController = Get.find<CellControllers>();
   bool isLiked = false;
   Stream<QuerySnapshot>? chats;
@@ -96,49 +97,53 @@ class _MessageTileState extends State<MessageTile> {
                 fontWeight: FontWeight.w700,
                 colors: AppColor().primaryColor,
               ),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      if (kDebugMode) {
-                        print('Message ID is ${widget.messageid}');
-                        print('Request Comment');
-                      }
-                      focusNode.requestFocus();
-                      _cellController.comment(widget.groupId, widget.messageid);
-                    },
-                    child: SvgPicture.asset(
-                      'assets/svgs/reply.svg',
-                    ),
-                  ),
-                  const Gap(10),
-                  InkWell(
-                    onTap: () async {
-                      if (kDebugMode) {
-                        print('Message ID is ${widget.messageid}');
-                      }
-                      setState(() {
-                        isLiked = !isLiked;
-                      });
-                      isLiked
-                          ? _cellController.likePost(
-                              widget.groupId, widget.messageid)
-                          : _cellController.unLikePost(
-                              widget.groupId, widget.messageid);
-                      setState(() {
-                        isLiked = isLiked;
-                      });
-                    },
-                    child: isLiked
-                        ? SvgPicture.asset(
-                            'assets/svgs/filled_thumb.svg',
-                          )
-                        : SvgPicture.asset(
-                            'assets/svgs/thumb.svg',
+              (_authController.liveUser.value!.admin == true ||
+                      _authController.liveUser.value!.role == 'consultant')
+                  ? Container()
+                  : Row(
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            if (kDebugMode) {
+                              print('Message ID is ${widget.messageid}');
+                              print('Request Comment');
+                            }
+                            focusNode.requestFocus();
+                            _cellController.comment(
+                                widget.groupId, widget.messageid);
+                          },
+                          child: SvgPicture.asset(
+                            'assets/svgs/reply.svg',
                           ),
-                  ),
-                ],
-              ),
+                        ),
+                        const Gap(10),
+                        InkWell(
+                          onTap: () async {
+                            if (kDebugMode) {
+                              print('Message ID is ${widget.messageid}');
+                            }
+                            setState(() {
+                              isLiked = !isLiked;
+                            });
+                            isLiked
+                                ? _cellController.likePost(
+                                    widget.groupId, widget.messageid)
+                                : _cellController.unLikePost(
+                                    widget.groupId, widget.messageid);
+                            setState(() {
+                              isLiked = isLiked;
+                            });
+                          },
+                          child: isLiked
+                              ? SvgPicture.asset(
+                                  'assets/svgs/filled_thumb.svg',
+                                )
+                              : SvgPicture.asset(
+                                  'assets/svgs/thumb.svg',
+                                ),
+                        ),
+                      ],
+                    ),
             ],
           ),
           subtitle: Column(

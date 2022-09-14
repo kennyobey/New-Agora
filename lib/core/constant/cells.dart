@@ -14,13 +14,15 @@ class Cells extends StatelessWidget {
     required this.members,
     required this.memberId,
     required this.time,
+    required this.cellQuote,
     required this.groupName,
     required this.assetName,
     required this.userName,
   }) : super(key: key);
 
-  final String members;
   final String time;
+  final String cellQuote;
+  final String members;
   final String? groupId;
   final String? groupName;
   final String? assetName;
@@ -41,6 +43,7 @@ class Cells extends StatelessWidget {
             userName: userName!,
             assetName: assetName!,
             member: memberId,
+            cellQuote: cellQuote,
           ),
         );
       },

@@ -15,7 +15,8 @@ import '../../services/database_service.dart';
 import '../cells/chat_page.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+  final String cellQuote;
+  const SearchPage({Key? key, required this.cellQuote}) : super(key: key);
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -204,8 +205,9 @@ class _SearchPageState extends State<SearchPage> {
                   context,
                   ChatPage(
                     groupId: groupId,
-                    groupName: groupName,
                     userName: userName,
+                    groupName: groupName,
+                    cellQuote: widget.cellQuote,
                     assetName: _authController.liveUser.value!.profilePic!,
                   ),
                 );
