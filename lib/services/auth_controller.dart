@@ -175,7 +175,7 @@ class AuthControllers extends GetxController {
       }
       liveUser(userModel);
 
-      if (user.emailVerified == isEmailVerified) {
+      if (user.emailVerified == !isEmailVerified) {
         if (userModel.admin == true) {
           Get.offAll(() => AdminNavScreen());
         } else if (userModel.role == 'consultant') {

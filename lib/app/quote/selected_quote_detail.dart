@@ -111,7 +111,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
     getChatandAdmin();
     listScrollController.addListener(_scrollListener);
 
-    _quoteContoller.streamtDailyQuote();
+    _quoteContoller.streamDailyQuote();
     reply = int.parse(widget.reply);
     share = widget.share;
     like = widget.likes;
@@ -526,7 +526,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                         messageid: snapshot.data!.docs[index].id,
                       ),
                       itemCount: snapshot.data?.docs.length,
-                      reverse: true,
+                      reverse: false,
                       controller: listScrollController,
                     );
                   } else {

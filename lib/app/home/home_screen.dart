@@ -45,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String email = "";
   String groupName = "";
   Stream? groups;
+  QuoteModel? _quoteModel;
   bool isJoined = false;
 
   DateTime greetTime = DateTime.now().toLocal();
@@ -69,6 +70,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _notifController.registerNotification();
     _notifController.configLocalNotification();
+    _quoteContoller.getDailyQuote().listen((event) {
+      if (event.docs.isNotEmpty) {
+        _quoteModel = QuoteModel.fromJson(event.docs.last, event.docs.last.id);
+        setState(() {});
+      }
+    });
     // _quoteContoller.getQuotes();
   }
 
@@ -246,9 +253,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   Get.to(
                     () => QuoteDetails(
-                      dailyQuote: _quoteContoller.allQuotes.last.dailyQuote!,
-                      groupId: _quoteContoller.allQuotes.last.groupId!,
-                      groupName: _quoteContoller.allQuotes.last.dailyQuote!,
+                      dailyQuote: _quoteModel!.dailyQuote!,
+                      groupId: _quoteModel!.groupId!,
+                      groupName: _quoteModel!.dailyQuote!,
                       userName: _authController.liveUser.value!.username!,
                       userImage: _authController.liveUser.value!.profilePic!,
                       assetName:
@@ -273,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     Positioned(
-                      top: 30,
+                      top: 50,
                       left: 70,
                       right: 70,
                       child: Column(
@@ -329,9 +336,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Obx(() {
                     return customDescriptionText(
                       _quoteContoller.allQuotes.isNotEmpty &&
-                              _quoteContoller.allQuotes.last.views != null
-                          ? _quoteContoller.allQuotes.last.views!.length
-                              .toString()
+                              _quoteModel!.views != null
+                          ? _quoteModel!.views!.length.toString()
                           : "0",
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -346,8 +352,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Obx(() {
                     return customDescriptionText(
                       _quoteContoller.allQuotes.isNotEmpty &&
-                              _quoteContoller.allQuotes.last.reply != null
-                          ? _quoteContoller.allQuotes.last.reply!.toString()
+                              _quoteModel!.reply != null
+                          ? _quoteModel!.reply!.toString()
                           : "0",
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -362,9 +368,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Obx(() {
                     return customDescriptionText(
                       _quoteContoller.allQuotes.isNotEmpty &&
-                              _quoteContoller.allQuotes.last.share != null
-                          ? _quoteContoller.allQuotes.last.share!.length
-                              .toString()
+                              _quoteModel!.share != null
+                          ? _quoteModel!.share!.length.toString()
                           : "0",
                       fontSize: 10,
                       fontWeight: FontWeight.w600,

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:agora_care/app/model/message_model.dart';
+import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -59,6 +60,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   bool isLiked = false;
   int _limit = 20;
   final int _limitIncrement = 20;
+  QuoteModel? _quoteModel;
 
   Future getPdf(Uint8List screenShot, time, tempPath) async {
     pw.Document pdf = pw.Document();
@@ -87,7 +89,13 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   void initState() {
     getChatandAdmin();
     listScrollController.addListener(_scrollListener);
-
+    _quoteContoller.quotesCollection
+        .doc(widget.groupId)
+        .snapshots()
+        .listen((event) {
+      _quoteModel = QuoteModel.fromJson(event.data(), event.id);
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -181,41 +189,52 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                       right: 10,
                       child: Column(
                         children: [
-                          StreamBuilder<QuerySnapshot<Object?>>(
-                              stream: _quoteContoller.getDailyQuote(),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  if (snapshot.data != null) {
-                                    return customDescriptionText(
-                                      snapshot.data!.docs.last
-                                          .data()!['dailyQuote']
-                                          .toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().filledTextField,
-                                    );
-                                  } else if (snapshot.data == null) {
-                                    return SvgPicture.asset(
-                                      'assets/svgs/fluent_tap-single-48-filled.svg',
-                                    );
-                                  } else {
-                                    return customDescriptionText(
-                                      'No Quote Today',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().whiteColor,
-                                    );
-                                  }
-                                } else {
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppColor().primaryColor,
-                                    ),
-                                  );
-                                }
-                              }),
+                          (_quoteModel != null)
+                              ? customDescriptionText(
+                                  _quoteModel!.dailyQuote.toString(),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  textAlign: TextAlign.center,
+                                  colors: AppColor().filledTextField,
+                                )
+                              : SvgPicture.asset(
+                                  'assets/svgs/fluent_tap-single-48-filled.svg',
+                                ),
+                          // StreamBuilder<QuerySnapshot<Object?>>(
+                          //     stream: _quoteContoller.getDailyQuote(),
+                          //     builder: (context, AsyncSnapshot snapshot) {
+                          //       if (snapshot.hasData) {
+                          //         if (snapshot.data != null) {
+                          //           return customDescriptionText(
+                          //             snapshot.data!.docs.last
+                          //                 .data()!['dailyQuote']
+                          //                 .toString(),
+                          //             fontSize: 20,
+                          //             fontWeight: FontWeight.w700,
+                          //             textAlign: TextAlign.center,
+                          //             colors: AppColor().filledTextField,
+                          //           );
+                          //         } else if (snapshot.data == null) {
+                          //           return SvgPicture.asset(
+                          //             'assets/svgs/fluent_tap-single-48-filled.svg',
+                          //           );
+                          //         } else {
+                          //           return customDescriptionText(
+                          //             'No Quote Today',
+                          //             fontSize: 16,
+                          //             fontWeight: FontWeight.w700,
+                          //             textAlign: TextAlign.center,
+                          //             colors: AppColor().whiteColor,
+                          //           );
+                          //         }
+                          //       } else {
+                          //         return Center(
+                          //           child: CircularProgressIndicator(
+                          //             color: AppColor().primaryColor,
+                          //           ),
+                          //         );
+                          //       }
+                          //     }),
                           const Gap(20),
                           Divider(
                             thickness: 1,
@@ -233,20 +252,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               const Gap(5),
                               Column(
                                 children: [
-                                  Obx(() {
-                                    return customDescriptionText(
-                                      _quoteContoller.allQuotes.last.share!
-                                                  .length ==
-                                              null
-                                          ? '0'
-                                          : _quoteContoller
-                                              .allQuotes.last.share!.length
-                                              .toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      colors: AppColor().textColor,
-                                    );
-                                  }),
+                                  customDescriptionText(
+                                    _quoteModel == null
+                                        ? '0'
+                                        : _quoteModel!.share!.length.toString(),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    colors: AppColor().textColor,
+                                  ),
                                   customDescriptionText(
                                     'shares',
                                     fontSize: 12,
@@ -269,20 +282,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               Column(
                                 children: [
                                   const Gap(5),
-                                  Obx(() {
-                                    return customDescriptionText(
-                                      _quoteContoller.allQuotes.last.likes!
-                                                  .length ==
-                                              null
-                                          ? '0'
-                                          : _quoteContoller
-                                              .allQuotes.last.likes!.length
-                                              .toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      colors: AppColor().textColor,
-                                    );
-                                  }),
+                                  customDescriptionText(
+                                    _quoteModel == null
+                                        ? '0'
+                                        : _quoteModel!.likes!.length.toString(),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    colors: AppColor().textColor,
+                                  ),
                                   customDescriptionText(
                                     'likes',
                                     fontSize: 12,
@@ -304,19 +311,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               const Gap(5),
                               Column(
                                 children: [
-                                  Obx(() {
-                                    return customDescriptionText(
-                                      _quoteContoller.allQuotes.last.reply! ==
-                                              null
-                                          ? '0'
-                                          : _quoteContoller
-                                              .allQuotes.last.reply!
-                                              .toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      colors: AppColor().textColor,
-                                    );
-                                  }),
+                                  customDescriptionText(
+                                    _quoteModel == null
+                                        ? '0'
+                                        : _quoteModel!.reply!.toString(),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    colors: AppColor().textColor,
+                                  ),
                                   customDescriptionText(
                                     'chats',
                                     fontSize: 12,
@@ -401,12 +403,10 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                           isLiked = !isLiked;
                                         });
                                         isLiked
-                                            ? _quoteContoller.likePost(
-                                                _quoteContoller
-                                                    .allQuotes.last.id!)
-                                            : _quoteContoller.unLikePost(
-                                                _quoteContoller
-                                                    .allQuotes.last.id!);
+                                            ? _quoteContoller
+                                                .likePost(_quoteModel!.id!)
+                                            : _quoteContoller
+                                                .unLikePost(_quoteModel!.id!);
                                       },
                                       child: isLiked
                                           ? Icon(
@@ -620,7 +620,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
 
       DatabaseService().sendComment(widget.groupId, chatMessageMap.toJson());
       _quoteContoller.chatList(
-        _quoteContoller.allQuotes.last.id!,
+        _quoteModel!.id!,
         //
       );
       setState(() {

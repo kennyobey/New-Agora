@@ -65,7 +65,7 @@ class QuoteControllers extends GetxController {
       if (p0 != null) {
         getQuotes();
         getDailyQuote();
-        streamtDailyQuote();
+        streamDailyQuote();
 
         final now = DateTime.now();
         if (FirebaseAuth.instance.currentUser != null) {
@@ -158,18 +158,19 @@ class QuoteControllers extends GetxController {
           }
           _quoteStatus(QuoteStatus.SUCCESS);
         }
-        List<QuoteModel> reversedList = List.from(list.reversed);
+        // List<QuoteModel> reversedList = list.reversed.toList();
 
         _quoteList([]);
 
-        _quoteList(reversedList);
+        _quoteList(list);
+        // _quoteList(reversedList);
       });
     } catch (ex) {
       //
     }
   }
 
-  Stream<List<QuoteModel>> streamtDailyQuote() {
+  Stream<List<QuoteModel>> streamDailyQuote() {
     // try {
     quotesCollection.orderBy("createdAt").snapshots().listen((event) {
       List<QuoteModel> list = [];
