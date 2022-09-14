@@ -313,6 +313,7 @@ class AuthControllers extends GetxController {
         'dailyQuote': userDocQuote,
         'nextOfKin': nextOfKin,
         'nexKinPhone': nexKinPhone,
+        'cellsJoined': [],
       };
       if (kDebugMode) {
         print("value of changes is $up");

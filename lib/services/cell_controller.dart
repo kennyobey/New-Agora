@@ -47,7 +47,8 @@ class CellControllers extends GetxController {
       .doc()
       .collection('messages');
   final _cellsDoc = FirebaseFirestore.instance.collection("cells");
-  final _usersDoc = FirebaseFirestore.instance.collection("user");
+
+  final _userDoc = FirebaseFirestore.instance.collection("users");
 
   @override
   void onInit() async {
@@ -69,6 +70,9 @@ class CellControllers extends GetxController {
               newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
             _newCell.doc(cellCollection.id).update({
               "members": memberAdd(cellCollection.id),
+            });
+            _userDoc.doc(userCollection.id).update({
+              "cellsJoined": memberCellAdd(userCollection.id),
             });
             _newMessage.doc(messagesCollection.id).update({
               "like": likePost(cellCollection.id, messagesCollection.id),
@@ -113,24 +117,22 @@ class CellControllers extends GetxController {
 
   Future memberCellAdd(String groupId) async {
     if (kDebugMode) {
-      print("member id is $groupId");
+      print("group id to add is $groupId");
     }
     FirebaseFirestore.instance.runTransaction((transaction) async {
-      transaction.update(_cellsDoc.doc(groupId), {
-        "members":
-            FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
+      transaction.update(_userDoc.doc(_authController.liveUser.value!.uid), {
+        "cellsJoined": FieldValue.arrayUnion([groupId]),
       });
     });
   }
 
   Future memberCellRemove(String groupId) async {
     if (kDebugMode) {
-      print("member id is $groupId");
+      print("group id to remove is $groupId");
     }
     FirebaseFirestore.instance.runTransaction((transaction) async {
-      transaction.update(_cellsDoc.doc(groupId), {
-        "members":
-            FieldValue.arrayRemove([_authController.liveUser.value!.uid!]),
+      transaction.update(_userDoc.doc(groupId), {
+        "cellsJoined": FieldValue.arrayRemove([groupId]),
       });
     });
   }
@@ -142,9 +144,6 @@ class CellControllers extends GetxController {
         "like": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
       });
     });
-    // _newCell.doc(cellId).collection('messages').doc(messageId).update({
-    //   "like": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
-    // });
   }
 
   Future unLikePost(String cellId, String messageId) async {
@@ -154,9 +153,6 @@ class CellControllers extends GetxController {
         "like": FieldValue.arrayRemove([_authController.liveUser.value!.uid!])
       });
     });
-    // _newCell.doc(cellId).collection('messages').doc(messageId).update({
-    //   "like": FieldValue.arrayRemove([_authController.liveUser.value!.uid!])
-    // });
   }
 
   Future comment(String cellId, String messageId) async {

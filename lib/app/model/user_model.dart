@@ -27,6 +27,7 @@ class UserModel {
     this.phoneNumber,
     this.nextOfKin,
     this.nexKinPhone,
+    this.cellsJoined,
   });
 
   final String? uid;
@@ -47,6 +48,7 @@ class UserModel {
   final String? phoneNumber;
   final String? nextOfKin;
   final String? nexKinPhone;
+  final List<dynamic>? cellsJoined;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         uid: json["uid"],
@@ -72,6 +74,9 @@ class UserModel {
         phoneNumber: json["phoneNumber"],
         nextOfKin: json["nextOfKin"],
         nexKinPhone: json["nexKinPhone"],
+        cellsJoined: json["cellsJoined"] == null
+            ? null
+            : List<dynamic>.from(json["cellsJoined"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -94,5 +99,8 @@ class UserModel {
         "phoneNumber": phoneNumber,
         "nextOfKin": nextOfKin,
         "nexKinPhone": nexKinPhone,
+        "cellsJoined": cellsJoined == null
+            ? null
+            : List<dynamic>.from(cellsJoined!.map((x) => x)),
       };
 }

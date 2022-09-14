@@ -186,19 +186,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
               },
               child: Stack(
                 children: [
-                  SizedBox(
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
                     width: MediaQuery.of(context).size.width,
-                    child: SvgPicture.asset(
-                      'assets/svgs/quote.svg',
-                      height: MediaQuery.of(context).size.height * 0.2,
-                      width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    decoration: BoxDecoration(
+                      color: AppColor().primaryColor,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  Positioned(
-                    top: 60,
-                    left: 70,
-                    right: 70,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         StreamBuilder(
                           stream: _quoteContoller.getDailyQuote(),
@@ -206,18 +204,51 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                             if (snapshot.hasData) {
                               if (snapshot.data != null &&
                                   snapshot.data!.docs.isNotEmpty) {
-                                return customDescriptionText(
-                                  snapshot.data!.docs.last
-                                      .data()!['dailyQuote']
-                                      .toString(),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  textAlign: TextAlign.center,
-                                  colors: AppColor().whiteColor,
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    customDescriptionText(
+                                      snapshot.data!.docs.last
+                                          .data()!['dailyQuote']
+                                          .toString(),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      textAlign: TextAlign.center,
+                                      colors: AppColor().whiteColor,
+                                    ),
+                                    const Gap(20),
+                                    customDescriptionText(
+                                      'Current quote'.toUpperCase(),
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      textAlign: TextAlign.center,
+                                      colors: AppColor()
+                                          .whiteColor
+                                          .withOpacity(0.4),
+                                    ),
+                                  ],
                                 );
                               } else {
-                                return SvgPicture.asset(
-                                  'assets/svgs/fluent_tap-single-48-filled.svg',
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/svgs/fluent_tap-single-48-filled.svg',
+                                      height: 60,
+                                    ),
+                                    const Gap(20),
+                                    customDescriptionText(
+                                      'TAP to post a new quote'.toUpperCase(),
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      textAlign: TextAlign.center,
+                                      colors: AppColor()
+                                          .whiteColor
+                                          .withOpacity(0.4),
+                                    ),
+                                  ],
                                 );
                               }
                             } else {
@@ -232,9 +263,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
                       ],
                     ),
                   ),
+                  Positioned(
+                    top: 0,
+                    right: 30,
+                    child: SvgPicture.asset('assets/svgs/quoteTag.svg'),
+                  ),
                 ],
               ),
             ),
+            const Gap(10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

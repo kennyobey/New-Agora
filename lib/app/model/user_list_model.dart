@@ -25,6 +25,10 @@ class UserList {
     this.lastLoginTime,
     this.weeklyLoginTime,
     this.updatedAt,
+    this.phoneNumber,
+    this.nextOfKin,
+    this.nexKinPhone,
+    this.cellsJoined,
   });
 
   final String? uid;
@@ -43,18 +47,22 @@ class UserList {
   DateTime? weeklyLoginTime;
   DateTime? updatedAt;
 
+  final String? phoneNumber;
+  final String? nextOfKin;
+  final String? nexKinPhone;
+  final List<dynamic>? cellsJoined;
+
   factory UserList.fromJson(Map<String, dynamic> json) => UserList(
         uid: json["uid"],
         email: json["email"],
         fullName: json["fullName"],
         username: json["username"],
-        gender: json["gender"],
         postalCode: json["postalCode"],
         address: json["address"],
         profilePic: json["profilePic"],
         streak: json["streak"],
         weeks: json["weeks"],
-        admin: json["admin"],
+        admin: json["admin"] ?? false,
         role: json["role"],
         lastLoginTime: json["lastLoginTime"] == null
             ? null
@@ -65,14 +73,18 @@ class UserList {
         updatedAt: json["updatedAt"] == null
             ? null
             : DateTime.parse(json["updatedAt"]),
+        phoneNumber: json["phoneNumber"],
+        nextOfKin: json["nextOfKin"],
+        nexKinPhone: json["nexKinPhone"],
+        cellsJoined: json["cellsJoined"] == null
+            ? null
+            : List<dynamic>.from(json["cellsJoined"].map((x) => x)),
       );
-
   Map<String, dynamic> toJson() => {
         "uid": uid,
         "email": email,
         "fullName": fullName,
         "username": username,
-        "gender": gender,
         "postalCode": postalCode,
         "address": address,
         "profilePic": profilePic,
@@ -85,5 +97,11 @@ class UserList {
         "weeklyLoginTime":
             weeklyLoginTime == null ? null : weeklyLoginTime!.toIso8601String(),
         "updatedAt": updatedAt == null ? null : updatedAt!.toIso8601String(),
+        "phoneNumber": phoneNumber,
+        "nextOfKin": nextOfKin,
+        "nexKinPhone": nexKinPhone,
+        "cellsJoined": cellsJoined == null
+            ? null
+            : List<dynamic>.from(cellsJoined!.map((x) => x)),
       };
 }
