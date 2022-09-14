@@ -311,6 +311,7 @@ class _CellInfoState extends State<CellInfo> {
                       '${widget.userName} is Joining ${widget.groupName} Cell');
                 }
                 await _cellController.memberAdd(widget.groupId);
+                await _cellController.memberAdd(widget.groupId);
                 Get.to(
                   () => ChatPage(
                     admin: widget.admin,
@@ -327,7 +328,7 @@ class _CellInfoState extends State<CellInfo> {
             Row(
               children: [
                 customDescriptionText(
-                  'Similar Cells'.toUpperCase(),
+                  'Other Cells'.toUpperCase(),
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   colors: AppColor().filledTextField,

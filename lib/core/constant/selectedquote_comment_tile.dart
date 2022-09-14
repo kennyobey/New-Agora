@@ -1,7 +1,10 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/services/cell_controller.dart';
+import 'package:agora_care/services/auth_controller.dart';
+import 'package:agora_care/services/quote_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,41 +15,49 @@ import 'package:intl/intl.dart';
 
 import '../customWidgets.dart';
 
-class MessageTile extends StatefulWidget {
+class SelectedQuoteCommentTile extends StatefulWidget {
   final String message;
-  final String? time;
   final String messageid;
   final String sender;
   final String groupId;
+  final String? time;
   final List<dynamic> like;
   final bool sentByMe;
 
-  const MessageTile({
+  const SelectedQuoteCommentTile({
     Key? key,
     required this.messageid,
     required this.message,
     required this.sender,
     required this.groupId,
-    this.time,
     required this.like,
+    required this.time,
     required this.sentByMe,
   }) : super(key: key);
 
   @override
-  State<MessageTile> createState() => _MessageTileState();
+  State<SelectedQuoteCommentTile> createState() =>
+      _SelectedQuoteCommentTileState();
 }
 
-class _MessageTileState extends State<MessageTile> {
-  // final _authController = Get.find<AuthControllers>();
-  final _cellController = Get.find<CellControllers>();
+class _SelectedQuoteCommentTileState extends State<SelectedQuoteCommentTile> {
+  final _authController = Get.find<AuthControllers>();
+  final _quoteController = Get.find<QuoteControllers>();
   bool isLiked = false;
-  Stream<QuerySnapshot>? chats;
-  FocusNode focusNode = FocusNode();
+  Stream<QuerySnapshot>? chat;
+
+  SelectedCommentModel? _messageModel;
 
   @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
+  void initState() {
+    _quoteController.messagesCollection
+        .doc(widget.like.toString())
+        .snapshots()
+        .listen((event) {
+      _messageModel = SelectedCommentModel.fromJson(event.data(), event.id);
+      setState(() {});
+    });
+    super.initState();
   }
 
   @override
@@ -82,11 +93,25 @@ class _MessageTileState extends State<MessageTile> {
         ),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: Image.asset(
-            'assets/images/placeholder.png',
-            height: 50,
-            width: 50,
-          ),
+          leading: _authController.liveUser.value!.profilePic == null
+              ? Image.asset(
+                  'assets/images/placeholder.png',
+                  height: 50,
+                  width: 50,
+                )
+              : Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(80),
+                    image: DecorationImage(
+                      image: CachedNetworkImageProvider(
+                        _authController.liveUser.value!.profilePic!,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -102,10 +127,9 @@ class _MessageTileState extends State<MessageTile> {
                     onTap: () async {
                       if (kDebugMode) {
                         print('Message ID is ${widget.messageid}');
-                        print('Request Comment');
                       }
-                      focusNode.requestFocus();
-                      _cellController.comment(widget.groupId, widget.messageid);
+                      _quoteController.comment(
+                          widget.groupId, widget.messageid);
                     },
                     child: SvgPicture.asset(
                       'assets/svgs/reply.svg',
@@ -121,13 +145,14 @@ class _MessageTileState extends State<MessageTile> {
                         isLiked = !isLiked;
                       });
                       isLiked
-                          ? _cellController.likePost(
+                          ? _quoteController.likeQuotePost(
                               widget.groupId, widget.messageid)
-                          : _cellController.unLikePost(
+                          : _quoteController.unLikeQuotePost(
                               widget.groupId, widget.messageid);
-                      setState(() {
-                        isLiked = isLiked;
-                      });
+                      setState(() {});
+                      if (kDebugMode) {
+                        print('Like State Changed');
+                      }
                     },
                     child: isLiked
                         ? SvgPicture.asset(
@@ -159,18 +184,43 @@ class _MessageTileState extends State<MessageTile> {
                         ? '0hrs'
                         : DateFormat.jm()
                             .format(DateTime.parse(widget.time!.toString())),
-                    //  : DateFormat('MMM.dd.yyyy | EEEE')
-                    // .format(DateTime.parse(widget.time!.toString())),
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     colors: AppColor().lightbackgroundColor,
                   ),
                   const Gap(20),
-                  customDescriptionText(
-                    '${widget.like.length == null ? '0' : widget.like.length.toString()} likes',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    colors: AppColor().lightbackgroundColor,
+                  // customDescriptionText(
+                  //   '${widget.like == null ? '0' : widget.like.length.toString()} likes',
+                  //   fontSize: 10,
+                  //   fontWeight: FontWeight.w500,
+                  //   colors: AppColor().lightbackgroundColor,
+                  // ),
+                  // customDescriptionText(
+                  //   _messageModel == null
+                  //       ? '0'
+                  //       : _messageModel!.like!.length.toString(),
+                  //   fontSize: 10,
+                  //   fontWeight: FontWeight.w500,
+                  //   colors: AppColor().lightbackgroundColor,
+                  // ),
+
+                  StreamBuilder(
+                    stream: chat,
+                    builder: (context, snapshot) {
+                      return snapshot.hasData
+                          ? customDescriptionText(
+                              '${_messageModel!.like == null ? '0' : widget.like.length.toString()} likes',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              colors: AppColor().lightbackgroundColor,
+                            )
+                          : customDescriptionText(
+                              '${_messageModel!.like == null ? '0' : widget.like.length.toString()} likes',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              colors: AppColor().lightbackgroundColor,
+                            );
+                    },
                   )
                 ],
               ),

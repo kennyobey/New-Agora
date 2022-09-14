@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/quote_controller.dart';
@@ -43,6 +44,20 @@ class _QuoteCommentTileState extends State<QuoteCommentTile> {
   final _quoteController = Get.find<QuoteControllers>();
   bool isLiked = false;
   Stream<QuerySnapshot>? chat;
+
+  CommentModel? _messageModel;
+
+  @override
+  void initState() {
+    _quoteController.quotesCollection
+        .doc(widget.like.toString())
+        .snapshots()
+        .listen((event) {
+      _messageModel = CommentModel.fromJson(event.data(), event.id);
+      setState(() {});
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +180,7 @@ class _QuoteCommentTileState extends State<QuoteCommentTile> {
                 children: [
                   customDescriptionText(
                     widget.time == null
-                        ? '19hrs'
+                        ? '0hrs'
                         : DateFormat.jm()
                             .format(DateTime.parse(widget.time!.toString())),
                     fontSize: 10,
@@ -174,7 +189,15 @@ class _QuoteCommentTileState extends State<QuoteCommentTile> {
                   ),
                   const Gap(20),
                   // customDescriptionText(
-                  //   '143 likes',
+                  //   '${widget.like == null ? '0' : widget.like.length.toString()} likes',
+                  //   fontSize: 10,
+                  //   fontWeight: FontWeight.w500,
+                  //   colors: AppColor().lightbackgroundColor,
+                  // ),
+                  // customDescriptionText(
+                  //   _messageModel == null
+                  //       ? '0'
+                  //       : _messageModel!.like!.length.toString(),
                   //   fontSize: 10,
                   //   fontWeight: FontWeight.w500,
                   //   colors: AppColor().lightbackgroundColor,
@@ -182,16 +205,16 @@ class _QuoteCommentTileState extends State<QuoteCommentTile> {
 
                   StreamBuilder(
                     stream: chat,
-                    builder: (context, AsyncSnapshot snapshot) {
+                    builder: (context, snapshot) {
                       return snapshot.hasData
                           ? customDescriptionText(
-                              '${widget.like.length == null ? '0' : widget.like.length.toString()} likes',
+                              '${widget.like == null ? '0' : widget.like.length.toString()} likes',
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                               colors: AppColor().lightbackgroundColor,
                             )
                           : customDescriptionText(
-                              '${widget.like.length == null ? '0' : widget.like.length.toString()} likes',
+                              '${widget.like == null ? '0' : widget.like.length.toString()} likes',
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                               colors: AppColor().lightbackgroundColor,

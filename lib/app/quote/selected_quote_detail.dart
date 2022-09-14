@@ -7,7 +7,7 @@ import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/app/quote/userlist.dart';
 import 'package:agora_care/core/constant/colors.dart';
-import 'package:agora_care/core/constant/quote_comment_tile.dart';
+import 'package:agora_care/core/constant/selectedquote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
@@ -515,14 +515,15 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
                   if (listMessage.isNotEmpty) {
                     return ListView.builder(
                       padding: const EdgeInsets.all(10),
-                      itemBuilder: (context, index) => QuoteCommentTile(
+                      itemBuilder: (context, index) => SelectedQuoteCommentTile(
                         time: snapshot.data!.docs[index]['time'],
                         message: snapshot.data!.docs[index]['message'],
                         sender: snapshot.data!.docs[index]['sender'],
                         sentByMe: widget.userName ==
                             snapshot.data!.docs[index]['sender'],
                         groupId: _quoteContoller.allQuotes.last.id!,
-                        like: const [],
+                        // like: const [],
+                        like: snapshot.data!.docs[index]['like'],
                         messageid: snapshot.data!.docs[index].id,
                       ),
                       itemCount: snapshot.data?.docs.length,
@@ -551,7 +552,7 @@ class _SelectedQuoteDetailsState extends State<SelectedQuoteDetails> {
 
   sendComment() {
     if (commentController.text.isNotEmpty) {
-      final chatMessageMap = CommentModel(
+      final chatMessageMap = SelectedCommentModel(
         message: commentController.text,
         sender: widget.userName,
         time: DateTime.now(),

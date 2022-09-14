@@ -55,7 +55,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   List<QueryDocumentSnapshot> listMessage = [];
 
   final _authController = Get.find<AuthControllers>();
-  final _quoteContoller = Get.find<QuoteControllers>();
+  final _quoteController = Get.find<QuoteControllers>();
 
   bool isLiked = false;
   int _limit = 20;
@@ -89,7 +89,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   void initState() {
     getChatandAdmin();
     listScrollController.addListener(_scrollListener);
-    _quoteContoller.quotesCollection
+    _quoteController.quotesCollection
         .doc(widget.groupId)
         .snapshots()
         .listen((event) {
@@ -201,7 +201,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                   'assets/svgs/fluent_tap-single-48-filled.svg',
                                 ),
                           // StreamBuilder<QuerySnapshot<Object?>>(
-                          //     stream: _quoteContoller.getDailyQuote(),
+                          //     stream: _quoteController.getDailyQuote(),
                           //     builder: (context, AsyncSnapshot snapshot) {
                           //       if (snapshot.hasData) {
                           //         if (snapshot.data != null) {
@@ -363,8 +363,8 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                   ? Container()
                                   : InkWell(
                                       // onTap: () async {
-                                      //   await _quoteContoller.sharePost(
-                                      //       _quoteContoller.allQuotes.last.id!);
+                                      //   await _quoteController.sharePost(
+                                      //       _quoteController.allQuotes.last.id!);
                                       //   RenderRepaintBoundary boundary =
                                       //       scr.currentContext!.findRenderObject()
                                       //           as RenderRepaintBoundary;
@@ -381,8 +381,8 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                       //   await Share.shareFiles([pathurl]);
                                       // },
                                       onTap: () async {
-                                        await _quoteContoller.sharePost(
-                                            _quoteContoller.allQuotes.last.id!);
+                                        await _quoteController
+                                            .sharePost(_quoteModel!.id!);
                                         await Share.share(widget.dailyQuote);
                                       },
                                       child: SvgPicture.asset(
@@ -403,9 +403,9 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                           isLiked = !isLiked;
                                         });
                                         isLiked
-                                            ? _quoteContoller
+                                            ? _quoteController
                                                 .likePost(_quoteModel!.id!)
-                                            : _quoteContoller
+                                            : _quoteController
                                                 .unLikePost(_quoteModel!.id!);
                                       },
                                       child: isLiked
@@ -547,7 +547,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   //                           sender: snapshot.data!.docs[index]['sender'],
   //                           sentByMe: widget.userName ==
   //                               snapshot.data!.docs[index]['sender'],
-  //                           groupId: _quoteContoller.allQuotes.last.id!,
+  //                           groupId: _quoteController.allQuotes.last.id!,
   //                           like: const [],
   //                           messageid: snapshot.data!.docs[index].id,
   //                       ));
@@ -570,19 +570,20 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                   if (listMessage.length > 0) {
                     return ListView.builder(
                       padding: const EdgeInsets.all(10),
+                      controller: listScrollController,
                       itemBuilder: (context, index) => QuoteCommentTile(
                         time: snapshot.data!.docs[index]['time'],
                         message: snapshot.data!.docs[index]['message'],
                         sender: snapshot.data!.docs[index]['sender'],
                         sentByMe: widget.userName ==
                             snapshot.data!.docs[index]['sender'],
-                        groupId: _quoteContoller.allQuotes.last.id!,
-                        like: const [],
+                        groupId: _quoteModel!.groupId!,
+                        // like: const [],
+                        like: snapshot.data!.docs[index]['like'],
                         messageid: snapshot.data!.docs[index].id,
                       ),
                       itemCount: snapshot.data?.docs.length,
                       reverse: false,
-                      controller: listScrollController,
                     );
                   } else {
                     return const Center(child: Text("No message here yet..."));
@@ -619,7 +620,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
       }
 
       DatabaseService().sendComment(widget.groupId, chatMessageMap.toJson());
-      _quoteContoller.chatList(
+      _quoteController.chatList(
         _quoteModel!.id!,
         //
       );

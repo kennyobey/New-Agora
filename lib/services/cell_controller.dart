@@ -47,6 +47,7 @@ class CellControllers extends GetxController {
       .doc()
       .collection('messages');
   final _cellsDoc = FirebaseFirestore.instance.collection("cells");
+  final _usersDoc = FirebaseFirestore.instance.collection("user");
 
   @override
   void onInit() async {
@@ -99,6 +100,30 @@ class CellControllers extends GetxController {
   }
 
   Future memberRemove(String groupId) async {
+    if (kDebugMode) {
+      print("member id is $groupId");
+    }
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_cellsDoc.doc(groupId), {
+        "members":
+            FieldValue.arrayRemove([_authController.liveUser.value!.uid!]),
+      });
+    });
+  }
+
+  Future memberCellAdd(String groupId) async {
+    if (kDebugMode) {
+      print("member id is $groupId");
+    }
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_cellsDoc.doc(groupId), {
+        "members":
+            FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
+      });
+    });
+  }
+
+  Future memberCellRemove(String groupId) async {
     if (kDebugMode) {
       print("member id is $groupId");
     }
