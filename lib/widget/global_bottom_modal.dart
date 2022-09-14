@@ -76,7 +76,7 @@ class _GlobalBottomDialogueState extends State<GlobalBottomDialogue> {
                         SvgPicture.asset('assets/svgs/cells.svg'),
                         const Gap(20),
                         customDescriptionText(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Et magna egestas senectus tellus est, mauris. Consequat eget non sapien a fermentum, pellentesque erat. Non non tortor id consectetur proin. Egestas sociis auctor volutpat mattis vitae, dolor pulvinar volutpat.',
+                          'Cells are our reminiscent to AA meetings. Here we have conversations about or experience and the quotes for each day. These conversations help us learn from each other and we get to get better at handling our emotional challenges.',
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                           colors: AppColor().blackColor,

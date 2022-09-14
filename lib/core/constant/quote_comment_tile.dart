@@ -1,6 +1,5 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/quote_controller.dart';
@@ -45,15 +44,12 @@ class _QuoteCommentTileState extends State<QuoteCommentTile> {
   bool isLiked = false;
   Stream<QuerySnapshot>? chat;
 
-  CommentModel? _messageModel;
-
   @override
   void initState() {
     _quoteController.quotesCollection
         .doc(widget.like.toString())
         .snapshots()
         .listen((event) {
-      _messageModel = CommentModel.fromJson(event.data(), event.id);
       setState(() {});
     });
     super.initState();

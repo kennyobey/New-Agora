@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, unused_field
 
 import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
@@ -209,13 +209,13 @@ class _SelectedQuoteCommentTileState extends State<SelectedQuoteCommentTile> {
                     builder: (context, snapshot) {
                       return snapshot.hasData
                           ? customDescriptionText(
-                              '${_messageModel!.like == null ? '0' : widget.like.length.toString()} likes',
+                              '${widget.like == null ? '0' : widget.like.length.toString()} likes',
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                               colors: AppColor().lightbackgroundColor,
                             )
                           : customDescriptionText(
-                              '${_messageModel!.like == null ? '0' : widget.like.length.toString()} likes',
+                              '${widget.like == null ? '0' : widget.like.length.toString()} likes',
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                               colors: AppColor().lightbackgroundColor,

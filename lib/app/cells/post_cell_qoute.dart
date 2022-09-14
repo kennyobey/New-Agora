@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_final_fields, must_be_immutable
 
 import 'package:agora_care/core/custom_form_field.dart';
-import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/cell_controller.dart';
 import 'package:agora_care/widget/bottom_modal.dart';
 import 'package:flutter/foundation.dart';
@@ -24,7 +23,6 @@ class PostCellQoute extends StatefulWidget {
 class _PostCellQouteState extends State<PostCellQoute> {
   final formKey = GlobalKey<FormState>();
   final _quoteTextController = TextEditingController();
-  final _authController = Get.find<AuthControllers>();
   final _cellController = Get.find<CellControllers>();
 
   DateTime createdTime = DateTime.now();
