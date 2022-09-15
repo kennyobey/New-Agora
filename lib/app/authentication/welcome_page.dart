@@ -183,7 +183,7 @@ class _WelComePageState extends State<WelComePage> {
                             setState(() {
                               _isLoading = true;
                             });
-                            await _authController.userChanges(
+                            await _authController.welcomeUserChanges(
                               _usernameController.text,
                               _fullnameController.text,
                               _authController.signupPhonenumberController.text,

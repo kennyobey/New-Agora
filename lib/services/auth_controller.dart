@@ -56,6 +56,7 @@ class AuthControllers extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    // FirebaseAuth.instance.signOut();
     final now = DateTime.now();
     pref = SharePref();
     await pref!.inits();
@@ -327,6 +328,59 @@ class AuthControllers extends GetxController {
         'fullName': fullName,
         'phoneNumber': phoneNumber,
         'address': address,
+        'postalCode': postalCode,
+        'profilePic': profilePic,
+        'dailyQuote': userDocQuote,
+        'nextOfKin': nextOfKin,
+        'nexKinPhone': nexKinPhone,
+        'cellsJoined': [],
+      };
+      if (kDebugMode) {
+        print("value of changes is $up");
+      }
+      await _userDoc.doc(FirebaseAuth.instance.currentUser!.uid).update(up);
+
+      final newUser =
+          await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
+      liveUser(newUser);
+      if (kDebugMode) {
+        print("new user update is ${newUser.toJson()}");
+      }
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    }
+  }
+
+  Future welcomeUserChanges(
+    String username,
+    String fullName,
+    String phoneNumber,
+    String address,
+    String postalCode,
+    String profilePic,
+    String nextOfKin,
+    String nexKinPhone,
+  ) async {
+    try {
+      if (kDebugMode) {
+        print(
+            "user detail update profile ${FirebaseAuth.instance.currentUser!.uid} ");
+      }
+      final userDocQuote =
+          FirebaseFirestore.instance.collection("quotes").doc("dailyQuotes");
+      if (FirebaseAuth.instance.currentUser == null) {
+        if (kDebugMode) {
+          print('I reach here');
+          return;
+        }
+      }
+      final up = {
+        'username': username,
+        'fullName': fullName,
+        'phoneNumber': phoneNumber,
+        'address': address,
+        'role': user,
+        'admin': false,
         'postalCode': postalCode,
         'profilePic': profilePic,
         'dailyQuote': userDocQuote,
