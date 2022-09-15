@@ -360,6 +360,8 @@ class AuthControllers extends GetxController {
     String profilePic,
     String nextOfKin,
     String nexKinPhone,
+    String role,
+    bool admin,
   ) async {
     try {
       if (kDebugMode) {
@@ -379,8 +381,8 @@ class AuthControllers extends GetxController {
         'fullName': fullName,
         'phoneNumber': phoneNumber,
         'address': address,
-        'role': user,
-        'admin': false,
+        'role': role,
+        'admin': admin,
         'postalCode': postalCode,
         'profilePic': profilePic,
         'dailyQuote': userDocQuote,

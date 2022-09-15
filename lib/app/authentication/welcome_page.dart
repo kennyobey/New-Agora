@@ -22,6 +22,7 @@ class _WelComePageState extends State<WelComePage> {
   String? selectedGender;
   final _authController = Get.find<AuthControllers>();
   late bool _isLoading = false;
+  bool isAdmin = false;
 
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -192,6 +193,8 @@ class _WelComePageState extends State<WelComePage> {
                               '',
                               _nextKinController.text,
                               _nextKinPhoneController.text,
+                              'user',
+                              isAdmin,
                             );
                             setState(() {
                               _isLoading = false;
