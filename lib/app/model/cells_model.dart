@@ -18,7 +18,6 @@ class CellModel {
     this.groupIcon,
     this.groupName,
     this.email,
-    this.fullName,
     this.description,
     this.recentMessage,
     this.recentMessageSender,
@@ -39,7 +38,6 @@ class CellModel {
   final String? groupName;
   final String? description;
   final String? email;
-  final String? fullName;
   final String? recentMessage;
   final String? recentMessageSender;
   final String? recentMessageTime;
@@ -57,7 +55,6 @@ class CellModel {
         groupIcon: json["groupIcon"],
         groupName: json["groupName"],
         email: json["email"],
-        fullName: json["fullName"],
         description: json["description"],
         recentMessageSender: json["recentMessageSender"],
         recentMessageTime: json["recentMessageTime"],
@@ -86,7 +83,6 @@ class CellModel {
         "groupIcon": groupIcon,
         "groupName": groupName,
         "email": email,
-        "fullName": fullName,
         "description": description,
         "recentMessageSender": recentMessageSender,
         "members":
