@@ -86,6 +86,7 @@ class CellModel {
         "groupIcon": groupIcon,
         "groupName": groupName,
         "email": email,
+        "fullName": fullName,
         "description": description,
         "recentMessageSender": recentMessageSender,
         "members":
