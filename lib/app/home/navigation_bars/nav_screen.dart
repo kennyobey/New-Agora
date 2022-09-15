@@ -79,25 +79,27 @@ class _UserNavScreenState extends State<UserNavScreen> {
       bottomNavigationBar: BottomNavigationBar(
         landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
         onTap: (newIndex) async => {
-          if (_authController.pref!.getFirstTimeOpen())
+          if (newIndex == 1)
             {
-              if (newIndex == 1)
+              if (_authController.pref!.getFirstTimeButtonOpen())
                 {
-                  await showGlobalBottomSheet(context),
+                  {
+                    await showGlobalBottomSheet(context),
+                    setState(() {
+                      //
+                    })
+                  }
+                }
+              else
+                {
                   setState(() {
-                    //
+                    setState(() {
+                      widget.tabIndex = newIndex;
+                      _selectedIndex = widget.tabIndex!;
+                      // _selectPage;
+                    });
                   })
                 }
-              // else
-              //   {
-              //     setState(() {
-              //       setState(() {
-              //         widget.tabIndex = newIndex;
-              //         _selectedIndex = widget.tabIndex!;
-              //         // _selectPage;
-              //       });
-              //     })
-              //   }
             }
           else
             {
@@ -199,7 +201,7 @@ class _UserNavScreenState extends State<UserNavScreen> {
           Get.close(1);
         },
         next: () async {
-          _authController.updateIsFirstTime(true);
+          _authController.setFirstTimeButtonOpen(true);
           await Navigator.push(
               context,
               MaterialPageRoute(

@@ -43,7 +43,7 @@ class _CellsScreenState extends State<CellsScreen> {
   late List<Widget> _screens;
 
   int tabIndex = 1;
-  int _selectedIndex = 1;
+  final int _selectedIndex = 1;
 
   final List<Color> colorList = <Color>[
     AppColor().pinkColor,

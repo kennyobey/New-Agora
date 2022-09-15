@@ -125,7 +125,7 @@ class _AdminNavScreenState extends State<AdminNavScreen> {
           Get.close(1);
         },
         next: () async {
-          _authController.updateIsFirstTime(true);
+          _authController.setFirstTimeButtonOpen(true);
           await Navigator.push(
               context,
               MaterialPageRoute(

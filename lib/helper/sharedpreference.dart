@@ -36,17 +36,20 @@ class SharePref {
     _preferences = await SharedPreferences.getInstance();
   }
 
-  bool getFirstTimeOpen() {
-    var value = _preferences!.getBool(firstTimeAppOpen);
-    if (kDebugMode) {
-      print("Am I a new User?  $value");
-    }
-    // return value ?? true;
-    return value == null ? true : value;
-  }
+  // bool getFirstTimeOpen() {
+  //   var value = _preferences!.getBool(firstTimeAppOpen);
+  //   if (kDebugMode) {
+  //     print("Am I a new User?  $value");
+  //   }
+  //   // return value ?? true;
+  //   return value == null ? true : value;
+  // }
 
   Future<void> setFirstTimeButtonOpen(bool value) async {
     _preferences!.setBool(firstTimeAppOpen, value);
+    if (kDebugMode) {
+      print("Trying to press the button?  $value");
+    }
   }
 
   void logout() {

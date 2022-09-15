@@ -60,7 +60,7 @@ class AuthControllers extends GetxController {
     final now = DateTime.now();
     pref = SharePref();
     await pref!.inits();
-    if (pref!.getFirstTimeOpen()) {
+    if (pref!.getFirstTimeButtonOpen()) {
       if (kDebugMode) {
         print("My First Time Using this app");
       }
@@ -101,7 +101,7 @@ class AuthControllers extends GetxController {
     }
   }
 
-  void updateIsFirstTime(bool value) {
+  void setFirstTimeButtonOpen(bool value) {
     pref!.setFirstTimeButtonOpen(value);
   }
 

@@ -96,7 +96,7 @@ class _OnboardingState extends State<Onboarding> {
                       borderRadius: BorderRadius.circular(50),
                       width: MediaQuery.of(context).size.width * 0.6,
                       onTap: () {
-                        controller.updateIsFirstTime(false);
+                        controller.setFirstTimeButtonOpen(false);
                         Get.to(() => const EmailPage());
                       },
                     ),
