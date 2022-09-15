@@ -90,7 +90,7 @@ class _CreateCellState extends State<CreateCell> {
               ),
               const Gap(20),
               customTitleText(
-                'Description',
+                'Add Cell Tags',
                 size: 14,
                 colors: AppColor().textColor,
               ),

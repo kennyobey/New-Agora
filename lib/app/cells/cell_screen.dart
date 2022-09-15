@@ -283,21 +283,21 @@ class _CellsScreenState extends State<CellsScreen> {
                         final random = Random();
                         final item = _cellController.allAvailableCell[index];
                         return otherCells(
-                          colors: colorList[random.nextInt(colorList.length)],
-                          groupId: item.groupId,
-                          groupName: item.groupName,
+                          groupId: item.groupId!,
+                          groupName: item.groupName!,
                           assetName: 'assets/svgs/bank.svg',
-                          assetName2: 'assets/svgs/people.svg',
-                          memberLength: item.members!,
+                          assetName3: 'assets/svgs/people.svg',
                           tags: item.tags!,
-                          time: item.createdAt!,
                           admin: item.admin!,
+                          time: item.createdAt!,
                           cellQuote: item.cellQuote!,
+                          memberLength: item.members!,
                           description: item.description!,
                           userName:
                               _authController.liveUser.value!.username == null
                                   ? 'No Username'
                                   : _authController.liveUser.value!.username!,
+                          colors: colorList[random.nextInt(colorList.length)],
                         );
                       });
                 } else if (_cellController.cellStatus == CellStatus.EMPTY) {
@@ -391,9 +391,9 @@ class _CellsScreenState extends State<CellsScreen> {
     String? assetName,
     String? userName,
     String? cellQuote,
-    String? assetName2,
-    List<String>? tags,
+    String? assetName3,
     String? description,
+    List<String>? tags,
     List<String>? memberLength,
   }) {
     return GestureDetector(
@@ -451,7 +451,7 @@ class _CellsScreenState extends State<CellsScreen> {
                   ),
                   const Gap(10),
                   customTitleText(
-                    groupName!,
+                    groupName ?? 'No group Name',
                     size: 14,
                     textAlign: TextAlign.left,
                     colors: AppColor().textColor,
@@ -461,7 +461,7 @@ class _CellsScreenState extends State<CellsScreen> {
                   Row(
                     children: [
                       SvgPicture.asset(
-                        assetName2!,
+                        assetName3!,
                         height: 16,
                         color: AppColor().textColor,
                       ),
