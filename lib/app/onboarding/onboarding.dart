@@ -4,6 +4,7 @@ import 'package:agora_care/app/authentication/email_page.dart';
 import 'package:agora_care/app/authentication/login_page.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/customWidgets.dart';
+import 'package:agora_care/services/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -19,7 +20,7 @@ class Onboarding extends StatefulWidget {
 }
 
 class _OnboardingState extends State<Onboarding> {
-  // final controller = Get.find<AuthServices>();
+  final controller = Get.find<AuthControllers>();
   bool isSignedIn = false;
 
   @override
@@ -95,6 +96,7 @@ class _OnboardingState extends State<Onboarding> {
                       borderRadius: BorderRadius.circular(50),
                       width: MediaQuery.of(context).size.width * 0.6,
                       onTap: () {
+                        controller.updateIsFirstTime(false);
                         Get.to(() => const EmailPage());
                       },
                     ),

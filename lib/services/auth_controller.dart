@@ -11,6 +11,7 @@ import 'package:agora_care/app/model/user_list_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
 import 'package:agora_care/core/constants.dart';
 import 'package:agora_care/helper/helper_function.dart';
+import 'package:agora_care/helper/sharedpreference.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -26,6 +27,7 @@ class AuthControllers extends GetxController {
   static AuthControllers to = Get.find();
   final bool isLoading = false;
   bool isEmailVerified = false;
+  SharePref? pref;
 
   final signupPhonenumberController = TextEditingController();
 
@@ -42,6 +44,8 @@ class AuthControllers extends GetxController {
   Rx<UserModel?> liveUser = Rx(null);
   UserModel? get users => liveUser.value;
 
+  UserModel? user;
+
   FirebaseAuth auth = FirebaseAuth.instance;
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -53,7 +57,22 @@ class AuthControllers extends GetxController {
   void onInit() async {
     super.onInit();
     final now = DateTime.now();
-    // FirebaseAuth.instance.signOut();
+    pref = SharePref();
+    await pref!.inits();
+    if (pref!.getFirstTimeOpen()) {
+      if (kDebugMode) {
+        print("My First Time Using this app");
+      }
+    } else {
+      if (kDebugMode) {
+        print("Not my First Time Using this app");
+      }
+      if (pref!.getUser() != null) {
+        user = pref!.getUser();
+        liveUser(user);
+      }
+    }
+
     if (FirebaseAuth.instance.currentUser != null) {
       final newUser =
           await getUserByModel(FirebaseAuth.instance.currentUser!.uid);
@@ -81,13 +100,13 @@ class AuthControllers extends GetxController {
     }
   }
 
+  void updateIsFirstTime(bool value) {
+    pref!.setFirstTimeButtonOpen(value);
+  }
+
   //
   Future<void> updateDataFirestore(
       String path, Map<String, String> dataNeedUpdate) async {
-    // String? token = await FirebaseMessaging.instance.getToken();
-    // await userDb.doc(FirebaseAuth.instance.currentUser!.uid).update(
-    //   {'fcm_token': token},
-    // );
     return _userDoc.doc(path).update(dataNeedUpdate);
   }
 
@@ -514,6 +533,7 @@ class AuthControllers extends GetxController {
       await HelperFunction.saveUserLoggedInStatus(false);
       await HelperFunction.saveUserEmailSF("");
       await auth.signOut();
+      pref!.logout();
       Get.offAll(() => const LoginPage());
     } catch (e) {
       return null;
@@ -530,6 +550,7 @@ class AuthControllers extends GetxController {
       await HelperFunction.saveUserEmailSF("");
       await auth.signOut();
       await user?.delete();
+      pref!.logout();
       final users = _userDoc.doc(userId).delete();
       // .then(
       //       (value) => Get.offAll(() => const LoginPage()),

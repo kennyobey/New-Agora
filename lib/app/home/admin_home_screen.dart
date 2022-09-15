@@ -93,6 +93,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
     });
   }
 
+  String greeting() {
+    final greetTime = DateTime.now().hour;
+    if (greetTime < 12) {
+      return 'Morning';
+    }
+    if (greetTime < 17) {
+      return 'Afternoon';
+    }
+    return 'Evening';
+  }
+
   @override
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
@@ -158,18 +169,32 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
               child: Obx(() {
                 return (_authController.liveUser.value!.role == null)
                     ? customTitleText(
-                        'No role yet',
+                        'No Name Yet',
                         size: 20,
                         spacing: -0.1,
                         fontWeight: FontWeight.w700,
                         colors: AppColor().filledTextField,
                       )
-                    : customTitleText(
-                        'Good afternoon, ${_authController.liveUser.value!.role}',
-                        size: 20,
-                        spacing: -0.1,
-                        fontWeight: FontWeight.w700,
-                        colors: AppColor().filledTextField,
+                    : Row(
+                        children: [
+                          customTitleText(
+                            'Good ${greeting()},',
+                            size: 20,
+                            spacing: -0.1,
+                            fontWeight: FontWeight.w700,
+                            colors: AppColor().filledTextField,
+                          ),
+                          const Gap(5),
+                          customTitleText(
+                            '${_authController.liveUser.value!.fullName}',
+                            size: 20,
+                            spacing: -0.1,
+                            fontWeight: FontWeight.w700,
+                            colors: AppColor().filledTextField,
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            textOverflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       );
               }),
             ),

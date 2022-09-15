@@ -56,10 +56,14 @@ class _SplashScreenState extends State<SplashScreen> {
               .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
 
           if (user.admin == true) {
+            controller.pref!.setFirstTimeButtonOpen(false);
             Get.offAll(() => AdminNavScreen());
           } else if (user.role == 'consultant') {
+            controller.pref!.setFirstTimeButtonOpen(false);
             Get.offAll(() => ConsultantNavScreen());
           } else {
+            controller.pref!.setFirstTimeButtonOpen(false);
+
             Get.offAll(() => UserNavScreen());
           }
         } else {

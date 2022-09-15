@@ -18,7 +18,6 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../home/home_screen.dart';
-import '../home/navigation_bars/nav_screen.dart';
 import '../profile/profile_screen.dart';
 
 class CellsScreen extends StatefulWidget {
@@ -64,7 +63,6 @@ class _CellsScreenState extends State<CellsScreen> {
   @override
   void initState() {
     super.initState();
-    // gettingUserData();
     _screens = [
       //Home Screen
       _authController.liveUser.value!.admin == true
@@ -112,78 +110,78 @@ class _CellsScreenState extends State<CellsScreen> {
         elevation: 0,
         toolbarHeight: 0,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-        onTap: (newIndex) async => {
-          if (newIndex == 1)
-            {}
-          else
-            {
-              setState(
-                () {
-                  setState(() {
-                    tabIndex = newIndex;
-                    _selectedIndex = tabIndex;
-                    // _selectPage;
-                  });
-                  Get.off(
-                    () => UserNavScreen(
-                      tabIndex: newIndex,
-                    ),
-                  );
-                },
-              ),
-            }
-        },
-        backgroundColor: AppColor().whiteColor,
-        currentIndex: _selectedIndex,
-        elevation: 20,
-        key: _scaffoldState,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).bottomAppBarColor,
-            icon: SvgPicture.asset(
-              'assets/svgs/home.svg',
-            ),
-            label: '',
-            tooltip: 'Home',
-            activeIcon: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                SvgPicture.asset('assets/svgs/home_filled.svg'),
-                SvgPicture.asset('assets/svgs/home.svg'),
-              ],
-            ),
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).bottomAppBarColor,
-            icon: SvgPicture.asset('assets/svgs/people.svg'),
-            label: '',
-            tooltip: 'Cells',
-            activeIcon: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                SvgPicture.asset('assets/svgs/people_filled.svg'),
-                SvgPicture.asset('assets/svgs/people.svg'),
-              ],
-            ),
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).bottomAppBarColor,
-            label: '',
-            tooltip: 'Users',
-            icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
-            activeIcon: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
-                SvgPicture.asset('assets/svgs/user-tag.svg'),
-              ],
-            ),
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+      //   onTap: (newIndex) async => {
+      //     if (newIndex == 1)
+      //       {}
+      //     else
+      //       {
+      //         setState(
+      //           () {
+      //             setState(() {
+      //               tabIndex = newIndex;
+      //               _selectedIndex = tabIndex;
+      //               // _selectPage;
+      //             });
+      //             Get.off(
+      //               () => UserNavScreen(
+      //                 tabIndex: newIndex,
+      //               ),
+      //             );
+      //           },
+      //         ),
+      //       }
+      //   },
+      //   backgroundColor: AppColor().whiteColor,
+      //   currentIndex: _selectedIndex,
+      //   elevation: 20,
+      //   key: _scaffoldState,
+      //   type: BottomNavigationBarType.fixed,
+      //   items: [
+      //     BottomNavigationBarItem(
+      //       backgroundColor: Theme.of(context).bottomAppBarColor,
+      //       icon: SvgPicture.asset(
+      //         'assets/svgs/home.svg',
+      //       ),
+      //       label: '',
+      //       tooltip: 'Home',
+      //       activeIcon: Stack(
+      //         alignment: AlignmentDirectional.center,
+      //         children: [
+      //           SvgPicture.asset('assets/svgs/home_filled.svg'),
+      //           SvgPicture.asset('assets/svgs/home.svg'),
+      //         ],
+      //       ),
+      //     ),
+      //     BottomNavigationBarItem(
+      //       backgroundColor: Theme.of(context).bottomAppBarColor,
+      //       icon: SvgPicture.asset('assets/svgs/people.svg'),
+      //       label: '',
+      //       tooltip: 'Cells',
+      //       activeIcon: Stack(
+      //         alignment: AlignmentDirectional.center,
+      //         children: [
+      //           SvgPicture.asset('assets/svgs/people_filled.svg'),
+      //           SvgPicture.asset('assets/svgs/people.svg'),
+      //         ],
+      //       ),
+      //     ),
+      //     BottomNavigationBarItem(
+      //       backgroundColor: Theme.of(context).bottomAppBarColor,
+      //       label: '',
+      //       tooltip: 'Users',
+      //       icon: SvgPicture.asset('assets/svgs/user-tag.svg'),
+      //       activeIcon: Stack(
+      //         alignment: AlignmentDirectional.center,
+      //         children: [
+      //           SvgPicture.asset('assets/svgs/user-tag_filled.svg'),
+      //           SvgPicture.asset('assets/svgs/user-tag.svg'),
+      //         ],
+      //       ),
+      //     ),
+      //   ],
+      // ),
       body: Container(
         color: AppColor().boxColor,
         width: MediaQuery.of(context).size.width,
@@ -225,14 +223,9 @@ class _CellsScreenState extends State<CellsScreen> {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.horizontal,
-                      // itemCount: imageName.length,
                       itemCount: _cellController.allAvailableCell.length,
                       itemBuilder: (BuildContext context, int index) {
                         final item = _cellController.allAvailableCell[index];
-                        // if (kDebugMode) {
-                        //   print('Cell is now ${item.groupName!.length}');
-                        //   print("group id for cell is ${item.groupId}");
-                        // }
                         final random = Random();
                         return recommendedCells(
                           tags: item.tags!,
@@ -283,13 +276,10 @@ class _CellsScreenState extends State<CellsScreen> {
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.vertical,
                       itemCount: _cellController.allAvailableCell.length,
-                      // itemCount: colorList.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               childAspectRatio: 5 / 3.7, crossAxisCount: 2),
                       itemBuilder: (BuildContext context, int index) {
-                        // int reverseIndex =
-                        //     _cellController.allAvailableCell.length - index - 1;
                         final random = Random();
                         final item = _cellController.allAvailableCell[index];
                         return otherCells(
@@ -315,11 +305,6 @@ class _CellsScreenState extends State<CellsScreen> {
                 } else {
                   return customDescriptionText('No Available Cell to join');
                 }
-                // } else {
-                //   return Center(
-                //     child: CircularProgressIndicator(
-                //         color: Theme.of(context).primaryColor),
-                // );
               }),
             ),
           ],
@@ -439,27 +424,6 @@ class _CellsScreenState extends State<CellsScreen> {
           ),
           child: Column(
             children: [
-              // Container(
-              //   width: MediaQuery.of(context).size.width * 0.1,
-              //   padding:
-              //       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              //   margin: const EdgeInsets.only(top: 10, bottom: 10),
-              //   decoration: BoxDecoration(
-              //     color: colors,
-              //     borderRadius: BorderRadius.circular(10),
-              //   ),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     mainAxisAlignment: MainAxisAlignment.start,
-              //     children: [
-              //       SvgPicture.asset(
-              //         assetName!,
-              //         height: 18,
-              //         color: AppColor().whiteColor,
-              //       ),
-              //     ],
-              //   ),
-              // ),
               const Gap(5),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
