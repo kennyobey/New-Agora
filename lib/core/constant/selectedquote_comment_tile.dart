@@ -1,5 +1,6 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, unused_field
 
+import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/quote_controller.dart';
@@ -14,7 +15,7 @@ import 'package:intl/intl.dart';
 
 import '../customWidgets.dart';
 
-class QuoteCommentTile extends StatefulWidget {
+class SelectedQuoteCommentTile extends StatefulWidget {
   final String message;
   final String messageid;
   final String sender;
@@ -23,7 +24,7 @@ class QuoteCommentTile extends StatefulWidget {
   final List<dynamic> like;
   final bool sentByMe;
 
-  const QuoteCommentTile({
+  const SelectedQuoteCommentTile({
     Key? key,
     required this.messageid,
     required this.message,
@@ -35,21 +36,25 @@ class QuoteCommentTile extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<QuoteCommentTile> createState() => _QuoteCommentTileState();
+  State<SelectedQuoteCommentTile> createState() =>
+      _SelectedQuoteCommentTileState();
 }
 
-class _QuoteCommentTileState extends State<QuoteCommentTile> {
+class _SelectedQuoteCommentTileState extends State<SelectedQuoteCommentTile> {
   final _authController = Get.find<AuthControllers>();
   final _quoteController = Get.find<QuoteControllers>();
   bool isLiked = false;
   Stream<QuerySnapshot>? chat;
 
+  SelectedCommentModel? _messageModel;
+
   @override
   void initState() {
-    _quoteController.quotesCollection
+    _quoteController.messagesCollection
         .doc(widget.like.toString())
         .snapshots()
         .listen((event) {
+      _messageModel = SelectedCommentModel.fromJson(event.data(), event.id);
       setState(() {});
     });
     super.initState();

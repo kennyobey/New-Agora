@@ -34,7 +34,6 @@ class _AdminNavScreenState extends State<AdminNavScreen> {
 
       // Cells Screens
       const AdminCellsScreen(),
-      // showGlobalBottomSheet(context),
 
       // Profile Screen
       const AdminProfileScreen(),
@@ -126,11 +125,12 @@ class _AdminNavScreenState extends State<AdminNavScreen> {
           Get.close(1);
         },
         next: () async {
-          // await Get.to(() => AdminNavScreen(tabIndex: 1));
+          _authController.setFirstTimeButtonOpen(true);
           await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => AdminNavScreen(tabIndex: 2)));
+
           if (kDebugMode) {
             print('next pressed');
           }

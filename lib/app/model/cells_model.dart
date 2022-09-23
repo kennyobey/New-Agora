@@ -18,7 +18,6 @@ class CellModel {
     this.groupIcon,
     this.groupName,
     this.email,
-    this.fullName,
     this.description,
     this.recentMessage,
     this.recentMessageSender,
@@ -28,6 +27,7 @@ class CellModel {
     this.admin,
     this.createdAt,
     this.updatedAt,
+    this.cellQuote,
   });
 
   final String? id;
@@ -38,7 +38,6 @@ class CellModel {
   final String? groupName;
   final String? description;
   final String? email;
-  final String? fullName;
   final String? recentMessage;
   final String? recentMessageSender;
   final String? recentMessageTime;
@@ -47,6 +46,7 @@ class CellModel {
   final String? admin;
   DateTime? createdAt;
   DateTime? updatedAt;
+  final String? cellQuote;
 
   factory CellModel.fromJson(dynamic json, String id) => CellModel(
         id: id,
@@ -55,7 +55,6 @@ class CellModel {
         groupIcon: json["groupIcon"],
         groupName: json["groupName"],
         email: json["email"],
-        fullName: json["fullName"],
         description: json["description"],
         recentMessageSender: json["recentMessageSender"],
         recentMessageTime: json["recentMessageTime"],
@@ -74,6 +73,7 @@ class CellModel {
         updatedAt: json["updatedAt"] == null
             ? null
             : DateTime.parse(json["updatedAt"]),
+        cellQuote: json["cellQuote"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -83,7 +83,6 @@ class CellModel {
         "groupIcon": groupIcon,
         "groupName": groupName,
         "email": email,
-        "fullName": fullName,
         "description": description,
         "recentMessageSender": recentMessageSender,
         "members":
@@ -95,5 +94,6 @@ class CellModel {
         "recentMessageTime": recentMessageTime,
         "createdAt": createdAt == null ? null : createdAt!.toIso8601String(),
         "updatedAt": updatedAt == null ? null : updatedAt!.toIso8601String(),
+        "cellQuote": cellQuote,
       };
 }

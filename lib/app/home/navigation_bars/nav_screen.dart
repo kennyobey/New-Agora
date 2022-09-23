@@ -26,10 +26,11 @@ class _UserNavScreenState extends State<UserNavScreen> {
   late List<Widget> _screens;
 
   final _scaffoldState = GlobalKey();
-
+  // SharePref? pref;
   @override
   void initState() {
-    // checkAdmin();
+    // pref = SharePref();
+    // await pref!.inits();
 
     _screens = [
       //Home Screen
@@ -80,10 +81,25 @@ class _UserNavScreenState extends State<UserNavScreen> {
         onTap: (newIndex) async => {
           if (newIndex == 1)
             {
-              await showGlobalBottomSheet(context),
-              setState(() {
-                //
-              })
+              if (_authController.pref!.getFirstTimeButtonOpen())
+                {
+                  {
+                    await showGlobalBottomSheet(context),
+                    setState(() {
+                      //
+                    })
+                  }
+                }
+              else
+                {
+                  setState(() {
+                    setState(() {
+                      widget.tabIndex = newIndex;
+                      _selectedIndex = widget.tabIndex!;
+                      // _selectPage;
+                    });
+                  })
+                }
             }
           else
             {
@@ -185,7 +201,7 @@ class _UserNavScreenState extends State<UserNavScreen> {
           Get.close(1);
         },
         next: () async {
-          // await Get.to(() => UserNavScreen(tabIndex: 1));
+          _authController.setFirstTimeButtonOpen(true);
           await Navigator.push(
               context,
               MaterialPageRoute(

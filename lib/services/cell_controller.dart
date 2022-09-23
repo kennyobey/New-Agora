@@ -3,6 +3,7 @@
 import 'package:agora_care/app/model/cells_model.dart';
 import 'package:agora_care/app/model/message_model.dart';
 import 'package:agora_care/app/model/user_model.dart';
+import 'package:agora_care/core/constants.dart';
 import 'package:agora_care/helper/helper_function.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:agora_care/services/database_service.dart';
@@ -46,7 +47,9 @@ class CellControllers extends GetxController {
       .collection("cells")
       .doc()
       .collection('messages');
-  final _cellsDoc = FirebaseFirestore.instance.collection("cells");
+  final _cellDoc = FirebaseFirestore.instance.collection("cells");
+
+  final _userDoc = FirebaseFirestore.instance.collection("users");
 
   @override
   void onInit() async {
@@ -68,6 +71,9 @@ class CellControllers extends GetxController {
               newUser.weeklyLoginTime!.difference(now).inDays >= 1) {
             _newCell.doc(cellCollection.id).update({
               "members": memberAdd(cellCollection.id),
+            });
+            _userDoc.doc(userCollection.id).update({
+              "cellsJoined": memberCellAdd(userCollection.id),
             });
             _newMessage.doc(messagesCollection.id).update({
               "like": likePost(cellCollection.id, messagesCollection.id),
@@ -91,7 +97,7 @@ class CellControllers extends GetxController {
       print("member id is $groupId");
     }
     FirebaseFirestore.instance.runTransaction((transaction) async {
-      transaction.update(_cellsDoc.doc(groupId), {
+      transaction.update(_cellDoc.doc(groupId), {
         "members":
             FieldValue.arrayUnion([_authController.liveUser.value!.uid!]),
       });
@@ -103,9 +109,31 @@ class CellControllers extends GetxController {
       print("member id is $groupId");
     }
     FirebaseFirestore.instance.runTransaction((transaction) async {
-      transaction.update(_cellsDoc.doc(groupId), {
+      transaction.update(_cellDoc.doc(groupId), {
         "members":
             FieldValue.arrayRemove([_authController.liveUser.value!.uid!]),
+      });
+    });
+  }
+
+  Future memberCellAdd(String groupId) async {
+    if (kDebugMode) {
+      print("group id to add is $groupId");
+    }
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_userDoc.doc(_authController.liveUser.value!.uid), {
+        "cellsJoined": FieldValue.arrayUnion([groupId]),
+      });
+    });
+  }
+
+  Future memberCellRemove(String groupId) async {
+    if (kDebugMode) {
+      print("group id to remove is $groupId");
+    }
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.update(_userDoc.doc(groupId), {
+        "cellsJoined": FieldValue.arrayRemove([groupId]),
       });
     });
   }
@@ -117,9 +145,6 @@ class CellControllers extends GetxController {
         "like": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
       });
     });
-    // _newCell.doc(cellId).collection('messages').doc(messageId).update({
-    //   "like": FieldValue.arrayUnion([_authController.liveUser.value!.uid!])
-    // });
   }
 
   Future unLikePost(String cellId, String messageId) async {
@@ -129,9 +154,6 @@ class CellControllers extends GetxController {
         "like": FieldValue.arrayRemove([_authController.liveUser.value!.uid!])
       });
     });
-    // _newCell.doc(cellId).collection('messages').doc(messageId).update({
-    //   "like": FieldValue.arrayRemove([_authController.liveUser.value!.uid!])
-    // });
   }
 
   Future comment(String cellId, String messageId) async {
@@ -195,7 +217,7 @@ class CellControllers extends GetxController {
           .toList());
 
   // creating a group
-  Future createGroup({
+  Future createCell({
     required String email,
     required String admin,
     required String groupId,
@@ -217,6 +239,7 @@ class CellControllers extends GetxController {
         tags: tags,
         admin: admin,
         recentMessage: '',
+        cellQuote: '',
         recentMessageSender: '',
         createdAt: DateTime.now(),
       );
@@ -243,7 +266,7 @@ class CellControllers extends GetxController {
     }
   }
 
-  // function -> bool
+  // Function -> bool
   Future<bool> isUserJoined(
     String groupName,
     String groupId,
@@ -297,6 +320,34 @@ class CellControllers extends GetxController {
         }
         _availableCell(list);
       });
+    } catch (ex) {
+      //
+    }
+  }
+
+  // Create Quotes
+  Future createCellQuote({
+    required String cellId,
+    required String cellQuote,
+  }) async {
+    // _quoteStatus(QuoteStatus.LOADING);
+    try {
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.update(_cellDoc.doc(cellId), {
+          "cellQuote": cellQuote,
+        });
+      });
+
+      await sendHttpNotification(
+          title: 'Agora Care', body: 'Todays Quote Has Been Posted');
+
+      await sendFirebaseNotification(
+        avatar:
+            "https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80",
+        message: 'Todays Quote has been posted',
+        id: cellCollection.id,
+        userId: _authController.liveUser.value!.uid!,
+      );
     } catch (ex) {
       //
     }

@@ -23,9 +23,9 @@ class _CreateCellState extends State<CreateCell> {
   final _authController = Get.find<AuthControllers>();
   final _cellController = Get.find<CellControllers>();
 
-  final _chipController = TextEditingController();
   final _cellDescription = TextEditingController();
   final _cellNameController = TextEditingController();
+  // final _tagController = TextEditingController();
 
   bool _isLoading = false;
 
@@ -89,16 +89,22 @@ class _CreateCellState extends State<CreateCell> {
                 fillColor: AppColor().fillColor,
               ),
               const Gap(20),
+              customTitleText(
+                'Add Cell Tags',
+                size: 14,
+                colors: AppColor().textColor,
+              ),
+              const Gap(5),
               ChipTags(
                 list: _myListCustom,
-                separator: '',
+                separator: ' ',
                 createTagOnSubmit: true,
                 textColor: Colors.white,
                 iconColor: Colors.white,
-                // inputController: _chipController,
                 keyboardType: TextInputType.text,
                 chipPosition: ChipPosition.above,
                 chipColor: AppColor().primaryColor2,
+                // inputController: _tagController,
                 decoration: InputDecoration(
                   fillColor: AppColor().whiteColor,
                   filled: true,
@@ -117,7 +123,7 @@ class _CreateCellState extends State<CreateCell> {
                       borderSide: BorderSide(
                           color: AppColor().lightTextColor, width: 1),
                       borderRadius: BorderRadius.circular(10)),
-                  hintText: "Enter Cell Tags",
+                  hintText: "Enter Cell Tags and press enter",
                   hintStyle: GoogleFonts.poppins(
                     color: Colors.black54,
                     fontSize: 14,
@@ -140,7 +146,7 @@ class _CreateCellState extends State<CreateCell> {
                     setState(() {
                       _isLoading = true;
                     });
-                    _cellController.createGroup(
+                    _cellController.createCell(
                       admin: _authController.liveUser.value!.role!,
                       email: _authController.liveUser.value!.email!,
                       groupIcon: '',

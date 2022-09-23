@@ -395,17 +395,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Get.to(() => const EditProfile());
                       },
                     ),
-              const Gap(15),
-              CustomContainer(
-                trailing: SvgPicture.asset(
-                  'assets/svgs/keyboard_arrow_right.svg',
-                  height: 14,
-                ),
-                titleText: 'Settings',
-                onTap: () {
-                  // Get.to(() => SettingsPage());
-                },
-              ),
+              // const Gap(15),
+              // CustomContainer(
+              //   trailing: SvgPicture.asset(
+              //     'assets/svgs/keyboard_arrow_right.svg',
+              //     height: 14,
+              //   ),
+              //   titleText: 'Settings',
+              //   onTap: () {
+              //     // Get.to(() => SettingsPage());
+              //   },
+              // ),
               (_authController.liveUser.value!.admin == true ||
                       _authController.liveUser.value!.role == 'consultant')
                   ? Container()

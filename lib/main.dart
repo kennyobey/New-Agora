@@ -19,21 +19,6 @@ import 'package:get/get.dart';
 
 import 'routes/app_router.dart';
 
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await Firebase.initializeApp();
-//   await SystemChrome.setPreferredOrientations([
-//     DeviceOrientation.portraitUp,
-//     DeviceOrientation.portraitDown,
-//   ]);
-//   runApp(
-//     DevicePreview(
-//       enabled: true,
-//       builder: (BuildContext context) => const AgoraCare(),
-//     ),
-//   );
-// }
-
 final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -149,6 +134,7 @@ void main() async {
     sound: true,
   );
   EasyLoading.init();
+  // await SharePref.init();
   runApp(const AgoraCare());
 }
 

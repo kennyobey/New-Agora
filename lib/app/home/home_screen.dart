@@ -45,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String email = "";
   String groupName = "";
   Stream? groups;
+  QuoteModel? _quoteModel;
   bool isJoined = false;
 
   DateTime greetTime = DateTime.now().toLocal();
@@ -69,6 +70,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _notifController.registerNotification();
     _notifController.configLocalNotification();
+    _quoteContoller.getDailyQuote().listen((event) {
+      if (event.docs.isNotEmpty) {
+        _quoteModel = QuoteModel.fromJson(event.docs.last, event.docs.last.id);
+        setState(() {});
+      }
+    });
     // _quoteContoller.getQuotes();
   }
 
@@ -246,9 +253,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   Get.to(
                     () => QuoteDetails(
-                      dailyQuote: _quoteContoller.allQuotes.last.dailyQuote!,
-                      groupId: _quoteContoller.allQuotes.last.groupId!,
-                      groupName: _quoteContoller.allQuotes.last.dailyQuote!,
+                      dailyQuote: _quoteModel!.dailyQuote!,
+                      groupId: _quoteModel!.groupId!,
+                      groupName: _quoteModel!.dailyQuote!,
                       userName: _authController.liveUser.value!.username!,
                       userImage: _authController.liveUser.value!.profilePic!,
                       assetName:
@@ -261,22 +268,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: Stack(
                   children: [
-                    SizedBox(
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
                       width: MediaQuery.of(context).size.width,
-                      child: Hero(
-                        tag: "img",
-                        child: SvgPicture.asset(
-                          'assets/svgs/quote.svg',
-                          height: MediaQuery.of(context).size.height * 0.2,
-                          width: MediaQuery.of(context).size.width,
-                        ),
+                      height: MediaQuery.of(context).size.height * 0.2,
+                      decoration: BoxDecoration(
+                        color: AppColor().primaryColor,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ),
-                    Positioned(
-                      top: 30,
-                      left: 70,
-                      right: 70,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           StreamBuilder(
                             stream: _quoteContoller.getDailyQuote(),
@@ -284,24 +286,60 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (snapshot.hasData) {
                                 if (snapshot.data != null &&
                                     snapshot.data!.docs.isNotEmpty) {
-                                  return Center(
-                                    child: customDescriptionText(
-                                      snapshot.data!.docs.last
-                                          .data()!['dailyQuote']
-                                          .toString(),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().whiteColor,
-                                    ),
+                                  return Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      customDescriptionText(
+                                        snapshot.data!.docs.last
+                                            .data()!['dailyQuote']
+                                            .toString(),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        textAlign: TextAlign.center,
+                                        colors: AppColor().whiteColor,
+                                      ),
+                                      const Gap(20),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/svgs/fluent_tap-single-48-filled.svg',
+                                            height: 10,
+                                          ),
+                                          const Gap(5),
+                                          customDescriptionText(
+                                            'TAP to join the conversation'
+                                                .toUpperCase(),
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                            textAlign: TextAlign.center,
+                                            colors: AppColor()
+                                                .whiteColor
+                                                .withOpacity(0.4),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   );
                                 } else {
-                                  return customDescriptionText(
-                                    'No Quote Today',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    textAlign: TextAlign.center,
-                                    colors: AppColor().whiteColor,
+                                  return Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      customDescriptionText(
+                                        'No Quote Today',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        textAlign: TextAlign.center,
+                                        colors: AppColor().whiteColor,
+                                      ),
+                                    ],
                                   );
                                 }
                               } else {
@@ -316,9 +354,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
+                    Positioned(
+                      top: 0,
+                      right: 30,
+                      child: SvgPicture.asset('assets/svgs/quoteTag.svg'),
+                    ),
                   ],
                 ),
               ),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -329,9 +373,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Obx(() {
                     return customDescriptionText(
                       _quoteContoller.allQuotes.isNotEmpty &&
-                              _quoteContoller.allQuotes.last.views != null
-                          ? _quoteContoller.allQuotes.last.views!.length
-                              .toString()
+                              _quoteModel!.views != null
+                          ? _quoteModel!.views!.length.toString()
                           : "0",
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -346,8 +389,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Obx(() {
                     return customDescriptionText(
                       _quoteContoller.allQuotes.isNotEmpty &&
-                              _quoteContoller.allQuotes.last.reply != null
-                          ? _quoteContoller.allQuotes.last.reply!.toString()
+                              _quoteModel!.reply != null
+                          ? _quoteModel!.reply!.toString()
                           : "0",
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -362,9 +405,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Obx(() {
                     return customDescriptionText(
                       _quoteContoller.allQuotes.isNotEmpty &&
-                              _quoteContoller.allQuotes.last.share != null
-                          ? _quoteContoller.allQuotes.last.share!.length
-                              .toString()
+                              _quoteModel!.share != null
+                          ? _quoteModel!.share!.length.toString()
                           : "0",
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -426,6 +468,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           time: item.createdAt,
                           groupId: item.groupId,
                           memberId: item.members,
+                          cellQuote: item.cellQuote,
                           colors: colorList[random.nextInt(colorList.length)],
                           groupName: item.groupName,
                           description: item.description,
@@ -548,6 +591,7 @@ class _HomeScreenState extends State<HomeScreen> {
     String? userName,
     String? groupName,
     String? assetName,
+    String? cellQuote,
     String? description,
     List<String>? tags,
     List<String>? memberId,
@@ -571,6 +615,7 @@ class _HomeScreenState extends State<HomeScreen> {
             admin: admin!,
             groupId: groupId,
             userName: userName,
+            cellQuote: cellQuote!,
             groupName: groupName,
             assetName: assetName!,
             memberList: memberId!,

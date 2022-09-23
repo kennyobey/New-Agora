@@ -91,6 +91,17 @@ class _ConsultantHomeState extends State<ConsultantHome>
     });
   }
 
+  String greeting() {
+    final greetTime = DateTime.now().hour;
+    if (greetTime < 12) {
+      return 'Morning';
+    }
+    if (greetTime < 17) {
+      return 'Afternoon';
+    }
+    return 'Evening';
+  }
+
   @override
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
@@ -118,18 +129,32 @@ class _ConsultantHomeState extends State<ConsultantHome>
               child: Obx(() {
                 return (_authController.liveUser.value!.role == null)
                     ? customTitleText(
-                        'No role yet',
+                        'No Name Yet',
                         size: 20,
                         spacing: -0.1,
                         fontWeight: FontWeight.w700,
                         colors: AppColor().filledTextField,
                       )
-                    : customTitleText(
-                        'Good afternoon, ${_authController.liveUser.value!.role}',
-                        size: 20,
-                        spacing: -0.1,
-                        fontWeight: FontWeight.w700,
-                        colors: AppColor().filledTextField,
+                    : Row(
+                        children: [
+                          customTitleText(
+                            'Good ${greeting()},',
+                            size: 20,
+                            spacing: -0.1,
+                            fontWeight: FontWeight.w700,
+                            colors: AppColor().filledTextField,
+                          ),
+                          const Gap(5),
+                          customTitleText(
+                            '${_authController.liveUser.value!.fullName}',
+                            size: 20,
+                            spacing: -0.1,
+                            fontWeight: FontWeight.w700,
+                            colors: AppColor().filledTextField,
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            textOverflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       );
               }),
             ),
@@ -156,19 +181,17 @@ class _ConsultantHomeState extends State<ConsultantHome>
               },
               child: Stack(
                 children: [
-                  SizedBox(
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
                     width: MediaQuery.of(context).size.width,
-                    child: SvgPicture.asset(
-                      'assets/svgs/quote.svg',
-                      height: MediaQuery.of(context).size.height * 0.2,
-                      width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    decoration: BoxDecoration(
+                      color: AppColor().primaryColor,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  Positioned(
-                    top: 60,
-                    left: 70,
-                    right: 70,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         StreamBuilder(
                           stream: _quoteContoller.getDailyQuote(),
@@ -176,22 +199,58 @@ class _ConsultantHomeState extends State<ConsultantHome>
                             if (snapshot.hasData) {
                               if (snapshot.data != null &&
                                   snapshot.data!.docs.isNotEmpty) {
-                                return customDescriptionText(
-                                  snapshot.data!.docs.last
-                                      .data()!['dailyQuote']
-                                      .toString(),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  textAlign: TextAlign.center,
-                                  colors: AppColor().whiteColor,
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    customDescriptionText(
+                                      snapshot.data!.docs.last
+                                          .data()!['dailyQuote']
+                                          .toString(),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      textAlign: TextAlign.center,
+                                      colors: AppColor().whiteColor,
+                                    ),
+                                    const Gap(20),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/svgs/fluent_tap-single-48-filled.svg',
+                                          height: 10,
+                                        ),
+                                        const Gap(5),
+                                        customDescriptionText(
+                                          'TAP to join the conversation'
+                                              .toUpperCase(),
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w700,
+                                          textAlign: TextAlign.center,
+                                          colors: AppColor()
+                                              .whiteColor
+                                              .withOpacity(0.4),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 );
                               } else {
-                                return customDescriptionText(
-                                  'No Quote Today',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  textAlign: TextAlign.center,
-                                  colors: AppColor().whiteColor,
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    customDescriptionText(
+                                      'No Quote Today',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      textAlign: TextAlign.center,
+                                      colors: AppColor().whiteColor,
+                                    ),
+                                  ],
                                 );
                               }
                             } else {
@@ -206,9 +265,15 @@ class _ConsultantHomeState extends State<ConsultantHome>
                       ],
                     ),
                   ),
+                  Positioned(
+                    top: 0,
+                    right: 30,
+                    child: SvgPicture.asset('assets/svgs/quoteTag.svg'),
+                  ),
                 ],
               ),
             ),
+            const Gap(10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -345,6 +410,7 @@ class _ConsultantHomeState extends State<ConsultantHome>
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
                                             Cells(
+                                              cellQuote: item.cellQuote!,
                                               members: member == null
                                                   ? 'No members yet'
                                                   : member.toString(),

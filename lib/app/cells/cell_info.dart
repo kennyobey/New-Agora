@@ -20,6 +20,7 @@ import 'package:intl/intl.dart';
 class CellInfo extends StatefulWidget {
   final DateTime time;
   final String admin;
+  final String cellQuote;
   final String groupId;
   final String userName;
   final String groupName;
@@ -33,6 +34,7 @@ class CellInfo extends StatefulWidget {
     required this.time,
     required this.admin,
     required this.groupId,
+    required this.cellQuote,
     required this.groupName,
     required this.userName,
     required this.assetName,
@@ -226,80 +228,15 @@ class _CellInfoState extends State<CellInfo> {
                       }),
                 );
               } else {
-                return customDescriptionText('No Tage  Available');
+                return Center(
+                  child: customDescriptionText('No Tags Available'),
+                );
               }
             }),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.start,
-            //   children: [
-            //     Container(
-            //       height: 35,
-            //       width: 70,
-            //       decoration: BoxDecoration(color: AppColor().tagButton),
-            //       alignment: Alignment.center,
-            //       child: customDescriptionText(
-            //         (widget.tags.length == null || widget.tags.length == '')
-            //             ? ''
-            //             : widget.tags.first,
-            //         fontSize: 14,
-            //         fontWeight: FontWeight.w400,
-            //         colors: AppColor().filledTextField,
-            //         textAlign: TextAlign.center,
-            //       ),
-            //     ),
-            //     const Gap(10),
-            // Container(
-            //   height: 35,
-            //   width: 70,
-            //   decoration: BoxDecoration(color: AppColor().tagButton),
-            //   alignment: Alignment.center,
-            //   child: customDescriptionText(
-            //     (widget.tags.length == null || widget.tags.length == '')
-            //         ? ''
-            //         : widget.tags[1],
-            //     fontSize: 14,
-            //     fontWeight: FontWeight.w400,
-            //     colors: AppColor().filledTextField,
-            //     textAlign: TextAlign.center,
-            //   ),
-            // ),
-            // const Gap(10),
-            // Container(
-            //   height: 35,
-            //   width: 70,
-            //   decoration: BoxDecoration(color: AppColor().tagButton),
-            //   alignment: Alignment.center,
-            //   child: customDescriptionText(
-            //     (widget.tags.length == null || widget.tags.length == '')
-            //         ? ''
-            //         : widget.tags[2],
-            //     fontSize: 14,
-            //     fontWeight: FontWeight.w400,
-            //     colors: AppColor().filledTextField,
-            //     textAlign: TextAlign.center,
-            //   ),
-            // ),
-            // const Gap(10),
-            // Container(
-            //   height: 35,
-            //   width: 70,
-            //   decoration: BoxDecoration(color: AppColor().tagButton),
-            //   alignment: Alignment.center,
-            //   child: customDescriptionText(
-            //     (widget.tags.length == null || widget.tags.length == '')
-            //         ? ''
-            //         : widget.tags.last,
-            //     fontSize: 14,
-            //     fontWeight: FontWeight.w400,
-            //     colors: AppColor().filledTextField,
-            //     textAlign: TextAlign.center,
-            //   ),
-            // ),
-            //   ],
-            // ),
             const Gap(30),
             CustomFillButton(
-              buttonText: _authController.liveUser.value!.admin == true
+              buttonText: (_authController.liveUser.value!.admin == true ||
+                      _authController.liveUser.value!.role == 'consultant')
                   ? 'View Cells'
                   : 'Join Cells',
               textColor: AppColor().button1Color,
@@ -308,9 +245,22 @@ class _CellInfoState extends State<CellInfo> {
               onTap: () async {
                 if (kDebugMode) {
                   print(
-                      '${widget.userName} is Joining ${widget.groupName} Cell');
+                      '${widget.userName} is Joining ${widget.groupName} Cell with ID ${widget.groupId}');
                 }
-                await _cellController.memberAdd(widget.groupId);
+                // if (_authController.liveUser.value!.cellsJoined!
+                //     .contains(widget.groupId)) {
+                //   Get.snackbar('Alert', 'You are already in a cell');
+                // } else {
+                // (_authController.liveUser.value!.admin == true ||
+                //         _authController.liveUser.value!.role == 'consultant')
+                //     ?
+                _cellController.memberCellAdd(widget.groupId);
+                //     : null;
+                // (_authController.liveUser.value!.admin != true ||
+                //         _authController.liveUser.value!.role != 'consultant')
+                //     ?
+                _cellController.memberAdd(widget.groupId);
+                // : null;
                 Get.to(
                   () => ChatPage(
                     admin: widget.admin,
@@ -319,15 +269,17 @@ class _CellInfoState extends State<CellInfo> {
                     member: widget.memberList,
                     groupName: widget.groupName,
                     assetName: widget.assetName,
+                    cellQuote: widget.cellQuote,
                   ),
                 );
+                // }
               },
             ),
             const Gap(30),
             Row(
               children: [
                 customDescriptionText(
-                  'Similar Cells'.toUpperCase(),
+                  'Other Cells'.toUpperCase(),
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   colors: AppColor().filledTextField,
@@ -359,9 +311,14 @@ class _CellInfoState extends State<CellInfo> {
                         // }
                         final random = Random();
                         return recommendedCells(
-                          admin: item.admin!,
+                          tags: item.tags,
+                          admin: item.admin,
+                          time: item.createdAt,
                           groupId: item.groupId,
+                          cellQuote: item.cellQuote,
                           groupName: item.groupName,
+                          description: item.description,
+                          memberId: item.members,
                           assetName: 'assets/svgs/bank.svg',
                           colors: colorList[random.nextInt(colorList.length)],
                           userName: _authController.liveUser.value!.username!,
@@ -380,26 +337,60 @@ class _CellInfoState extends State<CellInfo> {
   GestureDetector recommendedCells({
     Color? colors,
     String? admin,
+    DateTime? time,
     String? groupId,
     String? groupName,
     String? assetName,
     String? userName,
+    String? cellQuote,
+    String? description,
+    List<String>? tags,
+    List<String>? memberId,
   }) {
     return GestureDetector(
       onTap: () {
         if (kDebugMode) {
           print('${widget.userName} is entering ${widget.groupName} cell');
         }
-        Get.to(
-          () => ChatPage(
-            admin: admin!,
-            groupId: groupId!,
-            groupName: groupName!,
-            userName: userName!,
-            assetName: assetName!,
-            member: widget.memberList,
-          ),
-        );
+        // Get.to(
+        //   () => ChatPage(
+        //     admin: admin!,
+        //     groupId: groupId!,
+        //     groupName: groupName!,
+        //     userName: userName!,
+        //     assetName: assetName!,
+        //     member: widget.memberList,
+        //   ),
+        // );
+        // Get.to(
+        //   () => CellInfo(
+        //     tags: tags!,
+        //     time: time!,
+        //     admin: admin!,
+        //     groupId: groupId!,
+        //     userName: userName!,
+        //     groupName: groupName!,
+        //     assetName: assetName!,
+        //     memberList: widget.memberList,
+        //     description: description!,
+        //   ),
+        // );
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CellInfo(
+                      tags: tags!,
+                      time: time!,
+                      admin: admin!,
+                      cellQuote: cellQuote!,
+                      groupId: groupId!,
+                      userName: userName!,
+                      groupName: groupName!,
+                      assetName: assetName!,
+                      memberList: widget.memberList,
+                      description: description!,
+                    )));
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 10, bottom: 10),
@@ -488,6 +479,7 @@ class _CellInfoState extends State<CellInfo> {
             userName: userName!,
             assetName: assetName!,
             member: widget.memberList,
+            cellQuote: widget.cellQuote,
           ),
         );
       },

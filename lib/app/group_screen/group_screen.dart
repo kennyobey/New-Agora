@@ -13,7 +13,8 @@ import '../../services/database_service.dart';
 import 'searchpage.dart';
 
 class GroupScreen extends StatefulWidget {
-  const GroupScreen({Key? key}) : super(key: key);
+  final String cellQuote;
+  const GroupScreen({Key? key, required this.cellQuote}) : super(key: key);
 
   @override
   State<GroupScreen> createState() => _GroupScreenState();
@@ -69,7 +70,8 @@ class _GroupScreenState extends State<GroupScreen> {
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () => Get.to(() => const SearchPage()),
+            onPressed: () =>
+                Get.to(() => SearchPage(cellQuote: widget.cellQuote)),
             icon: Icon(
               CupertinoIcons.search,
               color: AppColor().primaryColor,
@@ -210,6 +212,7 @@ class _GroupScreenState extends State<GroupScreen> {
                 itemBuilder: (context, index) {
                   int reverseIndex = snapshot.data['groups'].length - index - 1;
                   return GroupTile(
+                      cellQuote: widget.cellQuote,
                       groupId: getId(snapshot.data['groups'][reverseIndex]),
                       groupName: getName(snapshot.data['groups'][reverseIndex]),
                       userName: snapshot.data['email']);

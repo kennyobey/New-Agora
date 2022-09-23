@@ -87,3 +87,47 @@ class CommentModel {
             comment == null ? null : List<dynamic>.from(comment!.map((x) => x)),
       };
 }
+
+SelectedCommentModel selectedCommentModelFromJson(String str) =>
+    SelectedCommentModel.fromJson(json.decode(str), '');
+
+String selectedCommentModelToJson(SelectedCommentModel data) =>
+    json.encode(data.toJson());
+
+class SelectedCommentModel {
+  SelectedCommentModel({
+    this.message,
+    this.sender,
+    this.time,
+    this.like,
+    this.comment,
+  });
+
+  final String? message;
+  final String? sender;
+  DateTime? time;
+  final List<dynamic>? like;
+  final List<dynamic>? comment;
+
+  factory SelectedCommentModel.fromJson(dynamic json, String id) =>
+      SelectedCommentModel(
+        message: json["message"],
+        sender: json["sender"],
+        time: json["time"] == null ? null : DateTime.parse(json["time"]),
+        like: json["like"] == null
+            ? null
+            : List<dynamic>.from(json["like"]!.map((x) => x)),
+        comment: json["comment"] == null
+            ? null
+            : List<dynamic>.from(json["comment"]!.map((x) => x)),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "message": message,
+        "sender": sender,
+        "time": time == null ? null : time!.toIso8601String(),
+        "like": like == null ? null : List<dynamic>.from(like!.map((x) => x)),
+        "comment":
+            comment == null ? null : List<dynamic>.from(comment!.map((x) => x)),
+      };
+}

@@ -9,6 +9,7 @@ import 'package:agora_care/app/onboarding/onboarding.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/services/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -38,7 +39,9 @@ class _SplashScreenState extends State<SplashScreen> {
       // } else {
       //   _save('0');
       if (FirebaseAuth.instance.currentUser != null) {
-        print("user id is ${FirebaseAuth.instance.currentUser!.uid}");
+        if (kDebugMode) {
+          print("user id is ${FirebaseAuth.instance.currentUser!.uid}");
+        }
         // if () {
         // Center(
         //   child: CircularProgressIndicator(
@@ -53,10 +56,14 @@ class _SplashScreenState extends State<SplashScreen> {
               .getUserByModel(FirebaseAuth.instance.currentUser!.uid);
 
           if (user.admin == true) {
+            controller.pref!.setFirstTimeButtonOpen(false);
             Get.offAll(() => AdminNavScreen());
           } else if (user.role == 'consultant') {
+            controller.pref!.setFirstTimeButtonOpen(false);
             Get.offAll(() => ConsultantNavScreen());
           } else {
+            controller.pref!.setFirstTimeButtonOpen(false);
+
             Get.offAll(() => UserNavScreen());
           }
         } else {

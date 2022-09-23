@@ -1,9 +1,10 @@
-// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously
+// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously, prefer_is_empty
 
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:agora_care/app/model/message_model.dart';
+import 'package:agora_care/app/model/quote_model.dart';
 import 'package:agora_care/core/constant/colors.dart';
 import 'package:agora_care/core/constant/quote_comment_tile.dart';
 import 'package:agora_care/core/customWidgets.dart';
@@ -46,13 +47,20 @@ class QuoteDetails extends StatefulWidget {
 class _QuoteDetailsState extends State<QuoteDetails> {
   var scr = GlobalKey();
   final commentController = TextEditingController();
+  final ScrollController listScrollController = ScrollController();
+
   Stream<QuerySnapshot>? chat;
   String admin = "";
 
+  List<QueryDocumentSnapshot> listMessage = [];
+
   final _authController = Get.find<AuthControllers>();
-  final _quoteContoller = Get.find<QuoteControllers>();
+  final _quoteController = Get.find<QuoteControllers>();
 
   bool isLiked = false;
+  int _limit = 20;
+  final int _limitIncrement = 20;
+  QuoteModel? _quoteModel;
 
   Future getPdf(Uint8List screenShot, time, tempPath) async {
     pw.Document pdf = pw.Document();
@@ -80,7 +88,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
   @override
   void initState() {
     getChatandAdmin();
-    // chat = _quoteContoller.getGroupMembers(widget.groupId);
+    listScrollController.addListener(_scrollListener);
+    _quoteController.quotesCollection
+        .doc(widget.groupId)
+        .snapshots()
+        .listen((event) {
+      _quoteModel = QuoteModel.fromJson(event.data(), event.id);
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -95,6 +110,18 @@ class _QuoteDetailsState extends State<QuoteDetails> {
         admin = val;
       });
     });
+  }
+
+  _scrollListener() {
+    if (!listScrollController.hasClients) return;
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
+        !listScrollController.position.outOfRange &&
+        _limit <= listMessage.length) {
+      setState(() {
+        _limit += _limitIncrement;
+      });
+    }
   }
 
   @override
@@ -162,41 +189,52 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                       right: 10,
                       child: Column(
                         children: [
-                          StreamBuilder<QuerySnapshot<Object?>>(
-                              stream: _quoteContoller.getDailyQuote(),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  if (snapshot.data != null) {
-                                    return customDescriptionText(
-                                      snapshot.data!.docs.last
-                                          .data()!['dailyQuote']
-                                          .toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().filledTextField,
-                                    );
-                                  } else if (snapshot.data == null) {
-                                    return SvgPicture.asset(
-                                      'assets/svgs/fluent_tap-single-48-filled.svg',
-                                    );
-                                  } else {
-                                    return customDescriptionText(
-                                      'No Quote Today',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      textAlign: TextAlign.center,
-                                      colors: AppColor().whiteColor,
-                                    );
-                                  }
-                                } else {
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppColor().primaryColor,
-                                    ),
-                                  );
-                                }
-                              }),
+                          (_quoteModel != null)
+                              ? customDescriptionText(
+                                  _quoteModel!.dailyQuote.toString(),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  textAlign: TextAlign.center,
+                                  colors: AppColor().filledTextField,
+                                )
+                              : SvgPicture.asset(
+                                  'assets/svgs/fluent_tap-single-48-filled.svg',
+                                ),
+                          // StreamBuilder<QuerySnapshot<Object?>>(
+                          //     stream: _quoteController.getDailyQuote(),
+                          //     builder: (context, AsyncSnapshot snapshot) {
+                          //       if (snapshot.hasData) {
+                          //         if (snapshot.data != null) {
+                          //           return customDescriptionText(
+                          //             snapshot.data!.docs.last
+                          //                 .data()!['dailyQuote']
+                          //                 .toString(),
+                          //             fontSize: 20,
+                          //             fontWeight: FontWeight.w700,
+                          //             textAlign: TextAlign.center,
+                          //             colors: AppColor().filledTextField,
+                          //           );
+                          //         } else if (snapshot.data == null) {
+                          //           return SvgPicture.asset(
+                          //             'assets/svgs/fluent_tap-single-48-filled.svg',
+                          //           );
+                          //         } else {
+                          //           return customDescriptionText(
+                          //             'No Quote Today',
+                          //             fontSize: 16,
+                          //             fontWeight: FontWeight.w700,
+                          //             textAlign: TextAlign.center,
+                          //             colors: AppColor().whiteColor,
+                          //           );
+                          //         }
+                          //       } else {
+                          //         return Center(
+                          //           child: CircularProgressIndicator(
+                          //             color: AppColor().primaryColor,
+                          //           ),
+                          //         );
+                          //       }
+                          //     }),
                           const Gap(20),
                           Divider(
                             thickness: 1,
@@ -214,20 +252,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               const Gap(5),
                               Column(
                                 children: [
-                                  Obx(() {
-                                    return customDescriptionText(
-                                      _quoteContoller.allQuotes.last.share!
-                                                  .length ==
-                                              null
-                                          ? '0'
-                                          : _quoteContoller
-                                              .allQuotes.last.share!.length
-                                              .toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      colors: AppColor().textColor,
-                                    );
-                                  }),
+                                  customDescriptionText(
+                                    _quoteModel == null
+                                        ? '0'
+                                        : _quoteModel!.share!.length.toString(),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    colors: AppColor().textColor,
+                                  ),
                                   customDescriptionText(
                                     'shares',
                                     fontSize: 12,
@@ -250,20 +282,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               Column(
                                 children: [
                                   const Gap(5),
-                                  Obx(() {
-                                    return customDescriptionText(
-                                      _quoteContoller.allQuotes.last.likes!
-                                                  .length ==
-                                              null
-                                          ? '0'
-                                          : _quoteContoller
-                                              .allQuotes.last.likes!.length
-                                              .toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      colors: AppColor().textColor,
-                                    );
-                                  }),
+                                  customDescriptionText(
+                                    _quoteModel == null
+                                        ? '0'
+                                        : _quoteModel!.likes!.length.toString(),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    colors: AppColor().textColor,
+                                  ),
                                   customDescriptionText(
                                     'likes',
                                     fontSize: 12,
@@ -285,19 +311,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                               const Gap(5),
                               Column(
                                 children: [
-                                  Obx(() {
-                                    return customDescriptionText(
-                                      _quoteContoller.allQuotes.last.reply! ==
-                                              null
-                                          ? '0'
-                                          : _quoteContoller
-                                              .allQuotes.last.reply!
-                                              .toString(),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      colors: AppColor().textColor,
-                                    );
-                                  }),
+                                  customDescriptionText(
+                                    _quoteModel == null
+                                        ? '0'
+                                        : _quoteModel!.reply!.toString(),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    colors: AppColor().textColor,
+                                  ),
                                   customDescriptionText(
                                     'chats',
                                     fontSize: 12,
@@ -342,8 +363,8 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                   ? Container()
                                   : InkWell(
                                       // onTap: () async {
-                                      //   await _quoteContoller.sharePost(
-                                      //       _quoteContoller.allQuotes.last.id!);
+                                      //   await _quoteController.sharePost(
+                                      //       _quoteController.allQuotes.last.id!);
                                       //   RenderRepaintBoundary boundary =
                                       //       scr.currentContext!.findRenderObject()
                                       //           as RenderRepaintBoundary;
@@ -360,8 +381,8 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                       //   await Share.shareFiles([pathurl]);
                                       // },
                                       onTap: () async {
-                                        await _quoteContoller.sharePost(
-                                            _quoteContoller.allQuotes.last.id!);
+                                        await _quoteController
+                                            .sharePost(_quoteModel!.id!);
                                         await Share.share(widget.dailyQuote);
                                       },
                                       child: SvgPicture.asset(
@@ -382,12 +403,10 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                                           isLiked = !isLiked;
                                         });
                                         isLiked
-                                            ? _quoteContoller.likePost(
-                                                _quoteContoller
-                                                    .allQuotes.last.id!)
-                                            : _quoteContoller.unLikePost(
-                                                _quoteContoller
-                                                    .allQuotes.last.id!);
+                                            ? _quoteController
+                                                .likePost(_quoteModel!.id!)
+                                            : _quoteController
+                                                .unLikePost(_quoteModel!.id!);
                                       },
                                       child: isLiked
                                           ? Icon(
@@ -401,9 +420,7 @@ class _QuoteDetailsState extends State<QuoteDetails> {
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: chatMComments(),
-                        ),
+                        chatComments(),
                         Container(
                           padding: const EdgeInsets.all(5),
                           alignment: Alignment.bottomCenter,
@@ -512,28 +529,79 @@ class _QuoteDetailsState extends State<QuoteDetails> {
     );
   }
 
-  chatMComments() {
-    return StreamBuilder(
-      stream: chat,
-      builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return QuoteCommentTile(
-                    time: snapshot.data.docs[index]['time'],
-                    message: snapshot.data.docs[index]['message'],
-                    sender: snapshot.data.docs[index]['sender'],
-                    sentByMe:
-                        widget.userName == snapshot.data.docs[index]['sender'],
-                    groupId: _quoteContoller.allQuotes.last.id!,
-                    like: const [],
-                    messageid: snapshot.data.docs[index].id,
+  // chatMComments() {
+  //   return Flexible(
+  //     child: widget.groupId.isNotEmpty
+  //         ? StreamBuilder<QuerySnapshot>(
+  //             stream: chat,
+  //             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //                if (snapshot.hasData) {
+  //                       listMessage = snapshot.data!.docs;
+  //                       if (listMessage.length > 0) {
+  //              return ListView.builder(
+  //                   controller: listScrollController,
+  //                   itemCount: snapshot.data!.docs.length,
+  //                   itemBuilder: (context, index) =>QuoteCommentTile(
+  //                           time: snapshot.data!.docs[index]['time'],
+  //                           message: snapshot.data!.docs[index]['message'],
+  //                           sender: snapshot.data!.docs[index]['sender'],
+  //                           sentByMe: widget.userName ==
+  //                               snapshot.data!.docs[index]['sender'],
+  //                           groupId: _quoteController.allQuotes.last.id!,
+  //                           like: const [],
+  //                           messageid: snapshot.data!.docs[index].id,
+  //                       ));
+  //                       } else {
+  //                         return const Center(
+  //                             child: Text("No message here yet..."));
+  //                       });
+
+  // }
+
+  Widget chatComments() {
+    return Flexible(
+      child: widget.groupId.isNotEmpty
+          ? StreamBuilder<QuerySnapshot>(
+              stream: chat,
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  listMessage = snapshot.data!.docs;
+                  if (listMessage.length > 0) {
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(10),
+                      controller: listScrollController,
+                      itemBuilder: (context, index) => QuoteCommentTile(
+                        time: snapshot.data!.docs[index]['time'],
+                        message: snapshot.data!.docs[index]['message'],
+                        sender: snapshot.data!.docs[index]['sender'],
+                        sentByMe: widget.userName ==
+                            snapshot.data!.docs[index]['sender'],
+                        groupId: _quoteModel!.groupId!,
+                        // like: const [],
+                        like: snapshot.data!.docs[index]['like'],
+                        messageid: snapshot.data!.docs[index].id,
+                      ),
+                      itemCount: snapshot.data?.docs.length,
+                      reverse: false,
+                    );
+                  } else {
+                    return const Center(child: Text("No message here yet..."));
+                  }
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColor().primaryColor,
+                    ),
                   );
-                },
-              )
-            : Container();
-      },
+                }
+              },
+            )
+          : Center(
+              child: CircularProgressIndicator(
+                color: AppColor().primaryColor,
+              ),
+            ),
     );
   }
 
@@ -546,10 +614,14 @@ class _QuoteDetailsState extends State<QuoteDetails> {
         like: [],
         comment: [],
       );
+      if (listScrollController.hasClients) {
+        listScrollController.animateTo(0,
+            duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      }
 
       DatabaseService().sendComment(widget.groupId, chatMessageMap.toJson());
-      _quoteContoller.chatList(
-        _quoteContoller.allQuotes.last.id!,
+      _quoteController.chatList(
+        _quoteModel!.id!,
         //
       );
       setState(() {
