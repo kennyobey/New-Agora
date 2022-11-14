@@ -107,20 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     const Gap(20),
-                    CustomPassWord(
-                      textEditingController: _passworController,
-                      obscureText: true,
-                      label: 'Password',
-                      hint: 'Enter password',
-                      keyType: TextInputType.text,
-                      validatorText: '** Field cannot be empty',
-                      color: AppColor().lightTextColor,
-                      onChanged: (val) {
-                        setState(() {
-                          password = val;
-                        });
-                      },
-                    ),
+                    
                     const Gap(20),
                     Text.rich(TextSpan(
                       text: "Don't have an account? ",
